@@ -41,10 +41,19 @@ export default function SponsorsPage() {
   // Load sponsors data and enrich domains in one go
   // Separate function to handle background enrichment
   const enrichSponsors = async (currentSponsors: Sponsor[]) => {
-    // Enrich domains
-    const sponsorsToEnrich = currentSponsors.filter(
-      (sponsor) => !sponsor.website || sponsor.website === "unknown"
-    );
+    // Check store for existing data
+    const storeSponsors = allSponsors;
+
+    // Enrich domains only for sponsors without valid websites in both current and store data
+    const sponsorsToEnrich = currentSponsors.filter((sponsor) => {
+      const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
+      return (
+        (!sponsor.website || sponsor.website === "unknown") &&
+        (!storeVersion ||
+          !storeVersion.website ||
+          storeVersion.website === "unknown")
+      );
+    });
 
     if (sponsorsToEnrich.length > 0) {
       try {
@@ -74,9 +83,10 @@ export default function SponsorsPage() {
     }
 
     // Classify sectors
-    const sponsorsToClassify = currentSponsors.filter(
-      (sponsor) => !sponsor.sector
-    );
+    const sponsorsToClassify = currentSponsors.filter((sponsor) => {
+      const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
+      return !sponsor.sector && (!storeVersion || !storeVersion.sector);
+    });
 
     if (sponsorsToClassify.length > 0) {
       try {
@@ -106,9 +116,15 @@ export default function SponsorsPage() {
     }
 
     // Find career URLs
-    const sponsorsNeedingCareerUrls = currentSponsors.filter(
-      (sponsor) => !sponsor.careerUrl && sponsor.website
-    );
+    const sponsorsNeedingCareerUrls = currentSponsors.filter((sponsor) => {
+      const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
+      return (
+        !sponsor.careerUrl &&
+        sponsor.website &&
+        (!storeVersion || !storeVersion.careerUrl) &&
+        sponsor.website !== "unknown"
+      );
+    });
 
     if (sponsorsNeedingCareerUrls.length > 0) {
       try {
@@ -168,9 +184,20 @@ export default function SponsorsPage() {
         setPaginationInfo(data.pagination);
         setTotalCount(data.count);
 
-        if (currentPage === 1) {
-          setSponsors(currentSponsors);
-        }
+        // Merge current sponsors with store data
+        const sponsorMap = new Map(allSponsors.map((s) => [s.id, s]));
+
+        // Update or add new sponsors
+        currentSponsors.forEach((sponsor: Sponsor) => {
+          const existing = sponsorMap.get(sponsor.id);
+          sponsorMap.set(sponsor.id, {
+            ...(existing || {}),
+            ...sponsor,
+          } as Sponsor);
+        });
+
+        // Update store with merged sponsors
+        setSponsors(Array.from(sponsorMap.values()));
 
         // Start background enrichment process
         enrichSponsors(currentSponsors);
@@ -198,51 +225,39 @@ export default function SponsorsPage() {
   ]);
 
   // Update filtered sponsors when store updates
-  // Update filtered sponsors when store updates
   useEffect(() => {
-    const updateFromStore = () => {
-      if (filteredSponsors.length === 0 || allSponsors.length === 0) return;
+    if (filteredSponsors.length === 0) return;
 
-      const updatedSponsors = filteredSponsors.map((sponsor) => {
-        const storeVersion = allSponsors.find((s) => s.id === sponsor.id);
-        if (!storeVersion) return sponsor;
+    const sponsorMap = new Map(allSponsors.map((s) => [s.id, s]));
+    const updatedSponsors = filteredSponsors.map((sponsor: Sponsor) => {
+      const storeVersion = sponsorMap.get(sponsor.id);
+      if (!storeVersion) return sponsor;
 
-        return {
-          ...sponsor,
-          sector: storeVersion.sector,
-          website: storeVersion.website,
-          careerUrl: storeVersion.careerUrl,
-        };
-      });
+      return {
+        ...sponsor,
+        sector: storeVersion.sector || sponsor.sector,
+        website: storeVersion.website || sponsor.website,
+        careerUrl: storeVersion.careerUrl || sponsor.careerUrl,
+      };
+    });
 
-      // Only update if there are actual changes
-      const hasChanges = updatedSponsors.some((updated, index) => {
-        const current = filteredSponsors[index];
-        return (
-          updated.sector !== current.sector ||
-          updated.website !== current.website ||
-          updated.careerUrl !== current.careerUrl
-        );
-      });
-
-      if (hasChanges) {
-        setFilteredSponsors(updatedSponsors);
-      }
-    };
-
-    updateFromStore();
-  }, [allSponsors]); // Only depend on allSponsors changes
+    setFilteredSponsors(updatedSponsors);
+  }, [allSponsors, filteredSponsors]);
 
   // Load initial data
   useEffect(() => {
     loadSponsors();
   }, [loadSponsors]);
 
-  // Re-fetch sponsors when filters change
+  // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
+  }, [filters]); // Only reset page when filters change
+
+  // Load sponsors when filters or page changes
+  useEffect(() => {
     loadSponsors();
-  }, [filters, loadSponsors]);
+  }, [filters, currentPage, loadSponsors]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
