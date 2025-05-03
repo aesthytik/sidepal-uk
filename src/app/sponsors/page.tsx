@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSponsorStore } from "@/store/useSponsorStore";
 import { Sponsor } from "@/lib/sponsorTypes";
-import { Sector } from "@/lib/classifySector";
 import { SearchBar } from "@/components/SearchBar";
 import { FilterPanel } from "@/components/FilterPanel";
 import { ResultsList } from "@/components/ResultsList";
@@ -40,119 +39,122 @@ export default function SponsorsPage() {
 
   // Load sponsors data and enrich domains in one go
   // Separate function to handle background enrichment
-  const enrichSponsors = async (currentSponsors: Sponsor[]) => {
-    // Check store for existing data
-    const storeSponsors = allSponsors;
+  const enrichSponsors = useCallback(
+    async (currentSponsors: Sponsor[]) => {
+      // Check store for existing data
+      const storeSponsors = allSponsors;
 
-    // Enrich domains only for sponsors without valid websites in both current and store data
-    const sponsorsToEnrich = currentSponsors.filter((sponsor) => {
-      const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
-      return (
-        (!sponsor.website || sponsor.website === "unknown") &&
-        (!storeVersion ||
-          !storeVersion.website ||
-          storeVersion.website === "unknown")
-      );
-    });
+      // Enrich domains only for sponsors without valid websites in both current and store data
+      const sponsorsToEnrich = currentSponsors.filter((sponsor) => {
+        const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
+        return (
+          (!sponsor.website || sponsor.website === "unknown") &&
+          (!storeVersion ||
+            !storeVersion.website ||
+            storeVersion.website === "unknown")
+        );
+      });
 
-    if (sponsorsToEnrich.length > 0) {
-      try {
-        const enrichResponse = await fetch("/api/enrich-domains", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sponsors: sponsorsToEnrich.map((sponsor) => ({
-              name: sponsor.name,
-              city: sponsor.city,
-            })),
-          }),
-        });
+      if (sponsorsToEnrich.length > 0) {
+        try {
+          const enrichResponse = await fetch("/api/enrich-domains", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sponsors: sponsorsToEnrich.map((sponsor) => ({
+                name: sponsor.name,
+                city: sponsor.city,
+              })),
+            }),
+          });
 
-        if (enrichResponse.ok) {
-          const enrichData = await enrichResponse.json();
-          if (
-            enrichData.success &&
-            Object.keys(enrichData.domains).length > 0
-          ) {
-            updateDomains(enrichData.domains);
+          if (enrichResponse.ok) {
+            const enrichData = await enrichResponse.json();
+            if (
+              enrichData.success &&
+              Object.keys(enrichData.domains).length > 0
+            ) {
+              updateDomains(enrichData.domains);
+            }
           }
+        } catch (error) {
+          console.error("Error enriching domains:", error);
         }
-      } catch (error) {
-        console.error("Error enriching domains:", error);
       }
-    }
 
-    // Classify sectors
-    const sponsorsToClassify = currentSponsors.filter((sponsor) => {
-      const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
-      return !sponsor.sector && (!storeVersion || !storeVersion.sector);
-    });
+      // Classify sectors
+      const sponsorsToClassify = currentSponsors.filter((sponsor) => {
+        const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
+        return !sponsor.sector && (!storeVersion || !storeVersion.sector);
+      });
 
-    if (sponsorsToClassify.length > 0) {
-      try {
-        const classifyResponse = await fetch("/api/classify-sectors", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sponsors: sponsorsToClassify.map((sponsor) => ({
-              name: sponsor.name,
-              website: sponsor.website || "unknown",
-            })),
-          }),
-        });
+      if (sponsorsToClassify.length > 0) {
+        try {
+          const classifyResponse = await fetch("/api/classify-sectors", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sponsors: sponsorsToClassify.map((sponsor) => ({
+                name: sponsor.name,
+                website: sponsor.website || "unknown",
+              })),
+            }),
+          });
 
-        if (classifyResponse.ok) {
-          const classifyData = await classifyResponse.json();
-          if (
-            classifyData.success &&
-            Object.keys(classifyData.sectors).length > 0
-          ) {
-            updateSectors(classifyData.sectors);
+          if (classifyResponse.ok) {
+            const classifyData = await classifyResponse.json();
+            if (
+              classifyData.success &&
+              Object.keys(classifyData.sectors).length > 0
+            ) {
+              updateSectors(classifyData.sectors);
+            }
           }
+        } catch (error) {
+          console.error("Error classifying sectors:", error);
         }
-      } catch (error) {
-        console.error("Error classifying sectors:", error);
       }
-    }
 
-    // Find career URLs
-    const sponsorsNeedingCareerUrls = currentSponsors.filter((sponsor) => {
-      const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
-      return (
-        !sponsor.careerUrl &&
-        sponsor.website &&
-        (!storeVersion || !storeVersion.careerUrl) &&
-        sponsor.website !== "unknown"
-      );
-    });
+      // Find career URLs
+      const sponsorsNeedingCareerUrls = currentSponsors.filter((sponsor) => {
+        const storeVersion = storeSponsors.find((s) => s.id === sponsor.id);
+        return (
+          !sponsor.careerUrl &&
+          sponsor.website &&
+          (!storeVersion || !storeVersion.careerUrl) &&
+          sponsor.website !== "unknown"
+        );
+      });
 
-    if (sponsorsNeedingCareerUrls.length > 0) {
-      try {
-        const careerUrlResponse = await fetch("/api/find-career-urls", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sponsors: sponsorsNeedingCareerUrls.map((sponsor) => ({
-              name: sponsor.name,
-              website: sponsor.website || "",
-            })),
-          }),
-        });
+      if (sponsorsNeedingCareerUrls.length > 0) {
+        try {
+          const careerUrlResponse = await fetch("/api/find-career-urls", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sponsors: sponsorsNeedingCareerUrls.map((sponsor) => ({
+                name: sponsor.name,
+                website: sponsor.website || "",
+              })),
+            }),
+          });
 
-        if (careerUrlResponse.ok) {
-          const careerUrlData = await careerUrlResponse.json();
-          if (
-            careerUrlData.success &&
-            Object.keys(careerUrlData.careerUrls).length > 0
-          ) {
-            updateCareerUrls(careerUrlData.careerUrls);
+          if (careerUrlResponse.ok) {
+            const careerUrlData = await careerUrlResponse.json();
+            if (
+              careerUrlData.success &&
+              Object.keys(careerUrlData.careerUrls).length > 0
+            ) {
+              updateCareerUrls(careerUrlData.careerUrls);
+            }
           }
+        } catch (error) {
+          console.error("Error finding career URLs:", error);
         }
-      } catch (error) {
-        console.error("Error finding career URLs:", error);
       }
-    }
-  };
+    },
+    [allSponsors, updateDomains, updateSectors, updateCareerUrls]
+  );
 
   const loadSponsors = useCallback(async () => {
     try {
@@ -211,18 +213,7 @@ export default function SponsorsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    filters,
-    currentPage,
-    setIsLoading,
-    setFilteredSponsors,
-    setPaginationInfo,
-    setTotalCount,
-    setSponsors,
-    updateDomains,
-    updateSectors,
-    updateCareerUrls,
-  ]);
+  }, [filters, currentPage, setSponsors, allSponsors, enrichSponsors]);
 
   // Update filtered sponsors when store updates
   useEffect(() => {

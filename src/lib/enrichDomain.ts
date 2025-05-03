@@ -3,6 +3,7 @@ import axios from "axios";
 import dns from "dns/promises";
 
 // Initialize OpenAI client (kept as fallback)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
 });

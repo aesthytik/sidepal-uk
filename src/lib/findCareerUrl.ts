@@ -107,7 +107,7 @@ async function checkUrlExists(url: string): Promise<boolean> {
       },
     });
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

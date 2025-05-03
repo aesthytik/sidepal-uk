@@ -1,7 +1,5 @@
 import { fetchLocalCsv } from "./fetchCsv";
-import { enrichDomain } from "./enrichDomain";
-import { classifySector, Sector } from "./classifySector";
-import { findCareerUrl } from "./findCareerUrl";
+import { Sector } from "./classifySector";
 import {
   SponsorRaw,
   Sponsor,
@@ -163,7 +161,7 @@ export async function processSponsorData(): Promise<Sponsor[]> {
   const updatedCache: EnrichmentCache = {
     domains: Object.fromEntries(
       Array.from(domainMap.entries()).filter(
-        ([_, domain]) => domain !== "unknown"
+        ([, domain]) => domain !== "unknown"
       )
     ),
     sectors: Object.fromEntries(sectorMap),

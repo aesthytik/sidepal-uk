@@ -33,7 +33,7 @@ export function Pagination({
         currentPage - Math.floor(maxMiddleButtons / 2),
         boundaryPages + 1
       );
-      let middleEnd = Math.min(
+      const middleEnd = Math.min(
         middleStart + maxMiddleButtons - 1,
         totalPages - boundaryPages
       );

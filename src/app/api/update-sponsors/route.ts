@@ -7,7 +7,7 @@ import { processSponsorData } from "@/lib/processSponsorData";
  * API route to trigger the sponsor data update process
  * This is meant to be called by a cron job or manually for testing
  */
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Process the sponsor data
     const sponsors = await processSponsorData();

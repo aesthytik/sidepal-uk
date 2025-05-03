@@ -3,9 +3,9 @@ import { Sponsor, SponsorFilters } from "@/lib/sponsorTypes";
 import fs from "fs";
 import path from "path";
 import Fuse from "fuse.js";
-import { fetchLocalCsv } from "@/lib/fetchCsv";
-import { convertToSponsors } from "@/lib/processSponsorData";
 import { Sector } from "@/lib/classifySector";
+import { fetchLocalCsv as fetchCsv } from "@/lib/fetchCsv";
+import { convertToSponsors as convert } from "@/lib/processSponsorData";
 
 // Using Node.js runtime for file system operations
 
@@ -57,17 +57,10 @@ async function loadSponsors(): Promise<Sponsor[]> {
     }
 
     if (fs.existsSync(csvPath)) {
-      const { fetchLocalCsv } = require("@/lib/fetchCsv");
-      const rawSponsors = await fetchLocalCsv();
+      const rawSponsors = await fetchCsv();
 
       // Convert raw sponsors to full sponsor objects with enrichment data
-      const { convertToSponsors } = require("@/lib/processSponsorData");
-      const sponsors = convertToSponsors(
-        rawSponsors,
-        domainMap,
-        sectorMap,
-        careerUrlMap
-      );
+      const sponsors = convert(rawSponsors, domainMap, sectorMap, careerUrlMap);
 
       // Update cache with enriched data and timestamps
       const enrichedSponsors: Sponsor[] = sponsors.map((sponsor: Sponsor) => ({

@@ -64,8 +64,8 @@ export default function SavedPage() {
         <div className="flex flex-col items-center justify-center text-center py-16 gap-6">
           <h1 className="text-4xl font-display mb-4">Saved Sponsors</h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-xl">
-            You haven't saved any sponsors yet. Browse our directory to find and
-            save companies you're interested in.
+            You haven&apos;t saved any sponsors yet. Browse our directory to
+            find and save companies you&apos;re interested in.
           </p>
           <Button asChild size="lg">
             <Link href="/sponsors">Browse Sponsors</Link>
