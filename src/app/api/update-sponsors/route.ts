@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { processSponsorData } from "@/lib/processSponsorData";
 
 // Using Node.js runtime for file system operations
