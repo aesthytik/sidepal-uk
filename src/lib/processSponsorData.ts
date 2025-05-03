@@ -1,4 +1,4 @@
-import { fetchSponsorCsv } from "./fetchCsv";
+import { fetchLocalCsv } from "./fetchCsv";
 import { enrichDomain, bulkEnrichDomains } from "./enrichDomain";
 import { classifySector, bulkClassifySectors, Sector } from "./classifySector";
 import { findCareerUrl, bulkFindCareerUrls } from "./findCareerUrl";
@@ -117,39 +117,14 @@ export async function processSponsorData(): Promise<Sponsor[]> {
 
   // Step 2: Fetch raw sponsor data
   console.log("Fetching sponsor CSV data...");
-  const rawSponsors = await fetchSponsorCsv();
+  const rawSponsors = await fetchLocalCsv(20); // Limit to first 20 items for testing
   console.log(`Fetched ${rawSponsors.length} sponsors from CSV`);
 
-  // Step 3: Enrich with domains
-  console.log("Enriching with website domains...");
-  const domainMap = await bulkEnrichDomains(
-    rawSponsors.map((s) => ({ name: s.name, city: s.city })),
-    domainCache
-  );
-
-  // Step 4: Classify sectors
-  console.log("Classifying industry sectors...");
-  // For sector classification, we need to fetch homepage HTML first
-  const companiesWithDomains = rawSponsors
-    .filter((s) => domainMap.get(s.name) && domainMap.get(s.name) !== "unknown")
-    .map((s) => ({
-      name: s.name,
-      website: domainMap.get(s.name) || "",
-    }));
-
-  // We'll skip fetching HTML for now to keep things simpler
-  // In a production environment, you'd fetch the HTML for each website
-  const sectorMap = await bulkClassifySectors(
-    companiesWithDomains.map((c) => ({ name: c.name })),
-    sectorCache
-  );
-
-  // Step 5: Find career URLs
-  console.log("Finding career page URLs...");
-  const careerUrlMap = await bulkFindCareerUrls(
-    companiesWithDomains,
-    careerUrlCache
-  );
+  // Step 3-5: Skip all external enrichment for testing
+  console.log("Skipping all external enrichment for testing...");
+  const domainMap = new Map<string, string>();
+  const sectorMap = new Map<string, Sector>();
+  const careerUrlMap = new Map<string, string>();
 
   // Step 6: Combine all data
   console.log("Combining all data...");
