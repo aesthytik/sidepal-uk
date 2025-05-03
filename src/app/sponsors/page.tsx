@@ -39,6 +39,105 @@ export default function SponsorsPage() {
   });
 
   // Load sponsors data and enrich domains in one go
+  // Separate function to handle background enrichment
+  const enrichSponsors = async (currentSponsors: Sponsor[]) => {
+    // Enrich domains
+    const sponsorsToEnrich = currentSponsors.filter(
+      (sponsor) => !sponsor.website || sponsor.website === "unknown"
+    );
+
+    if (sponsorsToEnrich.length > 0) {
+      try {
+        const enrichResponse = await fetch("/api/enrich-domains", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sponsors: sponsorsToEnrich.map((sponsor) => ({
+              name: sponsor.name,
+              city: sponsor.city,
+            })),
+          }),
+        });
+
+        if (enrichResponse.ok) {
+          const enrichData = await enrichResponse.json();
+          if (
+            enrichData.success &&
+            Object.keys(enrichData.domains).length > 0
+          ) {
+            updateDomains(enrichData.domains);
+          }
+        }
+      } catch (error) {
+        console.error("Error enriching domains:", error);
+      }
+    }
+
+    // Classify sectors
+    const sponsorsToClassify = currentSponsors.filter(
+      (sponsor) => !sponsor.sector
+    );
+
+    if (sponsorsToClassify.length > 0) {
+      try {
+        const classifyResponse = await fetch("/api/classify-sectors", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sponsors: sponsorsToClassify.map((sponsor) => ({
+              name: sponsor.name,
+              website: sponsor.website || "unknown",
+            })),
+          }),
+        });
+
+        if (classifyResponse.ok) {
+          const classifyData = await classifyResponse.json();
+          if (
+            classifyData.success &&
+            Object.keys(classifyData.sectors).length > 0
+          ) {
+            updateSectors(classifyData.sectors);
+          }
+        }
+      } catch (error) {
+        console.error("Error classifying sectors:", error);
+      }
+    }
+
+    // Find career URLs
+    const sponsorsNeedingCareerUrls = currentSponsors.filter(
+      (sponsor) => !sponsor.careerUrl && sponsor.website
+    );
+
+    if (sponsorsNeedingCareerUrls.length > 0) {
+      try {
+        const careerUrlResponse = await fetch("/api/find-career-urls", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sponsors: sponsorsNeedingCareerUrls.map((sponsor) => ({
+              name: sponsor.name,
+              website: sponsor.website || "",
+            })),
+          }),
+        });
+
+        if (careerUrlResponse.ok) {
+          const careerUrlData = await careerUrlResponse.json();
+          if (
+            careerUrlData.success &&
+            Object.keys(careerUrlData.careerUrls).length > 0
+          ) {
+            updateCareerUrls(careerUrlData.careerUrls);
+          }
+        }
+      } catch (error) {
+        console.error("Error finding career URLs:", error);
+      }
+    }
+  };
+
   const loadSponsors = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -64,6 +163,7 @@ export default function SponsorsPage() {
           sector: sponsor.sector || undefined,
           careerUrl: sponsor.careerUrl || undefined,
         }));
+
         setFilteredSponsors(updatedSponsors);
         setPaginationInfo(data.pagination);
         setTotalCount(data.count);
@@ -72,91 +172,8 @@ export default function SponsorsPage() {
           setSponsors(currentSponsors);
         }
 
-        // Enrich domains once per page load
-        const sponsorsToEnrich = currentSponsors.filter(
-          (sponsor: Sponsor) =>
-            !sponsor.website || sponsor.website === "unknown"
-        );
-
-        if (sponsorsToEnrich.length > 0) {
-          const enrichResponse = await fetch("/api/enrich-domains", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              sponsors: sponsorsToEnrich.map((sponsor: Sponsor) => ({
-                name: sponsor.name,
-                city: sponsor.city,
-              })),
-            }),
-          });
-
-          if (enrichResponse.ok) {
-            const enrichData = await enrichResponse.json();
-            if (
-              enrichData.success &&
-              Object.keys(enrichData.domains).length > 0
-            ) {
-              updateDomains(enrichData.domains);
-            }
-          }
-        }
-
-        // Classify sectors for sponsors without sectors
-        const sponsorsToClassify = currentSponsors.filter(
-          (sponsor: Sponsor) => !sponsor.sector
-        );
-
-        if (sponsorsToClassify.length > 0) {
-          const classifyResponse = await fetch("/api/classify-sectors", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              sponsors: sponsorsToClassify.map((sponsor: Sponsor) => ({
-                name: sponsor.name,
-                website: sponsor.website || "unknown",
-              })),
-            }),
-          });
-
-          if (classifyResponse.ok) {
-            const classifyData = await classifyResponse.json();
-            console.log("Received sectors:", classifyData.sectors);
-            if (
-              classifyData.success &&
-              Object.keys(classifyData.sectors).length > 0
-            ) {
-              updateSectors(classifyData.sectors);
-            }
-          }
-        }
-
-        // Find career URLs for sponsors without them
-        const sponsorsNeedingCareerUrls = currentSponsors.filter(
-          (sponsor: Sponsor) => !sponsor.careerUrl && sponsor.website
-        );
-
-        if (sponsorsNeedingCareerUrls.length > 0) {
-          const careerUrlResponse = await fetch("/api/find-career-urls", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              sponsors: sponsorsNeedingCareerUrls.map((sponsor: Sponsor) => ({
-                name: sponsor.name,
-                website: sponsor.website || "",
-              })),
-            }),
-          });
-
-          if (careerUrlResponse.ok) {
-            const careerUrlData = await careerUrlResponse.json();
-            if (
-              careerUrlData.success &&
-              Object.keys(careerUrlData.careerUrls).length > 0
-            ) {
-              updateCareerUrls(careerUrlData.careerUrls);
-            }
-          }
-        }
+        // Start background enrichment process
+        enrichSponsors(currentSponsors);
       } else {
         console.error("Error loading sponsors:", data.error);
         setFilteredSponsors([]);
