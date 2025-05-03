@@ -51,7 +51,7 @@ function processCSVText(text: string): SponsorRaw[] {
 /**
  * Reads and parses the local sponsor list CSV file
  */
-export async function fetchLocalCsv(limit: number = 20): Promise<SponsorRaw[]> {
+export async function fetchLocalCsv(): Promise<SponsorRaw[]> {
   try {
     const csvPath = path.join(
       process.cwd(),
@@ -60,7 +60,7 @@ export async function fetchLocalCsv(limit: number = 20): Promise<SponsorRaw[]> {
     console.log("Reading local CSV from:", csvPath);
     const text = await fs.readFile(csvPath, "utf-8");
     const allSponsors = processCSVText(text);
-    return allSponsors.slice(0, limit);
+    return allSponsors;
   } catch (error) {
     console.error("Error reading or parsing local CSV:", error);
     throw error;

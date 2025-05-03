@@ -85,6 +85,12 @@ export const useSponsorStore = create<SponsorStore>()(
       partialize: (state) => ({
         savedSponsors: Array.from(state.savedSponsors),
       }),
+      onRehydrateStorage: () => (state) => {
+        // Convert savedSponsors back to a Set
+        if (state && Array.isArray(state.savedSponsors)) {
+          state.savedSponsors = new Set(state.savedSponsors);
+        }
+      },
     }
   )
 );

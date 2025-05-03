@@ -3,6 +3,8 @@ import { Sponsor, SponsorFilters } from "@/lib/sponsorTypes";
 import fs from "fs";
 import path from "path";
 import Fuse from "fuse.js";
+import { fetchLocalCsv } from "@/lib/fetchCsv";
+import { convertToSponsors } from "@/lib/processSponsorData";
 
 // Using Node.js runtime for file system operations
 
@@ -34,13 +36,41 @@ async function loadSponsors(): Promise<Sponsor[]> {
   }
 
   try {
-    // Check if the file exists
+    // First try to read from the CSV file directly
+    const csvPath = path.join(
+      process.cwd(),
+      "public",
+      "data",
+      "2025-05-02_-_Worker_and_Temporary_Worker.csv"
+    );
+
+    if (fs.existsSync(csvPath)) {
+      const { fetchLocalCsv } = require("@/lib/fetchCsv");
+      const rawSponsors = await fetchLocalCsv();
+
+      // Convert raw sponsors to full sponsor objects
+      const { convertToSponsors } = require("@/lib/processSponsorData");
+      const sponsors = convertToSponsors(
+        rawSponsors,
+        new Map(),
+        new Map(),
+        new Map()
+      );
+
+      // Cache the results
+      sponsorsCache = sponsors;
+      lastFetchTime = Date.now();
+
+      return sponsors;
+    }
+
+    // Fallback to sponsors.json if CSV not available
+    console.log("Attempting to load sponsors from:", SPONSORS_FILE);
     if (!fs.existsSync(SPONSORS_FILE)) {
-      console.warn("Sponsors data file not found");
+      console.warn("No sponsor data found");
       return [];
     }
 
-    // Read and parse the file
     const data = fs.readFileSync(SPONSORS_FILE, "utf-8");
     const sponsors = JSON.parse(data) as Sponsor[];
 
@@ -64,9 +94,16 @@ function filterSponsors(
 ): Sponsor[] {
   let results = [...sponsors];
 
-  // Filter by sector
+  // Filter by sector if specified and company has a sector
   if (filters.sector) {
-    results = results.filter((sponsor) => sponsor.sector === filters.sector);
+    // If sector filter is "it", also include companies without a sector as they might be IT companies
+    if (filters.sector.toLowerCase() === "it") {
+      results = results.filter(
+        (sponsor) => !sponsor.sector || sponsor.sector === "it"
+      );
+    } else {
+      results = results.filter((sponsor) => sponsor.sector === filters.sector);
+    }
   }
 
   // Filter by region
@@ -112,6 +149,8 @@ export async function GET(request: NextRequest) {
   try {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
     const filters: SponsorFilters = {
       sector: searchParams.get("sector") || undefined,
       region: searchParams.get("region") || undefined,
@@ -125,11 +164,33 @@ export async function GET(request: NextRequest) {
     // Apply filters
     const filteredSponsors = filterSponsors(sponsors, filters);
 
+    // Calculate pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedSponsors = filteredSponsors.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(filteredSponsors.length / limit);
+
+    console.log({
+      total: filteredSponsors.length,
+      pageSize: limit,
+      totalPages,
+      currentPage: page,
+    });
+
     // Return the results
     return NextResponse.json({
       success: true,
       count: filteredSponsors.length,
-      sponsors: filteredSponsors,
+      totalCount: filteredSponsors.length,
+      sponsors: paginatedSponsors,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        totalItems: filteredSponsors.length,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
     });
   } catch (error) {
     console.error("Error processing companies request:", error);

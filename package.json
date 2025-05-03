@@ -13,7 +13,6 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@types/axios": "^0.9.36",
     "@types/papaparse": "^5.3.15",
-    "@types/react-window": "^1.8.8",
     "ai": "^4.3.13",
     "axios": "^1.9.0",
     "class-variance-authority": "^0.7.0",
@@ -24,8 +23,6 @@
     "papaparse": "^5.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-virtualized-auto-sizer": "^1.0.26",
-    "react-window": "^1.8.11",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^5.0.4"

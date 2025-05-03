@@ -71,7 +71,7 @@ async function saveCache(cache: EnrichmentCache): Promise<void> {
 /**
  * Converts raw sponsor data to enriched sponsor objects
  */
-function convertToSponsors(
+export function convertToSponsors(
   rawSponsors: SponsorRaw[],
   domainMap: Map<string, string>,
   sectorMap: Map<string, Sector>,
@@ -117,10 +117,10 @@ export async function processSponsorData(): Promise<Sponsor[]> {
 
   // Step 2: Fetch raw sponsor data
   console.log("Fetching sponsor CSV data...");
-  const rawSponsors = await fetchLocalCsv(20); // Limit to first 20 items for testing
+  const rawSponsors = await fetchLocalCsv();
   console.log(`Fetched ${rawSponsors.length} sponsors from CSV`);
 
-  // Step 3-5: Skip all external enrichment for testing
+  // Step 3-5: Note: External enrichment is skipped for now
   console.log("Skipping all external enrichment for testing...");
   const domainMap = new Map<string, string>();
   const sectorMap = new Map<string, Sector>();
