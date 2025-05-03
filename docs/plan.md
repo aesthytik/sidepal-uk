@@ -94,16 +94,6 @@ flowchart LR
 
 ---
 
-## 8 · UI Style Guide (Pastel‑Tech)
-
-- Background gradient: `bg-[linear-gradient(#FCE0F5,#EEB6E0)]` light, `bg-[#121212→#1E1B23]` dark.
-- Accent colours: blue #2456FF, lavender #B39CFF, hot‑pink #FF6BD2, citrus #FFE66E, mint #D7F5E3.
-- Typography: Inter — `font-extrabold` for H1 64 px; Body 18 px.
-- Cards: radius 8 px, border `2px solid #E5E7EB`, tiny shadow.
-- Motion: Framer fade‑up 0.4 s, translate‑y 12 px.
-
----
-
 ## 9 · Testing Strategy
 
 | Layer  | Tool              | Key Checks                       |
