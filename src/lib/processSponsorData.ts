@@ -120,11 +120,66 @@ export async function processSponsorData(): Promise<Sponsor[]> {
   const rawSponsors = await fetchLocalCsv();
   console.log(`Fetched ${rawSponsors.length} sponsors from CSV`);
 
-  // Step 3-5: Note: External enrichment is skipped for now
-  console.log("Skipping all external enrichment for testing...");
-  const domainMap = new Map<string, string>();
-  const sectorMap = new Map<string, Sector>();
-  const careerUrlMap = new Map<string, string>();
+  // Step 3: Enrich domains
+  console.log("Enriching domains...");
+  const domainMap = new Map(domainCache);
+  const newSponsors = rawSponsors.filter((s) => !domainCache.has(s.name));
+  if (newSponsors.length > 0) {
+    console.log(
+      `Found ${newSponsors.length} sponsors needing domain enrichment`
+    );
+    const newDomains = await bulkEnrichDomains(
+      newSponsors.map((s) => ({ name: s.name, city: s.city }))
+    );
+
+    // Convert Map to entries and back to ensure proper iteration
+    for (const [name, domain] of newDomains.entries()) {
+      domainMap.set(name, domain);
+    }
+  }
+
+  // Step 4: Classify sectors
+  // console.log("Classifying sectors...");
+  const sectorMap = new Map(sectorCache);
+  // const sponsorsNeedingSectors = rawSponsors.filter(
+  //   (s) => !sectorCache.has(s.name)
+  // );
+  // if (sponsorsNeedingSectors.length > 0) {
+  //   console.log(
+  //     `Found ${sponsorsNeedingSectors.length} sponsors needing sector classification`
+  //   );
+  //   const newSectors = await bulkClassifySectors(
+  //     sponsorsNeedingSectors.map((s) => ({
+  //       name: s.name,
+  //       homepageHtml: undefined, // Could fetch HTML in future
+  //     }))
+  //   );
+  //   for (const [name, sector] of Object.entries(newSectors)) {
+  //     sectorMap.set(name, sector);
+  //   }
+  // }
+
+  // Step 5: Find career URLs
+  // console.log("Finding career URLs...");
+  const careerUrlMap = new Map(careerUrlCache);
+  // const sponsorsNeedingCareerUrls = rawSponsors.filter(
+  //   (s) => !careerUrlCache.has(s.name)
+  // );
+  // if (sponsorsNeedingCareerUrls.length > 0) {
+  //   console.log(
+  //     `Found ${sponsorsNeedingCareerUrls.length} sponsors needing career URLs`
+  //   );
+  //   const newCareerUrls = await bulkFindCareerUrls(
+  //     sponsorsNeedingCareerUrls.map((s) => ({
+  //       name: s.name,
+  //       website: domainMap.get(s.name) || "unknown",
+  //       homepageHtml: undefined, // Could fetch HTML in future
+  //     }))
+  //   );
+  //   for (const [name, url] of Object.entries(newCareerUrls)) {
+  //     careerUrlMap.set(name, url);
+  //   }
+  // }
 
   // Step 6: Combine all data
   console.log("Combining all data...");
@@ -140,12 +195,26 @@ export async function processSponsorData(): Promise<Sponsor[]> {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
-  fs.writeFileSync(SPONSORS_FILE, JSON.stringify(sponsors, null, 2));
+  // Ensure enrichment data is properly persisted
+  const enrichedSponsors = sponsors.map((sponsor) => {
+    // Get the latest domain from the map
+    const website = domainMap.get(sponsor.name);
+    return {
+      ...sponsor,
+      website: website || "unknown",
+    };
+  });
 
-  // Step 8: Update and save cache
+  fs.writeFileSync(SPONSORS_FILE, JSON.stringify(enrichedSponsors, null, 2));
+
+  // Step 8: Update and save cache with explicit domain data
   console.log("Updating cache...");
   const updatedCache: EnrichmentCache = {
-    domains: Object.fromEntries(domainMap),
+    domains: Object.fromEntries(
+      Array.from(domainMap.entries()).filter(
+        ([_, domain]) => domain !== "unknown"
+      )
+    ),
     sectors: Object.fromEntries(sectorMap),
     careerUrls: Object.fromEntries(careerUrlMap),
     lastUpdated: new Date().toISOString(),

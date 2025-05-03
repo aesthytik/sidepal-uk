@@ -5,6 +5,7 @@ import path from "path";
 import Fuse from "fuse.js";
 import { fetchLocalCsv } from "@/lib/fetchCsv";
 import { convertToSponsors } from "@/lib/processSponsorData";
+import { Sector } from "@/lib/classifySector";
 
 // Using Node.js runtime for file system operations
 
@@ -12,12 +13,9 @@ import { convertToSponsors } from "@/lib/processSponsorData";
 export const revalidate = 60;
 
 // Path to the sponsors data file
-const SPONSORS_FILE = path.join(
-  process.cwd(),
-  "public",
-  "data",
-  "sponsors.json"
-);
+const DATA_DIR = path.join(process.cwd(), "public", "data");
+const SPONSORS_FILE = path.join(DATA_DIR, "sponsors.json");
+const CACHE_FILE = path.join(DATA_DIR, "enrichment-cache.json");
 
 // In-memory cache
 let sponsorsCache: Sponsor[] | null = null;
@@ -44,24 +42,52 @@ async function loadSponsors(): Promise<Sponsor[]> {
       "2025-05-02_-_Worker_and_Temporary_Worker.csv"
     );
 
+    // Load enrichment cache if it exists
+    let domainMap = new Map<string, string>();
+    let sectorMap = new Map<string, Sector>();
+    let careerUrlMap = new Map<string, string | null>();
+
+    if (fs.existsSync(CACHE_FILE)) {
+      const cacheData = JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
+      domainMap = new Map<string, string>(Object.entries(cacheData.domains));
+      sectorMap = new Map<string, Sector>(Object.entries(cacheData.sectors));
+      careerUrlMap = new Map<string, string | null>(
+        Object.entries(cacheData.careerUrls)
+      );
+    }
+
     if (fs.existsSync(csvPath)) {
       const { fetchLocalCsv } = require("@/lib/fetchCsv");
       const rawSponsors = await fetchLocalCsv();
 
-      // Convert raw sponsors to full sponsor objects
+      // Convert raw sponsors to full sponsor objects with enrichment data
       const { convertToSponsors } = require("@/lib/processSponsorData");
       const sponsors = convertToSponsors(
         rawSponsors,
-        new Map(),
-        new Map(),
-        new Map()
+        domainMap,
+        sectorMap,
+        careerUrlMap
       );
 
-      // Cache the results
-      sponsorsCache = sponsors;
+      // Update cache with enriched data and timestamps
+      const enrichedSponsors: Sponsor[] = sponsors.map((sponsor: Sponsor) => ({
+        ...sponsor,
+        lastUpdated: new Date().toISOString(),
+        website: domainMap.get(sponsor.name) || "unknown",
+      }));
+      sponsorsCache = enrichedSponsors;
       lastFetchTime = Date.now();
 
-      return sponsors;
+      // Save updated enrichment cache
+      const updatedCache = {
+        domains: Object.fromEntries(domainMap),
+        sectors: Object.fromEntries(sectorMap),
+        careerUrls: Object.fromEntries(careerUrlMap),
+        lastUpdated: new Date().toISOString(),
+      };
+      fs.writeFileSync(CACHE_FILE, JSON.stringify(updatedCache, null, 2));
+
+      return enrichedSponsors;
     }
 
     // Fallback to sponsors.json if CSV not available
@@ -71,8 +97,25 @@ async function loadSponsors(): Promise<Sponsor[]> {
       return [];
     }
 
+    // Load JSON data and enrich with cached domains
     const data = fs.readFileSync(SPONSORS_FILE, "utf-8");
     const sponsors = JSON.parse(data) as Sponsor[];
+
+    // Ensure we have the latest enrichment data
+    if (fs.existsSync(CACHE_FILE)) {
+      const cacheData = JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
+      const domainMap = new Map<string, string>(
+        Object.entries(cacheData.domains)
+      );
+
+      // Update sponsor websites from cache
+      sponsors.forEach((sponsor) => {
+        const cachedDomain = domainMap.get(sponsor.name);
+        if (typeof cachedDomain === "string") {
+          sponsor.website = cachedDomain;
+        }
+      });
+    }
 
     // Update cache
     sponsorsCache = sponsors;
@@ -177,12 +220,15 @@ export async function GET(request: NextRequest) {
       currentPage: page,
     });
 
-    // Return the results
+    // Return the results with website field included
     return NextResponse.json({
       success: true,
       count: filteredSponsors.length,
       totalCount: filteredSponsors.length,
-      sponsors: paginatedSponsors,
+      sponsors: paginatedSponsors.map((sponsor) => ({
+        ...sponsor,
+        website: sponsor.website || "unknown",
+      })),
       pagination: {
         page,
         limit,

@@ -1,6 +1,17 @@
 {
-  "domains": {},
+  "domains": {
+    "McMullan Shellfish": "https://find-and-update.company-information.service.gov.uk",
+    "(A1F1 Limited T/A ) Ultrasound Direct London": "https://www.cqc.org.uk",
+    "(IECC Care) Independent Excel Care Consortium Limited": "https://iecc-care.co.uk",
+    "*ABOUTCARE HASTINGS LTD": "https://www.cqc.org.uk",
+    ".LITTLE NOORIYAH LTD": "https://littlenooriyah.co.uk",
+    "???£ ESS LTD": "https://ess.com",
+    "@ Architect UK Ltd": "https://architectuk.com",
+    "@ Home Accommodation Services Ltd": "https://find-and-update.company-information.service.gov.uk",
+    "@ Ur Eaz Ltd": "https://ureaz.com",
+    "@@@ FILER LIMITED": "https://filer.co.uk"
+  },
   "sectors": {},
   "careerUrls": {},
-  "lastUpdated": "2025-05-03T15:44:09.971Z"
+  "lastUpdated": "2025-05-03T16:39:56.027Z"
 }

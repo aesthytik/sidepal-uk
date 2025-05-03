@@ -65,6 +65,8 @@ async function findDomainViaDNS(name: string): Promise<string | null> {
     .replace(/limited|ltd|llc|inc|plc/g, "");
 
   const variations = [
+    `www.${cleanName}.com`,
+    `www.${cleanName}.co.uk`,
     `${cleanName}.com`,
     `${cleanName}.co.uk`,
     `${cleanName}.uk`,
@@ -75,7 +77,7 @@ async function findDomainViaDNS(name: string): Promise<string | null> {
   for (const domain of variations) {
     try {
       await dns.resolve(domain);
-      return `https://${domain}`;
+      return `https://${domain.replace("www.", "")}`;
     } catch {
       continue;
     }
@@ -104,30 +106,30 @@ export async function enrichDomain(
     if (googleDomain) return googleDomain;
 
     // 3. Fallback to OpenAI as last resort
-    const { choices } = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0,
-      messages: [
-        {
-          role: "user",
-          content: `Return ONLY the official website URL for the UK company "${name}"${
-            town ? ` in ${town}` : ""
-          }. If unsure, respond "unknown".`,
-        },
-      ],
-    });
+    // const { choices } = await openai.chat.completions.create({
+    //   model: "gpt-3.5-turbo",
+    //   temperature: 0,
+    //   messages: [
+    //     {
+    //       role: "user",
+    //       content: `Return ONLY the official website URL for the UK company "${name}"${
+    //         town ? ` in ${town}` : ""
+    //       }. If unsure, respond "unknown".`,
+    //     },
+    //   ],
+    // });
 
-    const result = choices[0].message.content?.trim() || "unknown";
+    // const result = choices[0].message.content?.trim() || "unknown";
 
-    // Basic validation to ensure it's a URL or "unknown"
-    if (result === "unknown" || result.startsWith("http")) {
-      return result;
-    }
+    // // Basic validation to ensure it's a URL or "unknown"
+    // if (result === "unknown" || result.startsWith("http")) {
+    //   return result;
+    // }
 
-    // If the model returned just a domain without http, add it
-    if (result.includes(".") && !result.startsWith("http")) {
-      return `https://${result}`;
-    }
+    // // If the model returned just a domain without http, add it
+    // if (result.includes(".") && !result.startsWith("http")) {
+    //   return `https://${result}`;
+    // }
 
     return "unknown";
   } catch (error) {
@@ -149,34 +151,79 @@ export async function bulkEnrichDomains(
   const results = new Map<string, string>(cacheMap);
   const queue = sponsors.filter((sponsor) => !cacheMap.has(sponsor.name));
 
+  // Initial stats logging
+  console.log(`
+Domain Enrichment Started
+Total sponsors: ${sponsors.length}
+Cached: ${cacheMap.size}
+To process: ${queue.length}
+  `);
+
   // Process in batches to respect rate limits
   const BATCH_SIZE = 30;
   const DELAY_MS = 20 * 1000; // 20 seconds between batches
 
   for (let i = 0; i < queue.length; i += BATCH_SIZE) {
+    const batchStartTime = Date.now();
     const batch = queue.slice(i, i + BATCH_SIZE);
+    const currentBatch = Math.floor(i / BATCH_SIZE) + 1;
+    const totalBatches = Math.ceil(queue.length / BATCH_SIZE);
+
+    console.log(
+      `\nProcessing batch ${currentBatch}/${totalBatches} (${batch.length} sponsors)`
+    );
 
     // Process batch in parallel
     const batchPromises = batch.map(async (sponsor) => {
-      const domain = await enrichDomain(sponsor.name, sponsor.city);
-      return { name: sponsor.name, domain };
+      try {
+        const domain = await enrichDomain(sponsor.name, sponsor.city);
+        console.log(`✓ ${sponsor.name}: ${domain}`);
+        return { name: sponsor.name, domain, success: true };
+      } catch (error) {
+        console.error(`✗ ${sponsor.name}: Failed to enrich domain`, error);
+        return { name: sponsor.name, domain: "unknown", success: false };
+      }
     });
 
     const batchResults = await Promise.all(batchPromises);
 
-    // Add results to map
-    batchResults.forEach(({ name, domain }) => {
+    // Add results to map and log stats
+    let successCount = 0;
+    let unknownCount = 0;
+
+    batchResults.forEach(({ name, domain, success }) => {
       results.set(name, domain);
+      if (success) {
+        successCount++;
+        if (domain === "unknown") unknownCount++;
+      }
     });
 
-    // Log progress
-    console.log(`Processed ${i + batch.length}/${queue.length} domains`);
+    const batchTimeMs = Date.now() - batchStartTime;
+    console.log(`
+Batch ${currentBatch} completed in ${(batchTimeMs / 1000).toFixed(1)}s
+Success: ${successCount}/${batch.length} (${unknownCount} unknown)
+Progress: ${i + batch.length}/${queue.length} total domains processed
+    `);
 
     // Delay before next batch if not the last batch
     if (i + BATCH_SIZE < queue.length) {
+      console.log(`Waiting ${DELAY_MS / 1000}s before next batch...`);
       await new Promise((resolve) => setTimeout(resolve, DELAY_MS));
     }
   }
+
+  // Final stats
+  const unknownDomains = Array.from(results.entries())
+    .filter(([, domain]) => domain === "unknown")
+    .map(([name]) => name);
+
+  console.log(`
+Domain Enrichment Completed
+Total processed: ${queue.length}
+Unknown domains: ${unknownDomains.length}
+Unknown companies: ${unknownDomains.join(", ")}
+  `);
 
   return results;
 }

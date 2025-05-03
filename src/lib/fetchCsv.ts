@@ -60,7 +60,7 @@ export async function fetchLocalCsv(): Promise<SponsorRaw[]> {
     console.log("Reading local CSV from:", csvPath);
     const text = await fs.readFile(csvPath, "utf-8");
     const allSponsors = processCSVText(text);
-    return allSponsors;
+    return allSponsors.slice(0, 10); // Limit to 100 sponsors for local testing
   } catch (error) {
     console.error("Error reading or parsing local CSV:", error);
     throw error;
