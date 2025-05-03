@@ -1,7 +1,7 @@
 import { fetchLocalCsv } from "./fetchCsv";
-import { enrichDomain, bulkEnrichDomains } from "./enrichDomain";
-import { classifySector, bulkClassifySectors, Sector } from "./classifySector";
-import { findCareerUrl, bulkFindCareerUrls } from "./findCareerUrl";
+import { enrichDomain } from "./enrichDomain";
+import { classifySector, Sector } from "./classifySector";
+import { findCareerUrl } from "./findCareerUrl";
 import {
   SponsorRaw,
   Sponsor,
@@ -120,66 +120,17 @@ export async function processSponsorData(): Promise<Sponsor[]> {
   const rawSponsors = await fetchLocalCsv();
   console.log(`Fetched ${rawSponsors.length} sponsors from CSV`);
 
-  // Step 3: Enrich domains
-  console.log("Enriching domains...");
+  // Step 3: Use domain cache
+  console.log("Loading domain cache...");
   const domainMap = new Map(domainCache);
-  const newSponsors = rawSponsors.filter((s) => !domainCache.has(s.name));
-  if (newSponsors.length > 0) {
-    console.log(
-      `Found ${newSponsors.length} sponsors needing domain enrichment`
-    );
-    const newDomains = await bulkEnrichDomains(
-      newSponsors.map((s) => ({ name: s.name, city: s.city }))
-    );
 
-    // Convert Map to entries and back to ensure proper iteration
-    for (const [name, domain] of newDomains.entries()) {
-      domainMap.set(name, domain);
-    }
-  }
-
-  // Step 4: Classify sectors
-  // console.log("Classifying sectors...");
+  // Step 4: Use sector cache
+  console.log("Loading sector cache...");
   const sectorMap = new Map(sectorCache);
-  // const sponsorsNeedingSectors = rawSponsors.filter(
-  //   (s) => !sectorCache.has(s.name)
-  // );
-  // if (sponsorsNeedingSectors.length > 0) {
-  //   console.log(
-  //     `Found ${sponsorsNeedingSectors.length} sponsors needing sector classification`
-  //   );
-  //   const newSectors = await bulkClassifySectors(
-  //     sponsorsNeedingSectors.map((s) => ({
-  //       name: s.name,
-  //       homepageHtml: undefined, // Could fetch HTML in future
-  //     }))
-  //   );
-  //   for (const [name, sector] of Object.entries(newSectors)) {
-  //     sectorMap.set(name, sector);
-  //   }
-  // }
 
-  // Step 5: Find career URLs
-  // console.log("Finding career URLs...");
+  // Step 5: Use career URL cache
+  console.log("Loading career URL cache...");
   const careerUrlMap = new Map(careerUrlCache);
-  // const sponsorsNeedingCareerUrls = rawSponsors.filter(
-  //   (s) => !careerUrlCache.has(s.name)
-  // );
-  // if (sponsorsNeedingCareerUrls.length > 0) {
-  //   console.log(
-  //     `Found ${sponsorsNeedingCareerUrls.length} sponsors needing career URLs`
-  //   );
-  //   const newCareerUrls = await bulkFindCareerUrls(
-  //     sponsorsNeedingCareerUrls.map((s) => ({
-  //       name: s.name,
-  //       website: domainMap.get(s.name) || "unknown",
-  //       homepageHtml: undefined, // Could fetch HTML in future
-  //     }))
-  //   );
-  //   for (const [name, url] of Object.entries(newCareerUrls)) {
-  //     careerUrlMap.set(name, url);
-  //   }
-  // }
 
   // Step 6: Combine all data
   console.log("Combining all data...");
