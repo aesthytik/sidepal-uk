@@ -130,16 +130,20 @@ function filterSponsors(
 ): Sponsor[] {
   let results = [...sponsors];
 
-  // Filter by sector if specified and company has a sector
-  if (filters.sector) {
-    // If sector filter is "it", also include companies without a sector as they might be IT companies
-    if (filters.sector.toLowerCase() === "it") {
-      results = results.filter(
-        (sponsor) => !sponsor.sector || sponsor.sector === "it"
-      );
-    } else {
-      results = results.filter((sponsor) => sponsor.sector === filters.sector);
-    }
+  // Filter by city
+  if (filters.city) {
+    const cityLower = filters.city.toLowerCase();
+    results = results.filter((sponsor) =>
+      sponsor.city.toLowerCase().includes(cityLower)
+    );
+  }
+
+  // Filter by county
+  if (filters.county) {
+    const countyLower = filters.county.toLowerCase();
+    results = results.filter(
+      (sponsor) => sponsor.county?.toLowerCase().includes(countyLower) // Check for county existence
+    );
   }
 
   // Filter by region
@@ -188,7 +192,9 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const filters: SponsorFilters = {
-      sector: searchParams.get("sector") || undefined,
+      // sector: searchParams.get("sector") || undefined, // Removed sector
+      city: searchParams.get("city") || undefined, // Added city
+      county: searchParams.get("county") || undefined, // Added county
       region: searchParams.get("region") || undefined,
       visaType: searchParams.get("visa") || undefined,
       query: searchParams.get("q") || undefined,

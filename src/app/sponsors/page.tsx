@@ -41,9 +41,8 @@ export default function SponsorsPage() {
   // Separate function to handle background enrichment
   const enrichSponsors = useCallback(
     async (currentSponsors: Sponsor[]) => {
-      // Check store for existing data
-      // allSponsors from the hook's closure is used here.
-      const storeSponsors = allSponsors;
+      // Access latest allSponsors directly from the store
+      const storeSponsors = useSponsorStore.getState().sponsors;
 
       // Enrich domains only for sponsors without valid websites in both current and store data
       const sponsorsToEnrich = currentSponsors.filter((sponsor) => {
@@ -190,7 +189,9 @@ export default function SponsorsPage() {
         setTotalCount(data.count);
 
         // Merge current sponsors with store data
-        const sponsorMap = new Map(allSponsors.map((s) => [s.id, s]));
+        // Access latest allSponsors directly from the store for merging
+        const storeSponsorsForMerge = useSponsorStore.getState().sponsors;
+        const sponsorMap = new Map(storeSponsorsForMerge.map((s) => [s.id, s]));
 
         // Update or add new sponsors
         currentSponsors.forEach((sponsor: Sponsor) => {
