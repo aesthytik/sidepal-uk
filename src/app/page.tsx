@@ -1,15 +1,119 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sidepal: Find UK Tech Visa Sponsors | Search 130K+ Companies",
+  description:
+    "Easily find UK tech companies licensed to sponsor visas. Search over 130,000+ sponsors, filter by sector, and apply directly. Your journey to a UK tech job starts here.",
+  keywords:
+    "UK tech visa, visa sponsors UK, tech jobs UK, skilled worker visa, UK tech companies, Sidepal, tech sponsorship, UK visa",
+  openGraph: {
+    title: "Sidepal: Find UK Tech Visa Sponsors | Search 130K+ Companies",
+    description:
+      "Easily find UK tech companies licensed to sponsor visas. Search over 130,000+ sponsors, filter by sector, and apply directly.",
+    url: "https://sidepal.club", // Assuming this is your production URL, please change if different
+    siteName: "Sidepal",
+    images: [
+      {
+        url: "https://sidepal.club/og-image.png", // Replace with your actual OG image URL
+        width: 1200,
+        height: 630,
+        alt: "Sidepal - UK Tech Visa Sponsor Finder",
+      },
+    ],
+    locale: "en_GB",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sidepal: Find UK Tech Visa Sponsors | Search 130K+ Companies",
+    description:
+      "Easily find UK tech companies licensed to sponsor visas. Search over 130,000+ sponsors, filter by sector, and apply directly.",
+    // site: "@yourtwitterhandle", // Replace with your Twitter handle
+    // creator: "@yourtwitterhandle", // Replace with your Twitter handle
+    images: ["https://sidepal.club/twitter-image.png"], // Replace with your actual Twitter image URL
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  // alternates: { // Add this if you have alternate language versions
+  //   canonical: "https://sidepal.club",
+  //   languages: {
+  //     'en-US': 'https://sidepal.club/en-US',
+  //   },
+  // },
+  // verification: { // Add verification tags if needed
+  //   google: 'your-google-site-verification-code',
+  //   yandex: 'your-yandex-verification-code',
+  //   other: {
+  //     me: ['my-email@example.com', 'my-link'],
+  //   },
+  // },
+};
 
 export default function Home() {
   return (
     <main className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                name: "Sidepal",
+                url: "https://sidepal.club",
+                logo: "https://sidepal.club/favicon.svg", // Replace with your actual logo URL if different
+                sameAs: [
+                  // Add links to your social media profiles here if available
+                  // "https://twitter.com/yourtwitterhandle",
+                  // "https://www.linkedin.com/company/yourlinkedinpage"
+                ],
+              },
+              {
+                "@type": "WebSite",
+                name: "Sidepal",
+                url: "https://sidepal.club",
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: {
+                    "@type": "EntryPoint",
+                    urlTemplate:
+                      "https://sidepal.club/sponsors?q={search_term_string}",
+                  },
+                  "query-input": "required name=search_term_string",
+                },
+                publisher: {
+                  "@type": "Organization",
+                  name: "Sidepal",
+                  logo: {
+                    "@type": "ImageObject",
+                    url: "https://sidepal.club/favicon.svg", // Replace with your actual logo URL
+                  },
+                },
+                description:
+                  "Easily find UK tech companies licensed to sponsor visas. Search over 130,000+ sponsors, filter by sector, and apply directly.",
+              },
+            ],
+          }),
+        }}
+      />
       {/* Hero Section */}
       <section className="hero py-24 md:py-32">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl">
             <h1 className="mb-6 text-balance font-display inline-block border-2 border-black dark:border-white px-4 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
-              <span className="text-primary-500">SidePal:</span> Find your UK
+              <span className="text-primary-500">Sidepal:</span> Find your UK
               tech sponsor in seconds.
             </h1>
             <p className="text-xl md:text-2xl max-w-2xl mb-8 text-gray-700 dark:text-gray-300 font-display">
@@ -160,7 +264,7 @@ export default function Home() {
       <section className="py-20 bg-primary-500 text-white border-y-2 border-black dark:border-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="mb-6 font-display inline-block border-2 border-white px-4 py-2 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]">
-            Ready to find your UK tech sponsor with SidePal?
+            Ready to find your UK tech sponsor with Sidepal?
           </h2>
           <p className="text-xl max-w-2xl mx-auto mb-8 font-display">
             Start your UK tech visa journey today with the most comprehensive
