@@ -4,15 +4,15 @@ import { useState, useEffect } from "react";
 import { useSponsorStore } from "@/store/useSponsorStore";
 import { Button } from "@/components/ui/button";
 
-// Sector options
-const SECTORS = [
-  { value: "it", label: "IT & Software" },
-  { value: "finance", label: "Finance" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "education", label: "Education" },
-  { value: "retail", label: "Retail" },
-  { value: "other", label: "Other" },
-];
+// Sector options (Removed)
+// const SECTORS = [
+//   { value: "it", label: "IT & Software" },
+//   { value: "finance", label: "Finance" },
+//   { value: "healthcare", label: "Healthcare" },
+//   { value: "education", label: "Education" },
+//   { value: "retail", label: "Retail" },
+//   { value: "other", label: "Other" },
+// ];
 
 // Visa type options
 const VISA_TYPES = [
@@ -37,8 +37,14 @@ const POPULAR_REGIONS = [
 
 export function FilterPanel() {
   const { filters, setFilters } = useSponsorStore();
-  const [selectedSector, setSelectedSector] = useState<string | undefined>(
-    filters.sector
+  // const [selectedSector, setSelectedSector] = useState<string | undefined>(
+  //   filters.sector
+  // );
+  const [selectedCity, setSelectedCity] = useState<string | undefined>(
+    filters.city
+  );
+  const [selectedCounty, setSelectedCounty] = useState<string | undefined>(
+    filters.county
   );
   const [selectedVisaType, setSelectedVisaType] = useState<string | undefined>(
     filters.visaType
@@ -50,45 +56,53 @@ export function FilterPanel() {
   // Update filters when selections change
   useEffect(() => {
     setFilters({
-      sector: selectedSector,
+      // sector: selectedSector, // Removed
+      city: selectedCity,
+      county: selectedCounty,
       visaType: selectedVisaType,
       region: selectedRegion,
     });
-  }, [selectedSector, selectedVisaType, selectedRegion, setFilters]);
+  }, [
+    selectedCity,
+    selectedCounty,
+    selectedVisaType,
+    selectedRegion,
+    setFilters,
+  ]);
 
   // Reset all filters
   const resetFilters = () => {
-    setSelectedSector(undefined);
+    // setSelectedSector(undefined); // Removed
+    setSelectedCity(undefined);
+    setSelectedCounty(undefined);
     setSelectedVisaType(undefined);
     setSelectedRegion(undefined);
   };
 
   return (
     <div className="space-y-6">
-      {/* Sector Filter */}
+      {/* City Filter */}
       <div>
-        <h3 className="text-lg font-semibold mb-3">Industry Sector</h3>
-        <div className="space-y-2">
-          {SECTORS.map((sector) => (
-            <div key={sector.value} className="flex items-center">
-              <input
-                id={`sector-${sector.value}`}
-                type="radio"
-                name="sector"
-                value={sector.value}
-                checked={selectedSector === sector.value}
-                onChange={(e) => setSelectedSector(e.target.value)}
-                className="w-4 h-4 text-primary-500 border-2 border-black focus:ring-primary-500"
-              />
-              <label
-                htmlFor={`sector-${sector.value}`}
-                className="ml-2 text-sm font-medium"
-              >
-                {sector.label}
-              </label>
-            </div>
-          ))}
-        </div>
+        <h3 className="text-lg font-semibold mb-3">City</h3>
+        <input
+          type="text"
+          placeholder="Enter city"
+          value={selectedCity || ""}
+          onChange={(e) => setSelectedCity(e.target.value || undefined)}
+          className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+        />
+      </div>
+
+      {/* County Filter */}
+      <div>
+        <h3 className="text-lg font-semibold mb-3">County</h3>
+        <input
+          type="text"
+          placeholder="Enter county"
+          value={selectedCounty || ""}
+          onChange={(e) => setSelectedCounty(e.target.value || undefined)}
+          className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+        />
       </div>
 
       {/* Visa Type Filter */}
@@ -144,7 +158,10 @@ export function FilterPanel() {
       </div>
 
       {/* Reset Filters Button */}
-      {(selectedSector || selectedVisaType || selectedRegion) && (
+      {(selectedCity ||
+        selectedCounty ||
+        selectedVisaType ||
+        selectedRegion) && (
         <Button onClick={resetFilters} variant="outline" className="w-full">
           Reset Filters
         </Button>

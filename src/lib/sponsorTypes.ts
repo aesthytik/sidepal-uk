@@ -33,10 +33,12 @@ export interface Sponsor {
  * Filter parameters for sponsors
  */
 export interface SponsorFilters {
-  sector?: string;
+  city?: string; // Added
+  county?: string; // Added
   region?: string;
   visaType?: string;
   query?: string;
+  // sector?: string; // Removed
 }
 
 /**

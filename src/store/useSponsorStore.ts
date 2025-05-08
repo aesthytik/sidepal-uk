@@ -6,6 +6,7 @@ interface Sponsor {
   id: string;
   name: string;
   city: string;
+  county: string; // Added county
   region: string;
   visaTypes: string[];
   sector?: Sector;
@@ -14,7 +15,8 @@ interface Sponsor {
 }
 
 interface SponsorFilters {
-  sector?: string;
+  city?: string; // Added
+  county?: string; // Added
   region?: string;
   visaType?: string;
   query?: string;
@@ -50,7 +52,13 @@ export const useSponsorStore = create<SponsorStore>()(
       savedSponsors: new Set(),
       enrichmentInProgress: false,
       filters: {
-        sector: "IT",
+        // sector: "IT", // Removed
+        // Initialize new filters if needed, or leave undefined
+        city: undefined,
+        county: undefined,
+        region: undefined,
+        visaType: undefined,
+        query: undefined,
       },
 
       // Actions
@@ -136,10 +144,31 @@ export const useSponsorStore = create<SponsorStore>()(
       filteredSponsors: () => {
         const { sponsors, filters } = get();
         return sponsors.filter((sponsor) => {
-          if (filters.sector && sponsor.sector !== filters.sector) return false;
-          if (filters.region && sponsor.region !== filters.region) return false;
-          if (filters.visaType && !sponsor.visaTypes.includes(filters.visaType))
-            return false;
+          // if (filters.sector && sponsor.sector !== filters.sector) return false; // Removed sector filter
+          if (
+            filters.city &&
+            sponsor.city.toLowerCase() !== filters.city.toLowerCase()
+          )
+            return false; // Added city filter
+          if (
+            filters.county &&
+            sponsor.county &&
+            sponsor.county.toLowerCase() !== filters.county.toLowerCase()
+          )
+            return false; // Added county filter (check for existence of sponsor.county)
+          if (
+            filters.region &&
+            sponsor.region.toLowerCase() !== filters.region.toLowerCase()
+          )
+            return false; // Ensure case-insensitive comparison for region
+          if (
+            filters.visaType &&
+            !sponsor.visaTypes.some(
+              (vt) => vt.toLowerCase() === filters.visaType?.toLowerCase()
+            )
+          )
+            return false; // Ensure case-insensitive comparison for visaType
+
           if (filters.query) {
             const query = filters.query.toLowerCase();
             return (

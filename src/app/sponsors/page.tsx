@@ -42,6 +42,7 @@ export default function SponsorsPage() {
   const enrichSponsors = useCallback(
     async (currentSponsors: Sponsor[]) => {
       // Check store for existing data
+      // allSponsors from the hook's closure is used here.
       const storeSponsors = allSponsors;
 
       // Enrich domains only for sponsors without valid websites in both current and store data
@@ -153,7 +154,7 @@ export default function SponsorsPage() {
         }
       }
     },
-    [allSponsors, updateDomains, updateSectors, updateCareerUrls]
+    [updateDomains, updateSectors, updateCareerUrls] // Removed allSponsors
   );
 
   const loadSponsors = useCallback(async () => {
@@ -162,7 +163,9 @@ export default function SponsorsPage() {
 
       // Build query string from filters
       const params = new URLSearchParams();
-      if (filters.sector) params.append("sector", filters.sector);
+      // if (filters.sector) params.append("sector", filters.sector); // Removed sector
+      if (filters.city) params.append("city", filters.city); // Added city
+      if (filters.county) params.append("county", filters.county); // Added county
       if (filters.region) params.append("region", filters.region);
       if (filters.visaType) params.append("visa", filters.visaType);
       if (filters.query) params.append("q", filters.query);
@@ -213,32 +216,44 @@ export default function SponsorsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [filters, currentPage, setSponsors, allSponsors, enrichSponsors]);
+  }, [filters, currentPage, setSponsors, enrichSponsors]); // Removed allSponsors
 
-  // Update filtered sponsors when store updates
+  // Update filtered sponsors when the global allSponsors store updates (e.g., due to enrichment)
   useEffect(() => {
-    if (filteredSponsors.length === 0) return;
+    setFilteredSponsors((prevFilteredSponsors) => {
+      if (prevFilteredSponsors.length === 0 || allSponsors.length === 0) {
+        return prevFilteredSponsors;
+      }
 
-    const sponsorMap = new Map(allSponsors.map((s) => [s.id, s]));
-    const updatedSponsors = filteredSponsors.map((sponsor: Sponsor) => {
-      const storeVersion = sponsorMap.get(sponsor.id);
-      if (!storeVersion) return sponsor;
+      const sponsorMap = new Map(allSponsors.map((s) => [s.id, s]));
+      let changed = false;
+      const newFilteredSponsors = prevFilteredSponsors.map((sponsor) => {
+        const storeVersion = sponsorMap.get(sponsor.id);
+        if (!storeVersion) return sponsor;
 
-      return {
-        ...sponsor,
-        sector: storeVersion.sector || sponsor.sector,
-        website: storeVersion.website || sponsor.website,
-        careerUrl: storeVersion.careerUrl || sponsor.careerUrl,
-      };
+        const updatedSector = storeVersion.sector || sponsor.sector;
+        const updatedWebsite = storeVersion.website || sponsor.website;
+        const updatedCareerUrl = storeVersion.careerUrl || sponsor.careerUrl;
+
+        if (
+          updatedSector !== sponsor.sector ||
+          updatedWebsite !== sponsor.website ||
+          updatedCareerUrl !== sponsor.careerUrl
+        ) {
+          changed = true;
+          return {
+            ...sponsor,
+            sector: updatedSector,
+            website: updatedWebsite,
+            careerUrl: updatedCareerUrl,
+          };
+        }
+        return sponsor;
+      });
+
+      return changed ? newFilteredSponsors : prevFilteredSponsors;
     });
-
-    setFilteredSponsors(updatedSponsors);
-  }, [allSponsors, filteredSponsors]);
-
-  // Load initial data
-  useEffect(() => {
-    loadSponsors();
-  }, [loadSponsors]);
+  }, [allSponsors]); // Only depends on allSponsors
 
   // Reset page when filters change
   useEffect(() => {
@@ -248,7 +263,7 @@ export default function SponsorsPage() {
   // Load sponsors when filters or page changes
   useEffect(() => {
     loadSponsors();
-  }, [filters, currentPage, loadSponsors]);
+  }, [filters, currentPage, loadSponsors]); // loadSponsors is stable now w.r.t its own side effects
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
