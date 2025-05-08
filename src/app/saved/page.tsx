@@ -27,7 +27,9 @@ export default function SavedPage() {
 
         // Build query string from filters
         const params = new URLSearchParams();
-        if (filters.sector) params.append("sector", filters.sector);
+        // if (filters.sector) params.append("sector", filters.sector); // Removed sector
+        if (filters.city) params.append("city", filters.city); // Added city
+        if (filters.county) params.append("county", filters.county); // Added county
         if (filters.region) params.append("region", filters.region);
         if (filters.visaType) params.append("visa", filters.visaType);
         if (filters.query) params.append("q", filters.query);
