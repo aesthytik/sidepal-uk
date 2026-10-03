@@ -4,6 +4,7 @@ import { Marquee } from "@/components/Marquee";
 import { Button } from "@/components/ui/button";
 import { BriefcaseIcon, BookmarkIcon, SearchIcon, ShieldCheckIcon } from "@/components/ui/icons";
 import { directoryInfo } from "@/lib/directory";
+import { jobsInfo } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
 
@@ -30,20 +31,21 @@ const STEPS = [
 
 async function getStats() {
   try {
-    const info = await directoryInfo();
+    const [info, jobs] = await Promise.all([directoryInfo(), jobsInfo()]);
     return {
+      jobCount: jobs.count,
       count: info.count,
       date: info.registerDate
         ? new Date(info.registerDate).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
         : null,
     };
   } catch {
-    return { count: null, date: null };
+    return { count: null, jobCount: 0, date: null };
   }
 }
 
 export default async function Home() {
-  const { count, date } = await getStats();
+  const { count, jobCount, date } = await getStats();
   const countLabel = count ? count.toLocaleString("en-GB") : "120,000+";
 
   return (
@@ -122,7 +124,15 @@ export default async function Home() {
           ))}
         </div>
 
-        <div className="mt-14 grid gap-4 text-left sm:grid-cols-2">
+        <div className="mt-14 grid gap-4 text-left sm:grid-cols-3">
+          <Link href="/jobs" className="card group p-8 transition-colors hover:bg-accent/60">
+            <p className="eyebrow">Ready to apply</p>
+            <h2 className="mt-3 font-display text-2xl font-bold">Latest sponsored jobs</h2>
+            <p className="mt-2 text-muted-foreground">
+              {jobCount > 0 ? `${jobCount.toLocaleString("en-GB")} live roles, newest first.` : "Live roles from licensed sponsors."}
+            </p>
+            <p className="mt-6 font-medium text-primary group-hover:underline">Browse jobs →</p>
+          </Link>
           <Link href="/sponsors" className="card group p-8 transition-colors hover:bg-accent/60">
             <p className="eyebrow">Looking for a sponsor</p>
             <h2 className="mt-3 font-display text-2xl font-bold">Browse licensed employers</h2>

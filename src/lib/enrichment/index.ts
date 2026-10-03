@@ -30,7 +30,7 @@ export type Enricher = (
 ) => Promise<Record<string, Enrichment>>;
 
 /** Runs `fn` over `items` with at most `limit` in flight. */
-async function mapPool<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
+export async function mapPool<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
   const results: R[] = new Array(items.length);
   let next = 0;
   await Promise.all(

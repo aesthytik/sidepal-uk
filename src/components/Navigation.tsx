@@ -8,6 +8,7 @@ import { useShortlist } from "@/store/useShortlist";
 import { MenuIcon, XIcon } from "./ui/icons";
 
 const LINKS = [
+  { href: "/jobs", label: "Jobs" },
   { href: "/sponsors", label: "Find sponsors" },
   { href: "/saved", label: "My shortlist" },
   { href: "/guide/visa-basics", label: "Visa guide" },

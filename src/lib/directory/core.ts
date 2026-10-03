@@ -122,6 +122,7 @@ function toSponsors(rows: SponsorRow[], overrides: Record<string, SectorId | nul
 
 export interface Directory {
   count: number;
+  all(): Sponsor[];
   search(query: SearchQuery): SearchPage;
   getByIds(ids: string[]): Sponsor[];
   suggestLocations(prefix: string, limit?: number): string[];
@@ -204,6 +205,8 @@ export function createDirectory(rows: SponsorRow[], overrides: Record<string, Se
 
   return {
     count: sponsors.length,
+
+    all: () => sponsors,
 
     search(query) {
       const { matches, fuzzy } = findMatches(query);

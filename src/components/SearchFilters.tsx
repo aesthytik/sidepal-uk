@@ -41,9 +41,11 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export function SearchFilters({
   filters,
   onChange,
+  showSponsored = false,
 }: {
   filters: Filters;
   onChange: (changes: Partial<Filters>, options?: { replace?: boolean }) => void;
+  showSponsored?: boolean; // Jobs page only: filter to roles that look sponsorable
 }) {
   const listId = useId();
   const [locationText, setLocationText] = useState(filters.location ?? "");
@@ -145,6 +147,25 @@ export function SearchFilters({
         </p>
       </Section>
 
+      {showSponsored && (
+        <Section title="Sponsorship">
+          <label className="flex cursor-pointer items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-0.5 h-4 w-4 accent-[hsl(var(--primary))]"
+              checked={filters.sponsored === "likely"}
+              onChange={(e) => onChange({ sponsored: e.target.checked ? "likely" : undefined })}
+            />
+            <span>
+              Likely sponsorable only
+              <span className="block text-muted-foreground">
+                Salary meets the minimum or the ad mentions sponsorship. A rough guide, not advice.
+              </span>
+            </span>
+          </label>
+        </Section>
+      )}
+
       <Section title="Sponsor rating">
         <label className="flex cursor-pointer items-start gap-3 text-sm">
           <input
@@ -180,6 +201,7 @@ export function ActiveFilters({
     filters.role && { key: "role" as const, label: roleFamily(filters.role)?.label ?? filters.role },
     filters.sector && { key: "sector" as const, label: sectorLabel(filters.sector) },
     filters.rating && { key: "rating" as const, label: "A-rated only" },
+    filters.sponsored && { key: "sponsored" as const, label: "Likely sponsorable" },
   ].filter(Boolean) as { key: keyof Filters; label: string }[];
 
   if (active.length === 0) return null;
@@ -194,7 +216,7 @@ export function ActiveFilters({
         <button
           type="button"
           className="px-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-          onClick={() => onChange({ q: undefined, location: undefined, visa: undefined, rating: undefined, sector: undefined, role: undefined })}
+          onClick={() => onChange({ q: undefined, location: undefined, visa: undefined, rating: undefined, sector: undefined, role: undefined, sponsored: undefined })}
         >
           Clear all
         </button>

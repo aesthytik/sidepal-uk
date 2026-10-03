@@ -90,10 +90,18 @@ function salary(min: unknown, max: unknown, currency: unknown, interval: unknown
   return { min: lo, max: hi, currency: typeof currency === "string" ? currency.toUpperCase() : "GBP", period };
 }
 
+/** An ISO date string from an ISO string or epoch milliseconds; undefined if unusable. */
+function isoDate(value: unknown): string | undefined {
+  if (typeof value !== "string" && typeof value !== "number") return undefined;
+  const t = new Date(value).getTime();
+  return Number.isFinite(t) ? new Date(t).toISOString() : undefined;
+}
+
 function job(title: unknown, url: unknown, location: unknown, extra: Partial<Job> = {}): Job | null {
   if (typeof title !== "string" || typeof url !== "string") return null;
   const loc = typeof location === "string" ? location : "";
-  return { title: title.trim(), url, location: loc, uk: isUkLocation(loc), ...extra };
+  const department = typeof extra.department === "string" && extra.department.trim() ? extra.department.trim() : undefined;
+  return { title: title.trim(), url, location: loc, uk: isUkLocation(loc), ...extra, department };
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- untyped third-party JSON */
@@ -105,6 +113,8 @@ const FETCHERS: Record<AtsProvider, (slug: string, http: Http) => Promise<(Job |
         const pay = j.pay_input_ranges?.[0];
         return job(j.title, j.absolute_url, j.location?.name, {
           snippet: toSnippet(j.content),
+          postedAt: isoDate(j.first_published ?? j.updated_at),
+          department: j.departments?.[0]?.name,
           salary: pay && salary(pay.min_cents / 100, pay.max_cents / 100, pay.currency_type, "year"),
         });
       }) ?? null
@@ -116,6 +126,8 @@ const FETCHERS: Record<AtsProvider, (slug: string, http: Http) => Promise<(Job |
       ? data.map((j: any) =>
           job(j.text, j.hostedUrl, (j.categories?.allLocations ?? [j.categories?.location]).filter(Boolean).join(" / "), {
             snippet: toSnippet(j.descriptionPlain),
+            postedAt: isoDate(j.createdAt),
+            department: j.categories?.department ?? j.categories?.team,
             salary: j.salaryRange && salary(j.salaryRange.min, j.salaryRange.max, j.salaryRange.currency, j.salaryRange.interval),
           })
         )
@@ -132,6 +144,8 @@ const FETCHERS: Record<AtsProvider, (slug: string, http: Http) => Promise<(Job |
           [j.location, ...(j.secondaryLocations ?? []).map((l: any) => l.location)].filter(Boolean).join(" / "),
           {
             snippet: toSnippet(j.descriptionPlain ?? j.descriptionHtml),
+            postedAt: isoDate(j.publishedAt),
+            department: j.department ?? j.team,
             salary: pay && salary(pay.minValue, pay.maxValue, pay.currencyCode, pay.interval),
           }
         );
@@ -144,6 +158,8 @@ const FETCHERS: Record<AtsProvider, (slug: string, http: Http) => Promise<(Job |
       data?.jobs?.map((j: any) =>
         job(j.title, j.url || j.shortlink, [j.city, j.state, j.country].filter(Boolean).join(", "), {
           snippet: toSnippet(j.description),
+          postedAt: isoDate(j.published_on ?? j.created_at),
+          department: j.department,
         })
       ) ?? null
     );
@@ -151,14 +167,36 @@ const FETCHERS: Record<AtsProvider, (slug: string, http: Http) => Promise<(Job |
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
+/** Every open role on a board, or null if the board can't be read. */
+export async function fetchAllJobs(board: AtsBoard, http: Http): Promise<Job[] | null> {
+  const raw = await FETCHERS[board.provider](encodeURIComponent(board.slug), http);
+  return raw ? raw.filter((j): j is Job => j !== null) : null;
+}
+
+/**
+ * The company name a board reports for itself, where the provider offers one
+ * (Greenhouse and Workable). Used to check a guessed board belongs to the sponsor.
+ */
+export async function boardName(board: AtsBoard, http: Http): Promise<string | null> {
+  const slug = encodeURIComponent(board.slug);
+  if (board.provider === "greenhouse") {
+    const data = await getJson<{ name?: string }>(http, `https://boards-api.greenhouse.io/v1/boards/${slug}`);
+    return data?.name ?? null;
+  }
+  if (board.provider === "workable") {
+    const data = await getJson<{ name?: string }>(http, `https://apply.workable.com/api/v1/widget/accounts/${slug}`);
+    return data?.name ?? null;
+  }
+  return null;
+}
+
 /**
  * Fetches a board's open roles from the provider's public API.
  * Returns null if the board can't be read.
  */
 export async function fetchJobs(board: AtsBoard, http: Http, role?: RegExp): Promise<JobSummary | null> {
-  const raw = await FETCHERS[board.provider](encodeURIComponent(board.slug), http);
-  if (!raw) return null;
-  const jobs = raw.filter((j): j is Job => j !== null);
+  const jobs = await fetchAllJobs(board, http);
+  if (!jobs) return null;
   // Stable sort: roles matching the requested role first, then UK roles, otherwise the board's own order
   const matches = (j: Job) => Number(role?.test(j.title) ?? false);
   const sorted = [...jobs].sort((a, b) => matches(b) - matches(a) || Number(b.uk) - Number(a.uk));

@@ -22,6 +22,7 @@ export interface SearchQuery {
   visa?: string; // One of VISA_CATEGORIES
   rating?: "A"; // Only A-rated sponsors
   sector?: SectorId;
+  sponsored?: "likely"; // Jobs only: roles that look sponsorable
   role?: RoleId; // Matches sponsors in the role family's likely sectors
   page?: number;
   limit?: number;
@@ -49,6 +50,8 @@ export interface Job {
   uk: boolean;
   salary?: Salary;
   snippet?: string; // Start of the plain-text description
+  postedAt?: string; // ISO date the role was published
+  department?: string;
 }
 
 export type AtsProvider = "greenhouse" | "lever" | "ashby" | "workable";

@@ -138,7 +138,7 @@ export function CompanyCard({
                     : "B-rated: on an action plan with the Home Office"
                 }
               >
-                {sponsor.rating}-rated
+                Verified sponsor ✓ · {sponsor.rating}-rated
               </Badge>
             )}
             {sponsor.visaTypes.slice(0, MAX_VISA_BADGES).map((v) => (
