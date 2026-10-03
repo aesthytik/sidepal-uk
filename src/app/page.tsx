@@ -4,7 +4,8 @@ import { Marquee } from "@/components/Marquee";
 import { Button } from "@/components/ui/button";
 import { BriefcaseIcon, BookmarkIcon, SearchIcon, ShieldCheckIcon } from "@/components/ui/icons";
 import { directoryInfo } from "@/lib/directory";
-import { jobsInfo } from "@/lib/jobs";
+import { JobCard } from "@/components/JobCard";
+import { jobsInfo, searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
 
@@ -46,6 +47,7 @@ async function getStats() {
 
 export default async function Home() {
   const { count, jobCount, date } = await getStats();
+  const latestJobs = (await searchJobs({ limit: 6 }).catch(() => null))?.items ?? [];
   const countLabel = count ? count.toLocaleString("en-GB") : "120,000+";
 
   return (
@@ -155,6 +157,22 @@ export default async function Home() {
           <Marquee items={POPULAR_LOCATIONS} />
         </div>
       </section>
+
+      {latestJobs.length > 0 && (
+        <section className="container px-4 pt-20">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Latest sponsored jobs</h2>
+            <Link href="/jobs" className="font-medium text-primary hover:underline">
+              See all {jobCount.toLocaleString("en-GB")} jobs →
+            </Link>
+          </div>
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            {latestJobs.map((job) => (
+              <JobCard key={job.url} job={job} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="container max-w-4xl px-4 py-24">
         <h2 className="text-balance font-display text-4xl font-bold tracking-tight sm:text-5xl">
