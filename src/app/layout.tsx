@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-int
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], display: "swap", variable: "--font-space-grotesk" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sidepal.club"),
-  title: { default: "Sidepal | Find UK visa sponsor jobs", template: "%s | Sidepal" },
+  metadataBase: new URL("https://horus.to"),
+  title: { default: "Horus | Find UK visa sponsor jobs", template: "%s | Horus" },
   description:
     "Search every UK employer licensed to sponsor work visas, see their open roles, and track your applications.",
 };
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container grid gap-10 px-4 sm:grid-cols-[2fr_1fr_1fr]">
             <div>
               <p className="font-display text-3xl font-bold tracking-tight text-foreground">
-                Side<span className="text-primary">pal</span>
+                Hor<span className="text-primary">us</span>
               </p>
               <p className="mt-3 max-w-sm">
                 Find UK employers licensed to sponsor your work visa, see who&apos;s hiring, and track your applications.

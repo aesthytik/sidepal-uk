@@ -1,7 +1,7 @@
 /** A fetch-compatible function: the global fetch in production, a fake in tests. */
 export type Http = (url: string, init?: RequestInit) => Promise<Response>;
 
-const USER_AGENT = "Mozilla/5.0 (compatible; SidepalSponsorFinder/1.0)";
+const USER_AGENT = "Mozilla/5.0 (compatible; HorusSponsorFinder/1.0)";
 const TIMEOUT_MS = 6000;
 // Some homepages inline megabytes of images before their footer links
 const MAX_HTML = 2_000_000;

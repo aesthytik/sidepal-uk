@@ -18,8 +18,8 @@ export async function complete(system: string, user: string, timeoutMs = TIMEOUT
         headers: {
           Authorization: `Bearer ${key}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://sidepal.club",
-          "X-Title": "Sidepal",
+          "HTTP-Referer": "https://horus.to",
+          "X-Title": "Horus",
         },
         body: JSON.stringify({
           model,

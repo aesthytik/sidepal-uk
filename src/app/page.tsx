@@ -54,11 +54,11 @@ export default async function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "Sidepal",
-            url: "https://sidepal.club",
+            name: "Horus",
+            url: "https://horus.to",
             potentialAction: {
               "@type": "SearchAction",
-              target: { "@type": "EntryPoint", urlTemplate: "https://sidepal.club/sponsors?q={search_term_string}" },
+              target: { "@type": "EntryPoint", urlTemplate: "https://horus.to/sponsors?q={search_term_string}" },
               "query-input": "required name=search_term_string",
             },
           }),

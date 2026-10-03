@@ -40,7 +40,7 @@ export function Navigation() {
     <header className="sticky top-3 z-30 px-3">
       <nav className="container flex h-14 max-w-5xl items-center justify-between rounded-full border border-border/70 bg-background/80 px-5 shadow-sm backdrop-blur" aria-label="Main">
         <Link href="/" className="font-display text-lg font-bold tracking-tight">
-          Side<span className="text-primary">pal</span>
+          Hor<span className="text-primary">us</span>
         </Link>
         <div className="hidden items-center gap-1 sm:flex">{links}</div>
         <button

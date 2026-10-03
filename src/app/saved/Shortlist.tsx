@@ -42,7 +42,7 @@ function exportCsv(rows: { sponsor: Sponsor; item: ShortlistItem }[], websites: 
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `sidepal-shortlist-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `horus-shortlist-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }

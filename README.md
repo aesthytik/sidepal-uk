@@ -1,4 +1,4 @@
-# Sidepal
+# Horus
 
 Find UK employers licensed to sponsor work visas, see their open roles, and track
 your applications. Data comes from the GOV.UK
