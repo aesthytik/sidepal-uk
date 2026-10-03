@@ -1,93 +1,141 @@
 import Papa from "papaparse";
 import fs from "fs/promises";
 import path from "path";
+import { SponsorRaw } from "./sponsorTypes";
 
-export interface SponsorRaw {
-  name: string;
-  city: string;
-  county: string;
-  route: string;
-  rating: string;
+export const DATA_DIR = path.join(process.cwd(), "public", "data");
+
+const REGISTER_PAGE_URL =
+  "https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers";
+
+/**
+ * Extracts the rating from the "Type & Rating" column,
+ * e.g. "Worker (A rating)" -> "A", "Worker (A (SME+))" -> "A (SME+)"
+ */
+function parseRating(typeAndRating: string): string {
+  const match = typeAndRating.match(/\((.*)\)\s*$/);
+  if (!match) return "";
+  return match[1].replace(/\s*rating$/i, "").trim();
 }
 
 /**
- * Processes raw CSV text into structured sponsor data
+ * Processes raw CSV text into structured sponsor data. The register has one
+ * row per (organisation, route), so rows are grouped by organisation and
+ * their routes merged.
  */
-function processCSVText(text: string): SponsorRaw[] {
-  // Parse CSV using PapaParse
-  const { data, errors } = Papa.parse<Record<string, string>>(text, {
-    header: true,
-    skipEmptyLines: true,
-  });
+export function processCSVText(text: string): SponsorRaw[] {
+  const { data, errors } = Papa.parse<Record<string, string>>(
+    text.replace(/^﻿/, ""),
+    {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (h) => h.trim(),
+    }
+  );
 
   if (errors.length > 0) {
-    console.error("CSV parsing errors:", errors);
+    console.error(`CSV parsing errors (${errors.length}):`, errors.slice(0, 5));
   }
 
-  // Transform and normalize the data
-  const sponsors: SponsorRaw[] = data
-    .filter(
-      (row: Record<string, string>) =>
-        // Filter out rows without organization name
-        row["Organisation Name"] &&
-        // Only include Worker routes (not Temporary Worker)
-        row["Route"] &&
-        row["Route"].includes("Worker")
-    )
-    .map((row: Record<string, string>) => ({
-      name: row["Organisation Name"].trim(),
-      city: row["Town/City"] ? row["Town/City"].trim() : "",
-      county: row["County"] ? row["County"].trim() : "",
-      route: row["Route"] ? row["Route"].trim() : "",
-      rating: row["Rating"] ? row["Rating"].trim() : "",
-    }));
+  const byName = new Map<string, SponsorRaw>();
 
-  // Remove duplicates based on name
-  return Array.from(
-    new Map(sponsors.map((sponsor) => [sponsor.name, sponsor])).values()
-  );
+  for (const row of data) {
+    const name = row["Organisation Name"]?.trim();
+    if (!name) continue;
+
+    const route = row["Route"]?.trim() || "";
+    const rating = parseRating(row["Type & Rating"]?.trim() || "");
+    const existing = byName.get(name);
+
+    if (existing) {
+      if (route && !existing.routes.includes(route)) existing.routes.push(route);
+      if (!existing.rating && rating) existing.rating = rating;
+      if (!existing.city && row["Town/City"]) existing.city = row["Town/City"].trim();
+      if (!existing.county && row["County"]) existing.county = row["County"].trim();
+    } else {
+      byName.set(name, {
+        name,
+        city: row["Town/City"]?.trim() || "",
+        county: row["County"]?.trim() || "",
+        routes: route ? [route] : [],
+        rating,
+      });
+    }
+  }
+
+  return Array.from(byName.values());
 }
 
 /**
- * Reads and parses the local sponsor list CSV file
+ * Finds the most recent register CSV in public/data (by modification time).
+ */
+export async function findLocalCsvPath(): Promise<string | null> {
+  try {
+    const files = (await fs.readdir(DATA_DIR)).filter((f) =>
+      f.toLowerCase().endsWith(".csv")
+    );
+    if (files.length === 0) return null;
+
+    const withTimes = await Promise.all(
+      files.map(async (f) => {
+        const full = path.join(DATA_DIR, f);
+        return { full, mtime: (await fs.stat(full)).mtimeMs };
+      })
+    );
+    withTimes.sort((a, b) => b.mtime - a.mtime);
+    return withTimes[0].full;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reads and parses the latest local sponsor list CSV file
  */
 export async function fetchLocalCsv(): Promise<SponsorRaw[]> {
-  try {
-    const csvPath = path.join(
-      process.cwd(),
-      "public/data/2025-05-02_-_Worker_and_Temporary_Worker.csv"
-    );
-    console.log("Reading local CSV from:", csvPath);
-    const text = await fs.readFile(csvPath, "utf-8");
-    const allSponsors = processCSVText(text);
-    return allSponsors.slice();
-  } catch (error) {
-    console.error("Error reading or parsing local CSV:", error);
-    throw error;
-  }
+  const csvPath = await findLocalCsvPath();
+  if (!csvPath) throw new Error(`No sponsor CSV found in ${DATA_DIR}`);
+  console.log("Reading local CSV from:", csvPath);
+  const text = await fs.readFile(csvPath, "utf-8");
+  return processCSVText(text);
 }
 
 /**
- * Fetches the UK government's sponsor list CSV and parses it into structured data
+ * Finds the URL of the latest register CSV by scanning the GOV.UK
+ * publication page. SPONSOR_CSV_URL overrides this if set.
  */
-export async function fetchSponsorCsv(): Promise<SponsorRaw[]> {
-  try {
-    // Get CSV URL from environment variable or use default
-    const csvUrl =
-      process.env.SPONSOR_CSV_URL ||
-      "https://assets.publishing.service.gov.uk/media/68148b58a87f19ba7b3a8286/2025-05-02_-_Worker_and_Temporary_Worker.csv";
+export async function findLatestCsvUrl(): Promise<string> {
+  if (process.env.SPONSOR_CSV_URL) return process.env.SPONSOR_CSV_URL;
 
-    console.log("Fetching CSV from:", csvUrl);
-    const res = await fetch(csvUrl);
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch CSV: ${res.status} ${res.statusText}`);
-    }
-
-    const text = await res.text();
-    return processCSVText(text);
-  } catch (error) {
-    console.error("Error fetching or parsing CSV:", error);
-    throw error;
+  const res = await fetch(REGISTER_PAGE_URL, {
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch register page: ${res.status}`);
   }
+  const html = await res.text();
+  const match = html.match(
+    /https:\/\/assets\.publishing\.service\.gov\.uk\/[^"'\s]+?\.csv/i
+  );
+  if (!match) throw new Error("No CSV link found on the register page");
+  return match[0];
+}
+
+/**
+ * Downloads the latest register CSV from GOV.UK.
+ */
+export async function downloadLatestCsv(): Promise<{
+  url: string;
+  fileName: string;
+  text: string;
+}> {
+  const url = await findLatestCsvUrl();
+  console.log("Fetching CSV from:", url);
+  const res = await fetch(url, { signal: AbortSignal.timeout(120_000) });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch CSV: ${res.status} ${res.statusText}`);
+  }
+  const text = await res.text();
+  const fileName = decodeURIComponent(url.split("/").pop() || "register.csv");
+  return { url, fileName, text };
 }

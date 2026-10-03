@@ -1,35 +1,40 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useSponsorStore } from "@/store/useSponsorStore";
 
-export function SearchBar() {
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const { setFilters } = useSponsorStore();
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+interface SearchBarProps {
+  value: string;
+  onSearch: (query: string) => void;
+  placeholder?: string;
+}
+
+export function SearchBar({
+  value,
+  onSearch,
+  placeholder = "Search company name, city, or county...",
+}: SearchBarProps) {
+  const [query, setQuery] = useState(value);
+  const lastSent = useRef(value);
+  const onSearchRef = useRef(onSearch);
+  onSearchRef.current = onSearch;
+
+  // Reflect external changes (e.g. filters loaded from the URL or reset)
+  useEffect(() => {
+    if (value !== lastSent.current) {
+      lastSent.current = value;
+      setQuery(value);
+    }
+  }, [value]);
 
   // Debounce the search query to avoid excessive API calls
   useEffect(() => {
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
-
-    debounceTimeout.current = setTimeout(() => {
-      setDebouncedQuery(query);
+    if (query === lastSent.current) return;
+    const timeout = setTimeout(() => {
+      lastSent.current = query;
+      onSearchRef.current(query);
     }, 300);
-
-    return () => {
-      if (debounceTimeout.current) {
-        clearTimeout(debounceTimeout.current);
-      }
-    };
+    return () => clearTimeout(timeout);
   }, [query]);
-
-  // Update filters when debounced query changes
-  useEffect(() => {
-    setFilters({ query: debouncedQuery });
-  }, [debouncedQuery, setFilters]);
 
   return (
     <div className="w-full">
@@ -53,8 +58,9 @@ export function SearchBar() {
         </div>
         <input
           type="search"
-          className="block w-full p-4 pl-10 text-sm border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] focus:outline-none focus:ring-0 focus:border-primary-500 bg-white dark:bg-gray-900"
-          placeholder="Search company name, city, or region..."
+          aria-label="Search sponsors"
+          className="block w-full p-4 pl-10 pr-10 text-sm border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] focus:outline-none focus:ring-0 focus:border-primary-500 bg-white dark:bg-gray-900 [&::-webkit-search-cancel-button]:hidden"
+          placeholder={placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -62,7 +68,11 @@ export function SearchBar() {
           <button
             type="button"
             className="absolute inset-y-0 right-0 flex items-center pr-3"
-            onClick={() => setQuery("")}
+            onClick={() => {
+              setQuery("");
+              lastSent.current = "";
+              onSearchRef.current("");
+            }}
             aria-label="Clear search"
           >
             <svg

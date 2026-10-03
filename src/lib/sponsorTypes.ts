@@ -1,13 +1,22 @@
-import { Sector } from "./classifySector";
+/**
+ * Possible industry sectors for classification
+ */
+export type Sector =
+  | "it"
+  | "finance"
+  | "healthcare"
+  | "education"
+  | "retail"
+  | "other";
 
 /**
- * Raw sponsor data from the CSV
+ * Raw sponsor data from the CSV (one entry per organisation)
  */
 export interface SponsorRaw {
   name: string;
   city: string;
   county: string;
-  route: string;
+  routes: string[]; // All routes the organisation is licensed for
   rating: string;
 }
 
@@ -20,8 +29,8 @@ export interface Sponsor {
   city: string; // Town/City
   county: string; // County
   region: string; // Combined location (city + county)
-  route: string; // Visa route
-  rating: string; // Rating (A or B)
+  route: string; // Visa routes, comma separated
+  rating: string; // Rating (A, B, A (SME+), ...)
   visaTypes: string[]; // Types of visas sponsored
   sector?: Sector; // Industry sector
   website?: string; // Company website
@@ -33,12 +42,11 @@ export interface Sponsor {
  * Filter parameters for sponsors
  */
 export interface SponsorFilters {
-  city?: string; // Added
-  county?: string; // Added
+  city?: string;
+  county?: string;
   region?: string;
   visaType?: string;
   query?: string;
-  // sector?: string; // Removed
 }
 
 /**
@@ -53,37 +61,41 @@ export function generateSponsorId(name: string): string {
 }
 
 /**
- * Extract visa types from route information
+ * Visa categories shown in the filter panel. Global Business Mobility
+ * sub-routes are grouped under one category.
  */
-export function extractVisaTypes(route: string): string[] {
-  const visaTypes: string[] = [];
+export const VISA_CATEGORIES = [
+  "Skilled Worker",
+  "Global Business Mobility",
+  "Scale-up",
+  "Creative Worker",
+  "Charity Worker",
+  "Religious Worker",
+  "International Sportsperson",
+  "Government Authorised Exchange",
+  "International Agreement",
+  "Seasonal Worker",
+];
 
-  if (route.includes("Skilled Worker")) {
-    visaTypes.push("Skilled Worker");
+/**
+ * Map a register route to its visa category
+ */
+function routeToVisaType(route: string): string {
+  if (route.startsWith("Global Business Mobility")) {
+    return "Global Business Mobility";
   }
+  if (/intra[- ]company/i.test(route)) return "Global Business Mobility";
+  if (/ministers of religion/i.test(route)) return "Religious Worker";
+  return route;
+}
 
-  if (route.includes("Global Business Mobility")) {
-    visaTypes.push("Global Business Mobility");
-  }
-
-  if (route.includes("Scale-up")) {
-    visaTypes.push("Scale-up");
-  }
-
-  if (route.includes("Innovator")) {
-    visaTypes.push("Innovator");
-  }
-
-  if (route.includes("Start-up")) {
-    visaTypes.push("Start-up");
-  }
-
-  // If no specific types were identified, use the full route
-  if (visaTypes.length === 0 && route.trim() !== "") {
-    visaTypes.push(route.trim());
-  }
-
-  return visaTypes;
+/**
+ * Extract distinct visa types from an organisation's routes
+ */
+export function extractVisaTypes(routes: string[]): string[] {
+  return Array.from(
+    new Set(routes.filter(Boolean).map((r) => routeToVisaType(r.trim())))
+  );
 }
 
 /**

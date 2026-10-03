@@ -1,26 +1,33 @@
 import { NextResponse } from "next/server";
 import { processSponsorData } from "@/lib/processSponsorData";
 
-// Using Node.js runtime for file system operations
+export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 /**
- * API route to trigger the sponsor data update process
- * This is meant to be called by a cron job or manually for testing
+ * Downloads the latest sponsor register from GOV.UK.
+ * Called daily by Vercel Cron (GET) or manually (POST).
+ * When CRON_SECRET is set, requests must send `Authorization: Bearer <secret>`.
  */
-export async function POST() {
-  try {
-    // Process the sponsor data
-    const sponsors = await processSponsorData();
+async function handler(request: Request) {
+  const secret = process.env.CRON_SECRET;
+  if (secret && request.headers.get("authorization") !== `Bearer ${secret}`) {
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
 
+  try {
+    const result = await processSponsorData();
     return NextResponse.json({
       success: true,
       message: "Sponsor data updated successfully",
-      count: sponsors.length,
+      ...result,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error("Error updating sponsors:", error);
-
     return NextResponse.json(
       {
         success: false,
@@ -31,3 +38,5 @@ export async function POST() {
     );
   }
 }
+
+export { handler as GET, handler as POST };

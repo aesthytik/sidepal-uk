@@ -3,15 +3,15 @@ import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sidepal: Find UK Tech Visa Sponsors | Search 130K+ Companies",
+  title: "Sidepal: Find UK Tech Visa Sponsors | Search 125K+ Companies",
   description:
-    "Easily find UK tech companies licensed to sponsor visas. Search over 130,000+ sponsors, filter by sector, and apply directly. Your journey to a UK tech job starts here.",
+    "Easily find UK tech companies licensed to sponsor visas. Search over 125,000+ sponsors, filter by city and visa type, and apply directly. Your journey to a UK tech job starts here.",
   keywords:
     "UK tech visa, visa sponsors UK, tech jobs UK, skilled worker visa, UK tech companies, Sidepal, tech sponsorship, UK visa",
   openGraph: {
-    title: "Sidepal: Find UK Tech Visa Sponsors | Search 130K+ Companies",
+    title: "Sidepal: Find UK Tech Visa Sponsors | Search 125K+ Companies",
     description:
-      "Easily find UK tech companies licensed to sponsor visas. Search over 130,000+ sponsors, filter by sector, and apply directly.",
+      "Easily find UK tech companies licensed to sponsor visas. Search over 125,000+ sponsors, filter by city and visa type, and apply directly.",
     url: "https://sidepal.club", // Assuming this is your production URL, please change if different
     siteName: "Sidepal",
     images: [
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sidepal: Find UK Tech Visa Sponsors | Search 130K+ Companies",
+    title: "Sidepal: Find UK Tech Visa Sponsors | Search 125K+ Companies",
     description:
-      "Easily find UK tech companies licensed to sponsor visas. Search over 130,000+ sponsors, filter by sector, and apply directly.",
+      "Easily find UK tech companies licensed to sponsor visas. Search over 125,000+ sponsors, filter by city and visa type, and apply directly.",
     // site: "@yourtwitterhandle", // Replace with your Twitter handle
     // creator: "@yourtwitterhandle", // Replace with your Twitter handle
     images: ["https://sidepal.club/twitter-image.png"], // Replace with your actual Twitter image URL
@@ -102,7 +102,7 @@ export default function Home() {
                   },
                 },
                 description:
-                  "Easily find UK tech companies licensed to sponsor visas. Search over 130,000+ sponsors, filter by sector, and apply directly.",
+                  "Easily find UK tech companies licensed to sponsor visas. Search over 125,000+ sponsors, filter by city and visa type, and apply directly.",
               },
             ],
           }),
@@ -117,7 +117,7 @@ export default function Home() {
               tech sponsor in seconds.
             </h1>
             <p className="text-xl md:text-2xl max-w-2xl mb-8 text-gray-700 dark:text-gray-300 font-display">
-              Search 130,000+ licensed sponsors, filter by sector, and apply
+              Search 125,000+ licensed sponsors, filter by city and visa type, and apply
               directly. No fluff. Just the data you need for your UK tech visa
               journey.
             </p>
@@ -234,7 +234,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center p-6 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] bg-white dark:bg-gray-900">
               <span className="text-5xl font-bold text-primary-500 mb-2">
-                130K+
+                125K+
               </span>
               <span className="text-gray-600 dark:text-gray-400 font-display">
                 Licensed Sponsors
@@ -242,15 +242,15 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-center p-6 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] bg-white dark:bg-gray-900">
               <span className="text-5xl font-bold text-primary-500 mb-2">
-                15K+
+                10
               </span>
               <span className="text-gray-600 dark:text-gray-400 font-display">
-                Tech Companies
+                Visa Routes
               </span>
             </div>
             <div className="flex flex-col items-center p-6 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] bg-white dark:bg-gray-900">
               <span className="text-5xl font-bold text-primary-500 mb-2">
-                24/7
+                Daily
               </span>
               <span className="text-gray-600 dark:text-gray-400 font-display">
                 Updated Data

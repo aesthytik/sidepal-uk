@@ -9,8 +9,9 @@ interface CompanyCardProps {
 }
 
 export function CompanyCard({ sponsor }: CompanyCardProps) {
-  const { savedSponsors, toggleSaved } = useSponsorStore();
-  const isSaved = savedSponsors.has(sponsor.id);
+  const isSaved = useSponsorStore((s) => s.savedSponsors.has(sponsor.id));
+  const toggleSaved = useSponsorStore((s) => s.toggleSaved);
+  const hasWebsite = Boolean(sponsor.website && sponsor.website !== "unknown");
 
   return (
     <div className="card p-4 bg-white dark:bg-gray-900">
@@ -24,6 +25,7 @@ export function CompanyCard({ sponsor }: CompanyCardProps) {
           onClick={() => toggleSaved(sponsor.id)}
           className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-500"
           aria-label={isSaved ? "Remove from saved" : "Save company"}
+          aria-pressed={isSaved}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -72,7 +74,7 @@ export function CompanyCard({ sponsor }: CompanyCardProps) {
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-2">
         {/* Website Button */}
-        {sponsor.website && (
+        {hasWebsite && (
           <Button asChild variant="outline" size="sm">
             <a
               href={sponsor.website}
@@ -126,39 +128,37 @@ export function CompanyCard({ sponsor }: CompanyCardProps) {
             </a>
           </Button>
         ) : (
-          sponsor.website && (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="text-gray-600 dark:text-gray-400"
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="text-gray-600 dark:text-gray-400"
+          >
+            <a
+              href={`https://www.google.com/search?q=${encodeURIComponent(
+                `${sponsor.name} ${sponsor.city} careers jobs`,
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center"
             >
-              <a
-                href={`https://www.google.com/search?q=${encodeURIComponent(
-                  `${sponsor.name} careers jobs`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-4 h-4 mr-1"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4 mr-1"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                  />
-                </svg>
-                Search Google
-              </a>
-            </Button>
-          )
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+              Search careers on Google
+            </a>
+          </Button>
         )}
       </div>
     </div>

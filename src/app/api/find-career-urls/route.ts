@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { findCareerUrl } from "@/lib/findCareerUrl";
+import {
+  getCareerUrl,
+  isUsableWebsite,
+  setCareerUrls,
+} from "@/lib/enrichmentCache";
+
+const MAX_BATCH = 25;
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { sponsors } = body;
+    const { sponsors } = await req.json();
 
     if (!Array.isArray(sponsors)) {
       return NextResponse.json(
@@ -13,30 +19,31 @@ export async function POST(req: Request) {
       );
     }
 
-    const careerUrls: Record<string, string> = {};
+    const batch = sponsors
+      .filter((s) => typeof s?.name === "string")
+      .slice(0, MAX_BATCH) as { name: string; website?: string }[];
 
-    // Process each sponsor in parallel
-    const results = await Promise.all(
-      sponsors.map(async ({ name, website }) => {
-        if (!website || website === "unknown") {
-          return { name, careerUrl: null };
+    const careerUrls: Record<string, string> = {};
+    const newEntries: Record<string, string | null> = {};
+
+    await Promise.all(
+      batch.map(async ({ name, website }) => {
+        const cached = getCareerUrl(name);
+        if (cached !== undefined) {
+          if (cached) careerUrls[name] = cached;
+          return;
         }
-        const careerUrl = await findCareerUrl(name, website);
-        return { name, careerUrl };
+        if (!isUsableWebsite(website)) return;
+
+        const careerUrl = await findCareerUrl(website);
+        newEntries[name] = careerUrl;
+        if (careerUrl) careerUrls[name] = careerUrl;
       })
     );
 
-    // Collect results
-    results.forEach(({ name, careerUrl }) => {
-      if (careerUrl) {
-        careerUrls[name] = careerUrl;
-      }
-    });
+    if (Object.keys(newEntries).length > 0) setCareerUrls(newEntries);
 
-    return NextResponse.json({
-      success: true,
-      careerUrls,
-    });
+    return NextResponse.json({ success: true, careerUrls });
   } catch (error) {
     console.error("Error finding career URLs:", error);
     return NextResponse.json(

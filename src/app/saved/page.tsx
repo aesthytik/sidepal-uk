@@ -1,65 +1,62 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useSponsorStore } from "@/store/useSponsorStore";
 import { Sponsor } from "@/lib/sponsorTypes";
+import { useEnrichment } from "@/lib/useEnrichment";
 import { SearchBar } from "@/components/SearchBar";
 import { ResultsList } from "@/components/ResultsList";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 export default function SavedPage() {
+  const savedSponsors = useSponsorStore((s) => s.savedSponsors);
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { filters, savedSponsors } = useSponsorStore();
-  const [filteredSponsors, setFilteredSponsors] = useState<Sponsor[]>([]);
+  const [query, setQuery] = useState("");
 
-  // Load saved sponsors data
+  // Key on the ids so un-saving a card doesn't trigger a reload
+  const savedKey = useMemo(
+    () => Array.from(savedSponsors).sort().join(","),
+    [savedSponsors]
+  );
+
   useEffect(() => {
-    async function loadSavedSponsors() {
-      try {
-        setIsLoading(true);
-
-        if (savedSponsors.size === 0) {
-          setFilteredSponsors([]);
-          setIsLoading(false);
-          return;
-        }
-
-        // Build query string from filters
-        const params = new URLSearchParams();
-        // if (filters.sector) params.append("sector", filters.sector); // Removed sector
-        if (filters.city) params.append("city", filters.city); // Added city
-        if (filters.county) params.append("county", filters.county); // Added county
-        if (filters.region) params.append("region", filters.region);
-        if (filters.visaType) params.append("visa", filters.visaType);
-        if (filters.query) params.append("q", filters.query);
-
-        // Fetch all sponsors
-        const response = await fetch(`/api/companies?${params.toString()}`);
-        const data = await response.json();
-
-        if (data.success) {
-          // Filter to only saved sponsors
-          const savedSponsorsList = data.sponsors.filter((sponsor: Sponsor) =>
-            savedSponsors.has(sponsor.id)
-          );
-          setFilteredSponsors(savedSponsorsList);
-        } else {
-          console.error("Error loading sponsors:", data.error);
-          setFilteredSponsors([]);
-        }
-      } catch (error) {
-        console.error("Error loading sponsors:", error);
-        setFilteredSponsors([]);
-      } finally {
-        setIsLoading(false);
-      }
+    if (!savedKey) {
+      setSponsors([]);
+      setIsLoading(false);
+      return;
     }
+    const controller = new AbortController();
+    setIsLoading(true);
+    fetch("/api/companies", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids: savedKey.split(",") }),
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data) => setSponsors(data.success ? data.sponsors : []))
+      .catch((err) => {
+        if (!controller.signal.aborted) console.error("Error loading saved:", err);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoading(false);
+      });
+    return () => controller.abort();
+  }, [savedKey]);
 
-    loadSavedSponsors();
-  }, [filters, savedSponsors]);
+  const { sponsors: enriched } = useEnrichment(sponsors);
 
-  // No saved sponsors state
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return enriched
+      .filter((s) => savedSponsors.has(s.id))
+      .filter(
+        (s) => !q || `${s.name} ${s.city} ${s.county}`.toLowerCase().includes(q)
+      );
+  }, [enriched, savedSponsors, query]);
+
   if (!isLoading && savedSponsors.size === 0) {
     return (
       <main className="container mx-auto px-4 py-8">
@@ -81,10 +78,12 @@ export default function SavedPage() {
     <main className="container mx-auto px-4 py-8">
       <div className="flex flex-col gap-6">
         <h1 className="text-4xl font-display">Saved Sponsors</h1>
-        <SearchBar />
-        <div className="card p-4 bg-white dark:bg-gray-900">
-          <ResultsList sponsors={filteredSponsors} isLoading={isLoading} />
-        </div>
+        <SearchBar
+          value={query}
+          onSearch={setQuery}
+          placeholder="Search your saved sponsors..."
+        />
+        <ResultsList sponsors={visible} isLoading={isLoading} />
       </div>
     </main>
   );

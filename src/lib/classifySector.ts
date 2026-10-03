@@ -1,20 +1,21 @@
 import OpenAI from "openai";
+import type { Sector } from "./sponsorTypes";
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "",
-});
+export type { Sector };
+
+let openai: OpenAI | null = null;
 
 /**
- * Possible industry sectors for classification
+ * Sector classification needs an OpenAI key; without one it is skipped.
  */
-export type Sector =
-  | "it"
-  | "finance"
-  | "healthcare"
-  | "education"
-  | "retail"
-  | "other";
+export function isClassificationEnabled(): boolean {
+  return Boolean(process.env.OPENAI_API_KEY);
+}
+
+function getClient(): OpenAI {
+  if (!openai) openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return openai;
+}
 
 /**
  * Uses AI to classify a company's industry sector based on name and homepage HTML
@@ -25,7 +26,8 @@ export type Sector =
 export async function classifySector(
   companyName: string,
   homepageHtml?: string
-): Promise<Sector> {
+): Promise<Sector | null> {
+  if (!isClassificationEnabled()) return null;
   try {
     // Prepare content for classification
     // If we have HTML, use it, otherwise just use the company name
@@ -36,7 +38,7 @@ export async function classifySector(
         )}` // Limit HTML to avoid token limits
       : `Company Name: ${companyName}`;
 
-    const { choices } = await openai.chat.completions.create({
+    const { choices } = await getClient().chat.completions.create({
       model: "gpt-4o-mini",
       temperature: 0,
       messages: [
@@ -68,7 +70,7 @@ export async function classifySector(
     return "other";
   } catch (error) {
     console.error(`Error classifying sector for ${companyName}:`, error);
-    return "other";
+    return null;
   }
 }
 
@@ -95,7 +97,7 @@ export async function bulkClassifySectors(
     // Process batch in parallel
     const batchPromises = batch.map(async (company) => {
       const sector = await classifySector(company.name, company.homepageHtml);
-      return { name: company.name, sector };
+      return { name: company.name, sector: sector ?? "other" };
     });
 
     const batchResults = await Promise.all(batchPromises);

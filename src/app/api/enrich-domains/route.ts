@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enrichDomain } from "@/lib/enrichDomain";
-import fs from "fs";
-import path from "path";
+import { getDomain, hasDomainEntry, setDomains } from "@/lib/enrichmentCache";
 
-const CACHE_FILE = path.join(
-  process.cwd(),
-  "public",
-  "data",
-  "enrichment-cache.json"
-);
+const MAX_BATCH = 25;
 
+/**
+ * Looks up websites for the given sponsors. Results (including "unknown")
+ * are cached so each company is only looked up once.
+ */
 export async function POST(request: NextRequest) {
   try {
     const { sponsors } = await request.json();
@@ -21,46 +19,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Load existing cache
-    let domainCache: Record<string, string> = {};
-    if (fs.existsSync(CACHE_FILE)) {
-      const cacheData = JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
-      domainCache = cacheData.domains || {};
-    }
+    const batch = sponsors
+      .filter((s) => typeof s?.name === "string")
+      .slice(0, MAX_BATCH) as { name: string; city?: string }[];
 
-    // Enrich domains for sponsors not in cache
-    const results: Record<string, string> = {};
-    const enrichmentPromises = sponsors
-      .filter(
-        (sponsor) =>
-          !domainCache[sponsor.name] || domainCache[sponsor.name] === "unknown"
-      )
-      .map(async (sponsor) => {
-        try {
-          const domain = await enrichDomain(sponsor.name, sponsor.city);
-          results[sponsor.name] = domain;
-          domainCache[sponsor.name] = domain;
-          return { name: sponsor.name, success: true };
-        } catch (error) {
-          console.error(`Error enriching domain for ${sponsor.name}:`, error);
-          return { name: sponsor.name, success: false };
+    const domains: Record<string, string> = {};
+    const newEntries: Record<string, string> = {};
+
+    await Promise.all(
+      batch.map(async ({ name, city }) => {
+        if (hasDomainEntry(name)) {
+          const cached = getDomain(name);
+          if (cached) domains[name] = cached;
+          return;
         }
-      });
+        const domain = await enrichDomain(name, city);
+        newEntries[name] = domain;
+        if (domain !== "unknown") domains[name] = domain;
+      })
+    );
 
-    await Promise.all(enrichmentPromises);
+    if (Object.keys(newEntries).length > 0) setDomains(newEntries);
 
-    // Update cache file with new domains
-    const cacheData = {
-      ...JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8")),
-      domains: domainCache,
-      lastUpdated: new Date().toISOString(),
-    };
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(cacheData, null, 2));
-
-    return NextResponse.json({
-      success: true,
-      domains: results,
-    });
+    return NextResponse.json({ success: true, domains });
   } catch (error) {
     console.error("Error in domain enrichment:", error);
     return NextResponse.json(
