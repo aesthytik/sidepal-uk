@@ -42,6 +42,8 @@ describe("namesMatch", () => {
     expect(namesMatch("Monzo Bank Limited", "Monzo")).toBe(true);
     expect(namesMatch("Monzo Bank Limited", "Monzo Bank")).toBe(true);
     expect(namesMatch("Acme Widgets Ltd", "Acme Gardening")).toBe(false);
+    expect(namesMatch("Ebury Court Residential Home Limited", "Ebury")).toBe(false);
+    expect(namesMatch("Asana Healthcare Ltd", "Asana")).toBe(false);
   });
 });
 
@@ -86,5 +88,19 @@ describe("buildIndex", () => {
     await buildIndex({ sponsors: s, store, http, budgetMs: 10_000 });
     expect(first).toBeGreaterThan(0);
     expect(calls).toBe(first);
+  });
+});
+
+describe("shared boards", () => {
+  it("gives a board to neither sponsor when two claim it", async () => {
+    const http = fakeHttp({
+      "https://boards-api.greenhouse.io/v1/boards/alliance/jobs?content=true": {
+        jobs: [{ title: "Nurse", absolute_url: "https://j/a", location: { name: "London, UK" } }],
+      },
+      "https://boards-api.greenhouse.io/v1/boards/alliance": { name: "Alliance" },
+    });
+    const sponsors = [sponsor("Alliance Software Ltd"), sponsor("Alliance Systems Ltd")];
+    const index = await buildIndex({ sponsors, store: createMemoryStore(), http, budgetMs: 10_000, concurrency: 1 });
+    expect(index.jobs).toEqual([]);
   });
 });

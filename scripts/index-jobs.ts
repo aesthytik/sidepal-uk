@@ -15,7 +15,8 @@ import { buildIndex } from "../src/lib/jobs/indexer";
 const dir = path.join(process.cwd(), "public", "data");
 
 async function main() {
-  const budgetMs = (Number(process.argv[2]) || 40) * 60_000;
+  const minutes = process.argv[2] === undefined ? 40 : Number(process.argv[2]);
+  const budgetMs = (Number.isFinite(minutes) ? minutes : 40) * 60_000;
   const csv = fs.readdirSync(dir).filter((f) => f.endsWith(".csv")).sort().pop();
   if (!csv) throw new Error(`No register CSV in ${dir}`);
   const overridesFile = path.join(dir, "sector-overrides.json");

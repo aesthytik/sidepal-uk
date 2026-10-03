@@ -57,12 +57,25 @@ export function slugVariants(name: string): { slug: string; exact: boolean }[] {
   return Array.from(out, ([slug, exact]) => ({ slug, exact }));
 }
 
-/** Whether a board's self-reported company name plausibly belongs to the sponsor. */
+// Words a company name may add to its brand without becoming a different company
+const GENERIC_EXTRA = new Set([
+  "bank", "partners", "technology", "technologies", "tech", "systems", "software", "labs", "capital",
+  "solutions", "digital", "global", "international", "europe", "emea", "financial", "management", "advisors",
+  "advisory", "research", "networks", "therapeutics", "ai", "data", "cloud", "security", "energy", "ventures",
+]);
+
+/**
+ * Whether a board's self-reported company name plausibly belongs to the sponsor:
+ * the same name, or the sponsor adds one generic word ("Monzo Bank" for "Monzo").
+ * "Ebury Court Residential Home" or "Asana Healthcare" are not "Ebury" or "Asana".
+ */
 export function namesMatch(sponsor: string, board: string): boolean {
   const variants = sponsor.split(/\s+t\/a\s+/i).map(normalise).filter(Boolean);
   const b = normalise(board);
   if (!b) return false;
-  return variants.some((a) => a === b || (Math.min(a.length, b.length) >= 4 && (a.startsWith(b) || b.startsWith(a))));
+  const addsGenericWord = (long: string, short: string) =>
+    long.startsWith(short + " ") && GENERIC_EXTRA.has(long.slice(short.length).trim());
+  return variants.some((a) => a === b || (Math.min(a.length, b.length) >= 4 && (addsGenericWord(a, b) || addsGenericWord(b, a))));
 }
 
 /** Tries guessed slugs on each provider. Returns the board and its jobs, or null. */
@@ -138,6 +151,11 @@ export async function buildIndex(opts: IndexOptions): Promise<JobIndex> {
   });
 
   const byId = new Map<string, IndexedJob[]>();
+  const boardKey = (b: AtsBoard) => `${b.provider}:${b.slug.toLowerCase()}`;
+  // A board belongs to one sponsor. If two claim it we can't tell which is right, so neither gets it.
+  const owners = new Map<string, Sponsor>();
+  for (const s of sponsors) if (stored[s.name]?.ats) owners.set(boardKey(stored[s.name].ats as AtsBoard), s);
+  const disputed = new Set<string>();
   let discovered = 0;
   let checked = 0;
 
@@ -152,6 +170,19 @@ export async function buildIndex(opts: IndexOptions): Promise<JobIndex> {
         if (jobs) found = { board: careers.ats, jobs };
       }
     }
+    if (found) {
+      const key = boardKey(found.board);
+      const other = owners.get(key);
+      if (other && other.id !== s.id) {
+        disputed.add(key);
+        byId.delete(other.id);
+        stored[other.name] = { ...stored[other.name], ats: null };
+        await store.set({ [other.name]: { ...stored[other.name], ats: null, checkedAt: new Date(now()).toISOString() } });
+        found = null;
+      } else {
+        owners.set(key, s);
+      }
+    }
     await store.set({
       [s.name]: { ...stored[s.name], ats: found?.board ?? null, checkedAt: new Date(now()).toISOString() },
     });
@@ -163,7 +194,7 @@ export async function buildIndex(opts: IndexOptions): Promise<JobIndex> {
   });
 
   // Refresh jobs for every board known from earlier runs
-  const known = sponsors.filter((s) => stored[s.name]?.ats && !byId.has(s.id));
+  const known = sponsors.filter((s) => stored[s.name]?.ats && !byId.has(s.id) && !disputed.has(boardKey(stored[s.name].ats as AtsBoard)));
   await mapPool(known, concurrency, async (s) => {
     const board = stored[s.name].ats as AtsBoard;
     const jobs = await fetchAllJobs(board, http);
