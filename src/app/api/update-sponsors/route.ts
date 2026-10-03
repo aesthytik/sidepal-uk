@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { processSponsorData } from "@/lib/processSponsorData";
+import { refreshFromGovUk } from "@/lib/directory";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -19,7 +19,7 @@ async function handler(request: Request) {
   }
 
   try {
-    const result = await processSponsorData();
+    const result = await refreshFromGovUk();
     return NextResponse.json({
       success: true,
       message: "Sponsor data updated successfully",

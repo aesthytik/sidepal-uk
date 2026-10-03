@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ["class"],
+  darkMode: "media",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -17,65 +17,31 @@ const config: Config = {
     },
     extend: {
       colors: {
+        border: "hsl(var(--border) / <alpha-value>)",
+        input: "hsl(var(--input) / <alpha-value>)",
+        ring: "hsl(var(--ring) / <alpha-value>)",
+        background: "hsl(var(--background) / <alpha-value>)",
+        foreground: "hsl(var(--foreground) / <alpha-value>)",
         primary: {
-          50: "#EEF2FF",
-          100: "#E0E7FF",
-          200: "#C7D2FE",
-          300: "#A5B4FC",
-          400: "#818CF8",
-          500: "#3B5BFF",
-          600: "#2749F8",
-          700: "#1E3AF1",
-          DEFAULT: "#3B5BFF",
-          foreground: "white",
-        },
-        secondary: {
-          500: "#06B6D4",
-          DEFAULT: "#06B6D4",
-          foreground: "white",
+          DEFAULT: "hsl(var(--primary) / <alpha-value>)",
+          foreground: "hsl(var(--primary-foreground) / <alpha-value>)",
         },
         accent: {
-          500: "#F472B6",
-          DEFAULT: "#F472B6",
-          foreground: "white",
+          DEFAULT: "hsl(var(--accent) / <alpha-value>)",
+          foreground: "hsl(var(--accent-foreground) / <alpha-value>)",
         },
-        highlight: {
-          500: "#FCD34D",
-          DEFAULT: "#FCD34D",
-        },
-        success: {
-          500: "#34D399",
-          DEFAULT: "#34D399",
-        },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
+          foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "hsl(var(--muted) / <alpha-value>)",
+          foreground: "hsl(var(--muted-foreground) / <alpha-value>)",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "hsl(var(--card) / <alpha-value>)",
+          foreground: "hsl(var(--card-foreground) / <alpha-value>)",
         },
-      },
-      backgroundImage: {
-        "gradient-light": "linear-gradient(170deg, #E0F4FF 0%, #E9FDF4 100%)",
-        "gradient-dark":
-          "radial-gradient(circle at top right, #1E3A8A 0%, #0F172A 80%)",
-        "hero-light": "linear-gradient(170deg, #E0F4FF 0%, #E9FDF4 100%)",
-        "hero-dark":
-          "radial-gradient(circle at top right, #1E3A8A 0%, #0F172A 80%)",
       },
       borderRadius: {
         lg: "var(--radius)",

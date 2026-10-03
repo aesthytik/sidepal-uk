@@ -1,188 +1,730 @@
 {
-  "domains": {
-    "McMullan Shellfish": "https://find-and-update.company-information.service.gov.uk",
-    "(A1F1 Limited T/A ) Ultrasound Direct London": "https://www.cqc.org.uk",
-    "(IECC Care) Independent Excel Care Consortium Limited": "https://iecc-care.co.uk",
-    "*ABOUTCARE HASTINGS LTD": "https://www.cqc.org.uk",
-    ".LITTLE NOORIYAH LTD": "https://littlenooriyah.co.uk",
-    "???£ ESS LTD": "https://ess.com",
-    "@ Architect UK Ltd": "https://architectuk.com",
-    "@ Home Accommodation Services Ltd": "https://find-and-update.company-information.service.gov.uk",
-    "@ Ur Eaz Ltd": "https://ureaz.com",
-    "@@@ FILER LIMITED": "https://filer.co.uk",
-    "[AI] INFINITI LIMITED": "https://aiinfiniti.com",
-    "01 ACCOUNTING SERVICES LTD": "https://01accountingservices.com",
-    "00Nation Limited": "https://00nation.com",
-    "012 Global Ltd": "https://012global.com",
-    "023 LTD": "https://023.com",
-    "007 Taxi Limited": "https://007taxi.co.uk",
-    "09 Care Limited": "https://09care.com",
-    "0086 Ltd": "https://0086.com",
-    "003 Ltd": "https://003.co.uk",
-    "`Brunswick Stores Limited": "https://www.brunswickgroup.com",
-    "1 Homecare Ltd": "https://1homecare.com",
-    "1 Kings Dental Limited": "https://1kingsdental.com",
-    "1 Key Solution Limited": "https://1keysolution.com",
-    "1 Indus Limited": "https://1indus.com",
-    "1 PhysioUK Limited": "https://1physiouk.com",
-    "1 REPAIR LTD": "https://1repair.com",
-    "1 Life London Limited": "https://1lifelondon.co.uk",
-    "1 Oak Home Care": "https://www.1oakcare.com",
-    "1 MODEL MANAGEMENT LONDON LIMITED": "https://find-and-update.company-information.service.gov.uk",
-    "1 Oak Leisure Ireland Ltd": "https://uk.linkedin.com",
-    "1 ALS LIMITED": "https://1als.com",
-    "1 And 5 Tech Ltd": "https://1and5tech.com",
-    "1 ACE TRAINING LIMITED": "https://1acetraining.co.uk",
-    "1 AND 1 ROUGAMO LIMITED": "https://www.tripadvisor.com",
-    "1 Green Foods Ltd": "https://find-and-update.company-information.service.gov.uk",
-    "1 Bishops Avenue Limited": "https://www.dnb.com",
-    "0xA Technologies Ltd": "https://oxa.tech",
-    "1 Eclipse Care Solutions Limited": "https://eclipsecare.uk",
-    "1 Digitals Europe Limited": "https://www.1digitals.com",
-    "1 Answer Insurance Services LTD.": "https://uk.linkedin.com",
-    "1 STOP CARS LTD": "https://1stopcars.com",
-    "1 Stop Print Ltd": "https://1stopprint.com",
-    "1 Stop Wash Ltd": "https://1stopwash.com",
-    "10 Europe Limited": "https://10europe.com",
-    "10 Squared Ltd": "https://10squared.com",
-    "10/10 MEDICAL LIMITED": "https://1010medical.com",
-    "10:10 Games Limited": "https://1010games.com",
-    "100 SHAPES LTD": "https://100shapes.co.uk",
-    "100 Percent Cornwall Ltd": "https://licensed-sponsors-uk.com",
-    "1 STOP REC LIMITED": "https://healthwatchessex.org.uk",
-    "1000 Trades Limited": "https://1000trades.com",
-    "100Starlings Ltd": "https://100starlings.com",
-    "101 A+D Ltd.": "https://101ad.com",
-    "101 Harley Street LTD": "https://101harleystreet.com",
-    "101 Ways Limited": "https://101ways.com",
-    "1000heads Ltd": "https://1000heads.com",
-    "101 Healthcare ltd": "https://101healthcare.com",
-    "100% HALAL MEAT STORES LTD": "https://find-and-update.company-information.service.gov.uk",
-    "101 Byres Road Limited": "https://visajob.co.uk",
-    "101 Studios UK Limited": "https://www.101studiosco.com",
-    "ZZIY Ltd": "https://zziy.com",
-    "ZZN STUDIO LTD": "https://zznstudio.com",
-    "Zzoomm Plc": "https://zzoomm.com",
-    "ZZ Management Ltd.": "https://zzmanagement.com",
-    "ZZA CONSULTING LIMITED": "https://zzaconsulting.co.uk",
-    "ZZZ Limited": "https://zzz.com",
-    "Zyzzle Limited": "https://find-and-update.company-information.service.gov.uk",
-    "ZyXEL Communications UK Ltd": "https://www.zyxel.com",
-    "Zurich Insurance Group": "https://zurichinsurancegroup.com",
-    "ZUSTECH LIMITED": "https://zustech.com",
-    "ZUZKA LIMITED": "https://zuzka.com",
-    "ZV UK LIMITED": "https://zvuk.com",
-    "ZUZ LTD": "https://zuz.uk",
-    "ZURU UK Limited": "https://zuru.com",
-    "Zutec Inc. (UK) Limited": "https://zutec.com",
-    "ZVC UK Ltd": "https://find-and-update.company-information.service.gov.uk",
-    "ZVF PHARMA LTD": "https://find-and-update.company-information.service.gov.uk",
-    "Zuzana Glow Limited": "https://find-and-update.company-information.service.gov.uk",
-    "ZUPLEX LTD": "https://zuplex.com",
-    "Zuma Array Limited": "https://zumaarray.com",
-    "Zunoma Ltd": "https://zunoma.com",
-    "Zuma Labs Limited": "https://zumalabs.com",
-    "ZUMZ Auto Limited": "unknown",
-    "ZUMUKU LTD T/A ZUMUKU SHUSHI": "https://zumukusushi.com",
-    "Zulfiquar Ali Murtaza t/a Capital Wholesalers": "unknown",
-    "ZULUS DUNDEE LTD": "https://www.zuluspiripiri.com",
-    "Zuora UK Limited": "https://www.zuora.com",
-    "ZUMI MARKET LIMITED": "unknown",
-    "2 Sisters Food Group Limited": "https://2sistersfoodgroup.com",
-    "360Globalnet Ltd": "https://360globalnet.com",
-    "3i plc": "https://3i.com",
-    "1E Limited": "https://1e.com",
-    "2A Link (UK) Limited": "https://find-and-update.company-information.service.gov.uk",
-    "2H Offshore Engineering Ltd": "https://2hoffshore.com",
-    "2023 RE INVESTMENT MANAGEMENT LIMITED": "https://www.schroders.com",
-    "3D Systems Europe Ltd": "https://www.3dsystems.com",
-    "3-D Matrix UK Limited": "https://3dmatrix.com",
-    "54 Queens Gate Hotel Limited": "https://54queensgatehotel.com",
-    "7Click Network Ltd": "https://7clicknetwork.com",
-    "720 Management Limited": "https://720management.com",
-    "8th Light Ltd": "https://8thlight.com",
-    "45R-LD LIMITED": "https://45rglobal.com",
-    "4M LONDON LIMITED": "https://find-and-update.company-information.service.gov.uk",
-    "Anywhereworks Ltd": "https://anywhereworks.com",
-    "Baillie Gifford": "https://bailliegifford.com",
-    "Administrate Ltd": "https://administrate.com",
-    "ABRDN PLC": "https://abrdn.com",
-    "Bakkafrost Scotland Limited": "https://bakkafrostscotland.com",
-    "ABACUSBIO INTERNATIONAL LIMITED": "https://abacusbio.com",
-    "ALPHA DATA PARALLEL SYSTEMS LTD": "https://alpha-data.com",
-    "Blackhouse Media (BHM) Limited": "https://bhmng.com",
-    "ADDEPAR UK LTD": "https://addepar.com",
-    "Accolade Wines Limited": "https://accoladewines.com",
-    "Airbus Protect Limited": "https://airbusprotect.com",
-    "Airbus Operations Limited": "https://airbusoperations.com",
-    "Babcock Integrated Technology Limited": "https://www.babcockinternational.com",
-    "AXA Group Operations UK Limited": "https://www.linkedin.com",
-    "Asset One Services LLP": "https://www.cleanharbors.com",
-    "Allied Digital Services UK Ltd": "https://www.cbp.gov",
-    "Baker Hughes Energy Technology UK Limited": "https://www.bakerhughes.com",
-    "Amiad Water Systems UK Limited": "https://amiad.com",
-    "Amcor Europe Group Management": "https://www.amcor.com",
-    "Amgen Limited": "https://amgen.com",
-    "Astex Therapeutics Limited": "https://astextherapeutics.com",
-    "AstraZeneca UK Limited": "https://astrazenecauk.co.uk",
-    "Alloy Therapeutics UK Limited": "https://alloytx.com",
-    "Agenus UK Limited": "https://agenusbio.com",
-    "AscendantFX Capital UK Limited": "https://ascendant.world",
-    "AMPLEXOR UK Ltd": "https://www.amplexor.com",
-    "Altium UK Limited": "https://www.altium.com",
-    "AAAS Science International inc": "https://www.aaas.org",
-    "AM FRESH UK Ltd": "https://amfresh.com",
-    "A F Foods LTD": "https://affoods.com",
-    "1st Choice Windows Yorkshire Ltd.": "https://1stchoicewindowsyorkshire.com",
-    "5 STAR AR BUILDERS LTD": "https://5stararbuilders.co.uk",
-    "1214 Construction": "https://1214construction.co.uk",
-    "3AK Online Limited": "https://visajob.co.uk",
-    "5G Security Services Limited": "https://uk.indeed.com",
-    "5 Lights Training": "https://www.pa.gov",
-    "3K Fabrics Limited": "https://find-and-update.company-information.service.gov.uk",
-    "A H LOCAL SUPERMARKET LIMITED": "https://uk.indeed.com",
-    "15Below Ltd": "https://15below.com",
-    "15GIFTS LTD": "https://15gifts.com",
-    "184 DISTRIBUTION LIMITED": "https://184distribution.co.uk",
-    "16 Barrack Ltd TA Saffron Indian Restaurant & Pizza Place": "https://saffronindianwoodbridge.co.uk",
-    "11Eleven UK Enterprises Ltd": "https://www.dnb.com",
-    "105 West Architects Ltd": "https://105west.co.uk",
-    "Monzo Bank Limited": "unknown",
-    "Deloitte LLP": "https://deloitte.co.uk",
-    "ABC Care Ltd": "https://abccare.co.uk",
-    "Revolut Ltd": "https://revolut.io",
-    "Google (UK) Limited": "https://google.co.uk",
-    "ARL Services (UK) Limited": "unknown",
-    "A Y & J Solicitors": "unknown",
-    "1ST VISA INTERNATIONAL LIMITED": "unknown",
-    "Bluestonex Consulting Ltd": "https://bluestonex.com",
-    "Blis Global Ltd": "unknown",
-    "Blue Sky IP Ltd": "unknown",
-    "AMICUS LAW (SOUTH WEST) LLP": "https://amicuslaw.co.uk",
-    "Berks Insulation Limited": "https://berksinsulation.com",
-    "BCT Consultants Ltd.": "https://bctconsultants.com",
-    "AGT Retail Limited": "unknown",
-    "Six & Flow Ltd": "https://sixandflow.com",
-    "ALT": "unknown",
-    "BZK PIZZAWORKS LTD": "unknown",
-    "BW Refrigeration & Air Conditioning Limited": "unknown",
-    "BRANOS OXFORD LTD T/A LILO": "unknown",
-    "AaruvikA Limited": "https://aaruvika.co.uk",
-    "Brooke Healthcare Ltd": "https://brookehealthcare.co.uk",
-    "Bossmans Retail Abergavenny Ltd": "unknown",
-    "BOLTWHIZ LIMITED": "https://boltwhiz.co.uk",
-    "BRITANNIA BUSINESS CONSULTING LIMITED": "unknown",
-    "Asian African Foods Ltd": "unknown"
+ "version": 2,
+ "updatedAt": "2026-10-03T01:15:18.270Z",
+ "sponsors": {
+  "McMullan Shellfish": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
   },
-  "sectors": {},
-  "careerUrls": {
-    "Monzo Bank Limited": "https://monzo.com/careers",
-    "Deloitte LLP": "https://deloitte.co.uk/uk/en/careers.html?icid=top_careers",
-    "Google (UK) Limited": "https://google.co.uk/about/careers",
-    "Six & Flow Ltd": "https://www.sixandflow.com/industries/recruitment",
-    "AaruvikA Limited": null,
-    "Brooke Healthcare Ltd": null,
-    "BOLTWHIZ LIMITED": null
+  "(A1F1 Limited T/A ) Ultrasound Direct London": {
+   "website": "https://www.cqc.org.uk",
+   "careersUrl": "https://www.cqc.org.uk/about-us/how-we-do-our-job",
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:10.518Z"
   },
-  "lastUpdated": "2026-10-03T00:45:55.252Z"
+  "(IECC Care) Independent Excel Care Consortium Limited": {
+   "website": "https://iecc-care.co.uk"
+  },
+  "*ABOUTCARE HASTINGS LTD": {
+   "website": "https://www.cqc.org.uk"
+  },
+  ".LITTLE NOORIYAH LTD": {
+   "website": "https://littlenooriyah.co.uk"
+  },
+  "???£ ESS LTD": {
+   "website": "https://ess.com"
+  },
+  "@ Architect UK Ltd": {
+   "website": "https://architectuk.com"
+  },
+  "@ Home Accommodation Services Ltd": {
+   "website": "https://find-and-update.company-information.service.gov.uk",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:10.520Z"
+  },
+  "@ Ur Eaz Ltd": {
+   "website": "https://ureaz.com"
+  },
+  "@@@ FILER LIMITED": {
+   "website": "https://filer.co.uk"
+  },
+  "[AI] INFINITI LIMITED": {
+   "website": "https://aiinfiniti.com"
+  },
+  "01 ACCOUNTING SERVICES LTD": {
+   "website": "https://01accountingservices.com"
+  },
+  "00Nation Limited": {
+   "website": "https://00nation.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:11.149Z"
+  },
+  "012 Global Ltd": {
+   "website": "https://012global.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:11.542Z"
+  },
+  "023 LTD": {
+   "website": "https://023.com"
+  },
+  "007 Taxi Limited": {
+   "website": "https://007taxi.co.uk"
+  },
+  "09 Care Limited": {
+   "website": "https://09care.com"
+  },
+  "0086 Ltd": {
+   "website": "https://0086.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:10.578Z"
+  },
+  "003 Ltd": {
+   "website": "https://003.co.uk"
+  },
+  "`Brunswick Stores Limited": {
+   "website": "https://www.brunswickgroup.com"
+  },
+  "1 Homecare Ltd": {
+   "website": "https://1homecare.com"
+  },
+  "1 Kings Dental Limited": {
+   "website": "https://1kingsdental.com"
+  },
+  "1 Key Solution Limited": {
+   "website": "https://1keysolution.com"
+  },
+  "1 Indus Limited": {
+   "website": "https://1indus.com"
+  },
+  "1 PhysioUK Limited": {
+   "website": "https://1physiouk.com"
+  },
+  "1 REPAIR LTD": {
+   "website": "https://1repair.com"
+  },
+  "1 Life London Limited": {
+   "website": "https://1lifelondon.co.uk"
+  },
+  "1 Oak Home Care": {
+   "website": "https://www.1oakcare.com"
+  },
+  "1 MODEL MANAGEMENT LONDON LIMITED": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "1 Oak Leisure Ireland Ltd": {
+   "website": "https://uk.linkedin.com"
+  },
+  "1 ALS LIMITED": {
+   "website": "https://1als.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:12.154Z"
+  },
+  "1 And 5 Tech Ltd": {
+   "website": "https://1and5tech.com"
+  },
+  "1 ACE TRAINING LIMITED": {
+   "website": "https://1acetraining.co.uk",
+   "careersUrl": "https://www.1acetraining.co.uk/careers/",
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:12.654Z"
+  },
+  "1 AND 1 ROUGAMO LIMITED": {
+   "website": "https://www.tripadvisor.com"
+  },
+  "1 Green Foods Ltd": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "1 Bishops Avenue Limited": {
+   "website": "https://www.dnb.com"
+  },
+  "0xA Technologies Ltd": {
+   "website": "https://oxa.tech",
+   "careersUrl": "https://oxa.tech/careers/",
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:11.426Z"
+  },
+  "1 Eclipse Care Solutions Limited": {
+   "website": "https://eclipsecare.uk"
+  },
+  "1 Digitals Europe Limited": {
+   "website": "https://www.1digitals.com"
+  },
+  "1 Answer Insurance Services LTD.": {
+   "website": "https://uk.linkedin.com"
+  },
+  "1 STOP CARS LTD": {
+   "website": "https://1stopcars.com"
+  },
+  "1 Stop Print Ltd": {
+   "website": "https://1stopprint.com"
+  },
+  "1 Stop Wash Ltd": {
+   "website": "https://1stopwash.com"
+  },
+  "10 Europe Limited": {
+   "website": "https://10europe.com"
+  },
+  "10 Squared Ltd": {
+   "website": "https://10squared.com"
+  },
+  "10/10 MEDICAL LIMITED": {
+   "website": "https://1010medical.com"
+  },
+  "10:10 Games Limited": {
+   "website": "https://1010games.com"
+  },
+  "100 SHAPES LTD": {
+   "website": "https://100shapes.co.uk"
+  },
+  "100 Percent Cornwall Ltd": {
+   "website": "https://licensed-sponsors-uk.com"
+  },
+  "1 STOP REC LIMITED": {
+   "website": "https://healthwatchessex.org.uk"
+  },
+  "1000 Trades Limited": {
+   "website": "https://1000trades.com"
+  },
+  "100Starlings Ltd": {
+   "website": "https://100starlings.com"
+  },
+  "101 A+D Ltd.": {
+   "website": "https://101ad.com"
+  },
+  "101 Harley Street LTD": {
+   "website": "https://101harleystreet.com"
+  },
+  "101 Ways Limited": {
+   "website": "https://101ways.com"
+  },
+  "1000heads Ltd": {
+   "website": "https://1000heads.com"
+  },
+  "101 Healthcare ltd": {
+   "website": "https://101healthcare.com"
+  },
+  "100% HALAL MEAT STORES LTD": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "101 Byres Road Limited": {
+   "website": "https://visajob.co.uk"
+  },
+  "101 Studios UK Limited": {
+   "website": "https://www.101studiosco.com"
+  },
+  "ZZIY Ltd": {
+   "website": "https://zziy.com"
+  },
+  "ZZN STUDIO LTD": {
+   "website": "https://zznstudio.com"
+  },
+  "Zzoomm Plc": {
+   "website": "https://zzoomm.com"
+  },
+  "ZZ Management Ltd.": {
+   "website": "https://zzmanagement.com"
+  },
+  "ZZA CONSULTING LIMITED": {
+   "website": "https://zzaconsulting.co.uk"
+  },
+  "ZZZ Limited": {
+   "website": "https://zzz.com"
+  },
+  "Zyzzle Limited": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "ZyXEL Communications UK Ltd": {
+   "website": "https://www.zyxel.com"
+  },
+  "Zurich Insurance Group": {
+   "website": "https://zurichinsurancegroup.com"
+  },
+  "ZUSTECH LIMITED": {
+   "website": "https://zustech.com"
+  },
+  "ZUZKA LIMITED": {
+   "website": "https://zuzka.com"
+  },
+  "ZV UK LIMITED": {
+   "website": "https://zvuk.com"
+  },
+  "ZUZ LTD": {
+   "website": "https://zuz.uk"
+  },
+  "ZURU UK Limited": {
+   "website": "https://zuru.com"
+  },
+  "Zutec Inc. (UK) Limited": {
+   "website": "https://zutec.com"
+  },
+  "ZVC UK Ltd": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "ZVF PHARMA LTD": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "Zuzana Glow Limited": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "ZUPLEX LTD": {
+   "website": "https://zuplex.com"
+  },
+  "Zuma Array Limited": {
+   "website": "https://zumaarray.com"
+  },
+  "Zunoma Ltd": {
+   "website": "https://zunoma.com"
+  },
+  "Zuma Labs Limited": {
+   "website": "https://zumalabs.com"
+  },
+  "ZUMZ Auto Limited": {
+   "website": null
+  },
+  "ZUMUKU LTD T/A ZUMUKU SHUSHI": {
+   "website": "https://zumukusushi.com"
+  },
+  "Zulfiquar Ali Murtaza t/a Capital Wholesalers": {
+   "website": null
+  },
+  "ZULUS DUNDEE LTD": {
+   "website": "https://www.zuluspiripiri.com"
+  },
+  "Zuora UK Limited": {
+   "website": "https://www.zuora.com"
+  },
+  "ZUMI MARKET LIMITED": {
+   "website": null
+  },
+  "2 Sisters Food Group Limited": {
+   "website": "https://2sistersfoodgroup.com"
+  },
+  "360Globalnet Ltd": {
+   "website": "https://360globalnet.com"
+  },
+  "3i plc": {
+   "website": "https://3i.com"
+  },
+  "1E Limited": {
+   "website": "https://1e.com"
+  },
+  "2A Link (UK) Limited": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "2H Offshore Engineering Ltd": {
+   "website": "https://2hoffshore.com"
+  },
+  "2023 RE INVESTMENT MANAGEMENT LIMITED": {
+   "website": "https://www.schroders.com"
+  },
+  "3D Systems Europe Ltd": {
+   "website": "https://www.3dsystems.com"
+  },
+  "3-D Matrix UK Limited": {
+   "website": "https://3dmatrix.com"
+  },
+  "54 Queens Gate Hotel Limited": {
+   "website": "https://54queensgatehotel.com"
+  },
+  "7Click Network Ltd": {
+   "website": "https://7clicknetwork.com"
+  },
+  "720 Management Limited": {
+   "website": "https://720management.com"
+  },
+  "8th Light Ltd": {
+   "website": "https://8thlight.com"
+  },
+  "45R-LD LIMITED": {
+   "website": "https://45rglobal.com"
+  },
+  "4M LONDON LIMITED": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "Anywhereworks Ltd": {
+   "website": "https://anywhereworks.com"
+  },
+  "Baillie Gifford": {
+   "website": "https://bailliegifford.com"
+  },
+  "Administrate Ltd": {
+   "website": "https://administrate.com"
+  },
+  "ABRDN PLC": {
+   "website": "https://abrdn.com"
+  },
+  "Bakkafrost Scotland Limited": {
+   "website": "https://bakkafrostscotland.com"
+  },
+  "ABACUSBIO INTERNATIONAL LIMITED": {
+   "website": "https://abacusbio.com"
+  },
+  "ALPHA DATA PARALLEL SYSTEMS LTD": {
+   "website": "https://alpha-data.com"
+  },
+  "Blackhouse Media (BHM) Limited": {
+   "website": "https://bhmng.com"
+  },
+  "ADDEPAR UK LTD": {
+   "website": "https://addepar.com"
+  },
+  "Accolade Wines Limited": {
+   "website": "https://accoladewines.com"
+  },
+  "Airbus Protect Limited": {
+   "website": "https://airbusprotect.com"
+  },
+  "Airbus Operations Limited": {
+   "website": "https://airbusoperations.com"
+  },
+  "Babcock Integrated Technology Limited": {
+   "website": "https://www.babcockinternational.com"
+  },
+  "AXA Group Operations UK Limited": {
+   "website": "https://www.linkedin.com"
+  },
+  "Asset One Services LLP": {
+   "website": "https://www.cleanharbors.com"
+  },
+  "Allied Digital Services UK Ltd": {
+   "website": "https://www.cbp.gov"
+  },
+  "Baker Hughes Energy Technology UK Limited": {
+   "website": "https://www.bakerhughes.com"
+  },
+  "Amiad Water Systems UK Limited": {
+   "website": "https://amiad.com"
+  },
+  "Amcor Europe Group Management": {
+   "website": "https://www.amcor.com"
+  },
+  "Amgen Limited": {
+   "website": "https://amgen.com"
+  },
+  "Astex Therapeutics Limited": {
+   "website": "https://astextherapeutics.com"
+  },
+  "AstraZeneca UK Limited": {
+   "website": "https://astrazenecauk.co.uk"
+  },
+  "Alloy Therapeutics UK Limited": {
+   "website": "https://alloytx.com"
+  },
+  "Agenus UK Limited": {
+   "website": "https://agenusbio.com"
+  },
+  "AscendantFX Capital UK Limited": {
+   "website": "https://ascendant.world"
+  },
+  "AMPLEXOR UK Ltd": {
+   "website": "https://www.amplexor.com"
+  },
+  "Altium UK Limited": {
+   "website": "https://www.altium.com"
+  },
+  "AAAS Science International inc": {
+   "website": "https://www.aaas.org"
+  },
+  "AM FRESH UK Ltd": {
+   "website": "https://amfresh.com"
+  },
+  "A F Foods LTD": {
+   "website": "https://affoods.com"
+  },
+  "1st Choice Windows Yorkshire Ltd.": {
+   "website": "https://1stchoicewindowsyorkshire.com"
+  },
+  "5 STAR AR BUILDERS LTD": {
+   "website": "https://5stararbuilders.co.uk"
+  },
+  "1214 Construction": {
+   "website": "https://1214construction.co.uk"
+  },
+  "3AK Online Limited": {
+   "website": "https://visajob.co.uk"
+  },
+  "5G Security Services Limited": {
+   "website": "https://uk.indeed.com"
+  },
+  "5 Lights Training": {
+   "website": "https://www.pa.gov"
+  },
+  "3K Fabrics Limited": {
+   "website": "https://find-and-update.company-information.service.gov.uk"
+  },
+  "A H LOCAL SUPERMARKET LIMITED": {
+   "website": "https://uk.indeed.com"
+  },
+  "15Below Ltd": {
+   "website": "https://15below.com"
+  },
+  "15GIFTS LTD": {
+   "website": "https://15gifts.com"
+  },
+  "184 DISTRIBUTION LIMITED": {
+   "website": "https://184distribution.co.uk"
+  },
+  "16 Barrack Ltd TA Saffron Indian Restaurant & Pizza Place": {
+   "website": "https://saffronindianwoodbridge.co.uk"
+  },
+  "11Eleven UK Enterprises Ltd": {
+   "website": "https://www.dnb.com"
+  },
+  "105 West Architects Ltd": {
+   "website": "https://105west.co.uk"
+  },
+  "Monzo Bank Limited": {
+   "website": null,
+   "careersUrl": "https://monzo.com/careers"
+  },
+  "Deloitte LLP": {
+   "website": "https://deloitte.co.uk",
+   "careersUrl": "https://deloitte.co.uk/uk/en/careers.html?icid=top_careers"
+  },
+  "ABC Care Ltd": {
+   "website": "https://abccare.co.uk"
+  },
+  "Revolut Ltd": {
+   "website": "https://revolut.io"
+  },
+  "Google (UK) Limited": {
+   "website": "https://google.co.uk",
+   "careersUrl": "https://google.co.uk/about/careers"
+  },
+  "ARL Services (UK) Limited": {
+   "website": null
+  },
+  "A Y & J Solicitors": {
+   "website": null
+  },
+  "1ST VISA INTERNATIONAL LIMITED": {
+   "website": null
+  },
+  "Bluestonex Consulting Ltd": {
+   "website": "https://bluestonex.com"
+  },
+  "Blis Global Ltd": {
+   "website": null
+  },
+  "Blue Sky IP Ltd": {
+   "website": null
+  },
+  "AMICUS LAW (SOUTH WEST) LLP": {
+   "website": "https://amicuslaw.co.uk"
+  },
+  "Berks Insulation Limited": {
+   "website": "https://berksinsulation.com"
+  },
+  "BCT Consultants Ltd.": {
+   "website": "https://bctconsultants.com"
+  },
+  "AGT Retail Limited": {
+   "website": null
+  },
+  "Six & Flow Ltd": {
+   "website": "https://sixandflow.com",
+   "careersUrl": "https://www.sixandflow.com/industries/recruitment"
+  },
+  "ALT": {
+   "website": null
+  },
+  "BZK PIZZAWORKS LTD": {
+   "website": null
+  },
+  "BW Refrigeration & Air Conditioning Limited": {
+   "website": null
+  },
+  "BRANOS OXFORD LTD T/A LILO": {
+   "website": null
+  },
+  "AaruvikA Limited": {
+   "website": "https://aaruvika.co.uk",
+   "careersUrl": null
+  },
+  "Brooke Healthcare Ltd": {
+   "website": "https://brookehealthcare.co.uk",
+   "careersUrl": null
+  },
+  "Bossmans Retail Abergavenny Ltd": {
+   "website": null
+  },
+  "BOLTWHIZ LIMITED": {
+   "website": "https://boltwhiz.co.uk",
+   "careersUrl": null
+  },
+  "BRITANNIA BUSINESS CONSULTING LIMITED": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:14.556Z"
+  },
+  "Asian African Foods Ltd": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:20.552Z"
+  },
+  "STARLING BANK LIMITED": {
+   "website": "https://starlingbank.co.uk",
+   "careersUrl": "https://starlingbank.co.uk/careers/",
+   "ats": null,
+   "checkedAt": "2026-10-03T01:09:20.197Z"
+  },
+  "Wise Payments Limited": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:12:17.614Z"
+  },
+  "Monzo Bank Ltd": {
+   "website": "https://monzo.co.uk",
+   "careersUrl": "https://monzo.com/careers",
+   "ats": {
+    "provider": "greenhouse",
+    "slug": "monzo"
+   },
+   "checkedAt": "2026-10-03T01:12:17.936Z"
+  },
+  "Octopus Energy Limited": {
+   "website": "https://octopusenergy.co.uk",
+   "careersUrl": "https://octopus.energy/careers/",
+   "ats": {
+    "provider": "lever",
+    "slug": "octoenergy"
+   },
+   "checkedAt": "2026-10-03T01:12:18.077Z"
+  },
+  "Roofoods Ltd t/a Deliveroo": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:12:19.158Z"
+  },
+  "Little Garden Gate Nursery Ltd": {
+   "website": "https://littlegardengatenursery.com",
+   "careersUrl": "https://littlegardengatenursery.com/careers",
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:13.662Z"
+  },
+  "Jideoni Ltd": {
+   "website": "https://jideoni.co.uk",
+   "careersUrl": "https://jideoni.co.uk/job-vacancies/",
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:13.791Z"
+  },
+  "M Y Fishmongers": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:13.833Z"
+  },
+  "LEAPFROG A.I. LTD": {
+   "website": "https://leapfrogai.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:14.120Z"
+  },
+  "NEW PAYLESS LTD": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:14.152Z"
+  },
+  "MULTIPLIER TECHNOLOGIES UK LTD": {
+   "website": "https://multipliertechnologies.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:14.594Z"
+  },
+  "Hotel Templeton Garden Limited": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:15.412Z"
+  },
+  "HARI EXPRESS LIMITED T/A LIMEHOUSE NEWSAGENTS": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:15.815Z"
+  },
+  "London Aesthetics U.K Ltd": {
+   "website": "https://londonaestheticsuk.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:16.687Z"
+  },
+  "Gibbs Consulting Global Limited": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:20.754Z"
+  },
+  "C. BECHSTEIN HALL LIMITED": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:12.816Z"
+  },
+  "FAB DJ LTD": {
+   "website": "https://fabdj.co.uk",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:13.251Z"
+  },
+  "FAST TRACK CONSULTANCY LIMITED": {
+   "website": "https://fasttrackconsultancy.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:13.774Z"
+  },
+  "CHENDHUR INFOTECH LTD": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:14.019Z"
+  },
+  "Emerge Management & Communications Limited": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:13:15.304Z"
+  },
+  "FORTITUDE (LONDON) LIMITED": {
+   "website": "https://fortitude.co.uk",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:16.442Z"
+  },
+  "Five Talents UK LTD": {
+   "website": "https://fivetalents.co.uk",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:17.047Z"
+  },
+  "CANTON ELEMENT LIMITED": {
+   "website": "https://canton.org",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:13:25.728Z"
+  },
+  "MODE AGENCE LTD": {
+   "website": "https://modeagence.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:10.599Z"
+  },
+  "01 Accounting Services Ltd": {
+   "website": "https://01accounting.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:12.553Z"
+  },
+  "'O Ver St. James Ltd": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:15:16.350Z"
+  },
+  "CITY STORE PVT LTD": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:15:11.601Z"
+  },
+  "CONSTRUCTION POINT LIMITED": {
+   "website": "https://constructionpoint.co.uk",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:12.224Z"
+  },
+  "CASA BAMBOO LTD T/a Pho Le Vietnamese Restaurant": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:15:12.476Z"
+  },
+  "CAKE GLORY LTD LTD": {
+   "website": "https://cakeglory.com",
+   "careersUrl": null,
+   "ats": null,
+   "checkedAt": "2026-10-03T01:15:12.940Z"
+  },
+  "CORBY MUSLIM ASSOCIATION": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:15:13.839Z"
+  },
+  "Charcoal Chicken Leeds Ltd": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:15:13.929Z"
+  },
+  "CHURCHVIEW CARE LTD": {
+   "website": null,
+   "checkedAt": "2026-10-03T01:15:17.270Z"
+  }
+ }
 }
