@@ -7,19 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:update-sponsors": "ts-node scripts/test-update-sponsors.ts"
+    "test": "vitest run"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
-    "@types/axios": "^0.9.36",
     "@types/papaparse": "^5.3.15",
-    "ai": "^4.3.13",
-    "axios": "^1.9.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "fuse.js": "^7.1.0",
     "next": "15.3.1",
-    "openai": "^4.97.0",
     "papaparse": "^5.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -38,6 +34,7 @@
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.3"
   }
 }

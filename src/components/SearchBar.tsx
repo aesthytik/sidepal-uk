@@ -1,88 +1,87 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useSponsorStore } from "@/store/useSponsorStore";
+import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import { SearchIcon, XIcon } from "./ui/icons";
 
-export function SearchBar() {
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const { setFilters } = useSponsorStore();
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+/**
+ * A search input that reports its value after the user pauses typing.
+ * Follows `value` when it changes from outside (URL navigation, reset).
+ */
+export function SearchBar({
+  value,
+  onSearch,
+  placeholder = "Search by company name, e.g. Monzo",
+  label = "Search sponsors",
+  icon = <SearchIcon width={18} height={18} />,
+  list,
+  className,
+  delay = 300,
+  onTextChange,
+}: {
+  value: string;
+  onSearch: (query: string) => void;
+  placeholder?: string;
+  label?: string;
+  icon?: React.ReactNode;
+  list?: string;
+  className?: string;
+  delay?: number;
+  onTextChange?: (text: string) => void;
+}) {
+  const [text, setText] = useState(value);
+  const lastSent = useRef(value);
+  const onSearchRef = useRef(onSearch);
+  onSearchRef.current = onSearch;
 
-  // Debounce the search query to avoid excessive API calls
   useEffect(() => {
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
+    if (value !== lastSent.current) {
+      lastSent.current = value;
+      setText(value);
     }
+  }, [value]);
 
-    debounceTimeout.current = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 300);
-
-    return () => {
-      if (debounceTimeout.current) {
-        clearTimeout(debounceTimeout.current);
-      }
-    };
-  }, [query]);
-
-  // Update filters when debounced query changes
   useEffect(() => {
-    setFilters({ query: debouncedQuery });
-  }, [debouncedQuery, setFilters]);
+    if (text === lastSent.current) return;
+    const timeout = setTimeout(() => {
+      lastSent.current = text;
+      onSearchRef.current(text);
+    }, delay);
+    return () => clearTimeout(timeout);
+  }, [text, delay]);
+
+  const send = (next: string) => {
+    lastSent.current = next;
+    setText(next);
+    onSearchRef.current(next);
+  };
 
   return (
-    <div className="w-full">
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <svg
-            className="w-4 h-4 text-gray-500 dark:text-gray-400"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 20 20"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-            />
-          </svg>
-        </div>
-        <input
-          type="search"
-          className="block w-full p-4 pl-10 text-sm border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] focus:outline-none focus:ring-0 focus:border-primary-500 bg-white dark:bg-gray-900"
-          placeholder="Search company name, city, or region..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        {query && (
-          <button
-            type="button"
-            className="absolute inset-y-0 right-0 flex items-center pr-3"
-            onClick={() => setQuery("")}
-            aria-label="Clear search"
-          >
-            <svg
-              className="w-4 h-4 text-gray-500 hover:text-gray-900 dark:hover:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        )}
-      </div>
+    <div className={cn("relative", className)}>
+      <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground">{icon}</span>
+      <input
+        type="search"
+        aria-label={label}
+        placeholder={placeholder}
+        value={text}
+        list={list}
+        onChange={(e) => {
+          setText(e.target.value);
+          onTextChange?.(e.target.value);
+        }}
+        onKeyDown={(e) => e.key === "Enter" && send(text)}
+        className="h-11 w-full rounded-lg border border-input bg-card pl-10 pr-10 text-base shadow-sm placeholder:text-muted-foreground/80 focus:border-primary [&::-webkit-search-cancel-button]:hidden"
+      />
+      {text && (
+        <button
+          type="button"
+          onClick={() => send("")}
+          aria-label={`Clear ${label.toLowerCase()}`}
+          className="absolute inset-y-0 right-2 my-auto flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <XIcon />
+        </button>
+      )}
     </div>
   );
 }

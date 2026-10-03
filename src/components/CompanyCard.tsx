@@ -1,166 +1,212 @@
 "use client";
 
-import { Sponsor } from "@/lib/sponsorTypes";
-import { Button } from "@/components/ui/button";
-import { useSponsorStore } from "@/store/useSponsorStore";
+import { useState } from "react";
+import type { Enrichment, Sponsor } from "@/lib/sponsorTypes";
+import { cn } from "@/lib/utils";
+import { STATUSES, STATUS_LABELS, type Status, useShortlist } from "@/store/useShortlist";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import {
+  BookmarkIcon,
+  BriefcaseIcon,
+  ChevronDownIcon,
+  ExternalLinkIcon,
+  GlobeIcon,
+  MapPinIcon,
+  SearchIcon,
+} from "./ui/icons";
 
-interface CompanyCardProps {
-  sponsor: Sponsor;
+const MAX_VISA_BADGES = 2;
+
+function hostname(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 }
 
-export function CompanyCard({ sponsor }: CompanyCardProps) {
-  const { savedSponsors, toggleSaved } = useSponsorStore();
-  const isSaved = savedSponsors.has(sponsor.id);
+function googleJobsUrl(sponsor: Sponsor) {
+  return `https://www.google.com/search?q=${encodeURIComponent(`${sponsor.name} ${sponsor.city} jobs`)}`;
+}
+
+function SaveControl({ id }: { id: string }) {
+  const item = useShortlist((s) => s.items[id]);
+  const toggle = useShortlist((s) => s.toggle);
+  const update = useShortlist((s) => s.update);
 
   return (
-    <div className="card p-4 bg-white dark:bg-gray-900">
-      {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="text-xl font-semibold mb-1">{sponsor.name}</h3>
-          <p className="text-gray-600 dark:text-gray-400">{sponsor.region}</p>
-        </div>
-        <button
-          onClick={() => toggleSaved(sponsor.id)}
-          className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-500"
-          aria-label={isSaved ? "Remove from saved" : "Save company"}
+    <div className="flex shrink-0 items-center gap-2">
+      {item && (
+        <select
+          aria-label="Application status"
+          value={item.status}
+          onChange={(e) => update(id, { status: e.target.value as Status })}
+          className="h-9 rounded-lg border border-input bg-card px-2 text-sm"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill={isSaved ? "currentColor" : "none"}
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-            />
-          </svg>
-        </button>
-      </div>
+          {STATUSES.map((s) => (
+            <option key={s} value={s}>
+              {STATUS_LABELS[s]}
+            </option>
+          ))}
+        </select>
+      )}
+      <Button
+        variant={item ? "subtle" : "outline"}
+        size="sm"
+        onClick={() => toggle(id)}
+        aria-pressed={Boolean(item)}
+        aria-label={item ? "Remove from shortlist" : "Save to shortlist"}
+      >
+        <BookmarkIcon filled={Boolean(item)} />
+        <span className="hidden sm:inline">{item ? "Saved" : "Save"}</span>
+      </Button>
+    </div>
+  );
+}
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {/* Sector Tag */}
-        {sponsor.sector && (
-          <span className="bg-secondary-500 text-white text-xs px-2.5 py-1 rounded-full">
-            {sponsor.sector.toUpperCase()}
-          </span>
-        )}
-
-        {/* Visa Type Tags */}
-        {sponsor.visaTypes.map((type) => (
-          <span
-            key={type}
-            className="bg-highlight-500 text-gray-900 text-xs px-2.5 py-1 rounded-full"
-          >
-            {type}
-          </span>
+function JobsPanel({ jobs, careersUrl }: { jobs: NonNullable<Enrichment["jobs"]>; careersUrl?: string }) {
+  return (
+    <div className="mt-3 rounded-lg border border-border bg-muted/40">
+      <ul className="divide-y divide-border">
+        {jobs.top.map((job) => (
+          <li key={job.url}>
+            <a
+              href={job.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-3 px-3 py-2.5 text-sm hover:bg-muted"
+            >
+              <span className="min-w-0">
+                <span className="block truncate font-medium">{job.title}</span>
+                {job.location && <span className="block truncate text-xs text-muted-foreground">{job.location}</span>}
+              </span>
+              <span className="flex shrink-0 items-center gap-2">
+                {job.uk && <Badge tone="success">UK</Badge>}
+                <ExternalLinkIcon className="text-muted-foreground" />
+              </span>
+            </a>
+          </li>
         ))}
+      </ul>
+      {careersUrl && jobs.total > jobs.top.length && (
+        <a
+          href={careersUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block border-t border-border px-3 py-2 text-sm font-medium text-primary hover:underline"
+        >
+          See all {jobs.total} roles →
+        </a>
+      )}
+    </div>
+  );
+}
 
-        {/* Rating Tag */}
-        {sponsor.rating && (
-          <span className="bg-success-500 text-white text-xs px-2.5 py-1 rounded-full">
-            Rating {sponsor.rating}
+export function CompanyCard({
+  sponsor,
+  enrichment,
+  pending,
+  children,
+}: {
+  sponsor: Sponsor;
+  enrichment?: Enrichment;
+  pending?: boolean;
+  children?: React.ReactNode;
+}) {
+  const [showJobs, setShowJobs] = useState(false);
+  const { website, careersUrl, jobs } = enrichment ?? {};
+  const extraVisas = sponsor.visaTypes.length - MAX_VISA_BADGES;
+
+  return (
+    <article className="card p-4 sm:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="font-display text-lg font-semibold leading-snug">{sponsor.name}</h3>
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1">
+              <MapPinIcon /> {sponsor.location}
+            </span>
+            {sponsor.rating && (
+              <Badge
+                tone={sponsor.rating.startsWith("A") ? "success" : "warning"}
+                title={
+                  sponsor.rating.startsWith("A")
+                    ? "A-rated: fully trusted to sponsor"
+                    : "B-rated: on an action plan with the Home Office"
+                }
+              >
+                {sponsor.rating}-rated
+              </Badge>
+            )}
+            {sponsor.visaTypes.slice(0, MAX_VISA_BADGES).map((v) => (
+              <Badge key={v} tone="primary">
+                {v}
+              </Badge>
+            ))}
+            {extraVisas > 0 && <Badge title={sponsor.visaTypes.slice(MAX_VISA_BADGES).join(", ")}>+{extraVisas}</Badge>}
+          </div>
+        </div>
+        <SaveControl id={sponsor.id} />
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-3">
+        {pending ? (
+          <span className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+            Looking for website and open roles…
           </span>
-        )}
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-2">
-        {/* Website Button */}
-        {sponsor.website && (
-          <Button asChild variant="outline" size="sm">
-            <a
-              href={sponsor.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-4 h-4 mr-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
-                />
-              </svg>
-              Website
-            </a>
-          </Button>
-        )}
-
-        {/* Careers Button */}
-        {sponsor.careerUrl ? (
-          <Button asChild variant="default" size="sm">
-            <a
-              href={sponsor.careerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-4 h-4 mr-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z"
-                />
-              </svg>
-              Careers
-            </a>
-          </Button>
         ) : (
-          sponsor.website && (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="text-gray-600 dark:text-gray-400"
-            >
-              <a
-                href={`https://www.google.com/search?q=${encodeURIComponent(
-                  `${sponsor.name} careers jobs`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4 mr-1"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                  />
-                </svg>
-                Search Google
-              </a>
-            </Button>
-          )
+          <>
+            {jobs && jobs.total > 0 && (
+              <Button size="sm" onClick={() => setShowJobs((s) => !s)} aria-expanded={showJobs}>
+                <BriefcaseIcon />
+                {jobs.total} open role{jobs.total === 1 ? "" : "s"}
+                {jobs.uk > 0 && jobs.uk < jobs.total && ` · ${jobs.uk} in UK`}
+                <ChevronDownIcon className={cn("transition-transform", showJobs && "rotate-180")} />
+              </Button>
+            )}
+            {careersUrl && (
+              <Button asChild size="sm" variant={jobs?.total ? "outline" : "default"}>
+                <a href={careersUrl} target="_blank" rel="noopener noreferrer">
+                  <BriefcaseIcon /> Careers page
+                </a>
+              </Button>
+            )}
+            {website && (
+              <Button asChild size="sm" variant="ghost">
+                <a href={website} target="_blank" rel="noopener noreferrer">
+                  <GlobeIcon /> {hostname(website)}
+                </a>
+              </Button>
+            )}
+            {!careersUrl && (
+              <Button asChild size="sm" variant="ghost">
+                <a href={googleJobsUrl(sponsor)} target="_blank" rel="noopener noreferrer">
+                  <SearchIcon /> Search jobs on Google
+                </a>
+              </Button>
+            )}
+          </>
         )}
       </div>
+
+      {showJobs && jobs && <JobsPanel jobs={jobs} careersUrl={careersUrl} />}
+      {children}
+    </article>
+  );
+}
+
+export function CompanyCardSkeleton() {
+  return (
+    <div className="card animate-pulse p-5" aria-hidden="true">
+      <div className="h-5 w-2/3 rounded bg-muted" />
+      <div className="mt-3 flex gap-2">
+        <div className="h-4 w-24 rounded bg-muted" />
+        <div className="h-4 w-16 rounded bg-muted" />
+        <div className="h-4 w-28 rounded bg-muted" />
+      </div>
+      <div className="mt-5 h-8 w-1/2 rounded bg-muted" />
     </div>
   );
 }
