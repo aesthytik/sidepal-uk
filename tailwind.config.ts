@@ -60,6 +60,7 @@ const config: Config = {
         display: ["var(--font-space-grotesk)", "sans-serif"],
       },
       keyframes: {
+        marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -70,6 +71,7 @@ const config: Config = {
         },
       },
       animation: {
+        marquee: "marquee 40s linear infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },

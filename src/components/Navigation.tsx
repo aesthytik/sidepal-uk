@@ -25,7 +25,7 @@ export function Navigation() {
       onClick={() => setOpen(false)}
       aria-current={pathname === href ? "page" : undefined}
       className={cn(
-        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-colors",
         pathname === href ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
     >
@@ -37,8 +37,8 @@ export function Navigation() {
   ));
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
-      <nav className="container flex h-14 items-center justify-between px-4" aria-label="Main">
+    <header className="sticky top-3 z-30 px-3">
+      <nav className="container flex h-14 max-w-5xl items-center justify-between rounded-full border border-border/70 bg-background/80 px-5 shadow-sm backdrop-blur" aria-label="Main">
         <Link href="/" className="font-display text-lg font-bold tracking-tight">
           Side<span className="text-primary">pal</span>
         </Link>
@@ -53,7 +53,7 @@ export function Navigation() {
           {open ? <XIcon width={20} height={20} /> : <MenuIcon width={20} height={20} />}
         </button>
       </nav>
-      {open && <div className="container flex flex-col gap-1 px-4 pb-3 sm:hidden">{links}</div>}
+      {open && <div className="container mt-2 flex max-w-5xl flex-col gap-1 rounded-3xl border border-border/70 bg-background p-3 sm:hidden">{links}</div>}
     </header>
   );
 }

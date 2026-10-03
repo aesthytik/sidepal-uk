@@ -25,25 +25,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ShortlistHydrator />
         <Navigation />
         <div className="flex-1">{children}</div>
-        <footer className="border-t border-border py-8 text-sm text-muted-foreground">
-          <div className="container flex flex-col gap-2 px-4 sm:flex-row sm:justify-between">
-            <p>
-              Data from the{" "}
+        <footer className="mt-16 border-t border-border bg-accent/40 py-14 text-sm text-muted-foreground">
+          <div className="container grid gap-10 px-4 sm:grid-cols-[2fr_1fr_1fr]">
+            <div>
+              <p className="font-display text-3xl font-bold tracking-tight text-foreground">
+                Side<span className="text-primary">pal</span>
+              </p>
+              <p className="mt-3 max-w-sm">
+                Find UK employers licensed to sponsor your work visa, see who&apos;s hiring, and track your applications.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-medium text-foreground">Product</p>
+              <Link href="/sponsors" className="hover:text-foreground">Find sponsors</Link>
+              <Link href="/saved" className="hover:text-foreground">My shortlist</Link>
+              <Link href="/guide/visa-basics" className="hover:text-foreground">Visa guide</Link>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="font-medium text-foreground">Data</p>
               <a
-                className="underline underline-offset-2 hover:text-foreground"
+                className="hover:text-foreground"
                 href="https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                GOV.UK register of licensed sponsors
+                GOV.UK sponsor register
               </a>
-              . Not affiliated with the Home Office.
-            </p>
-            <p>
-              <Link href="/guide/visa-basics" className="hover:text-foreground">
-                Visa guide
-              </Link>
-            </p>
+              <p>Not affiliated with the Home Office.</p>
+            </div>
           </div>
         </footer>
       </body>
