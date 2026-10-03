@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { STATUSES, STATUS_LABELS, type Status, useShortlist } from "@/store/useShortlist";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import { JobVerdict } from "./JobVerdict";
 import {
   BookmarkIcon,
   BriefcaseIcon,
@@ -65,7 +66,7 @@ function SaveControl({ id }: { id: string }) {
   );
 }
 
-function JobsPanel({ jobs, careersUrl }: { jobs: NonNullable<Enrichment["jobs"]>; careersUrl?: string }) {
+function JobsPanel({ jobs, careersUrl, rating }: { jobs: NonNullable<Enrichment["jobs"]>; careersUrl?: string; rating?: string }) {
   return (
     <div className="mt-3 rounded-lg border border-border bg-muted/40">
       <ul className="divide-y divide-border">
@@ -86,6 +87,7 @@ function JobsPanel({ jobs, careersUrl }: { jobs: NonNullable<Enrichment["jobs"]>
                 <ExternalLinkIcon className="text-muted-foreground" />
               </span>
             </a>
+            <JobVerdict job={job} rating={rating} />
           </li>
         ))}
       </ul>
@@ -161,6 +163,7 @@ export function CompanyCard({
             {jobs && jobs.total > 0 && (
               <Button size="sm" onClick={() => setShowJobs((s) => !s)} aria-expanded={showJobs}>
                 <BriefcaseIcon />
+                {jobs.matching ? `${jobs.matching} matching · ` : ""}
                 {jobs.total} open role{jobs.total === 1 ? "" : "s"}
                 {jobs.uk > 0 && jobs.uk < jobs.total && ` · ${jobs.uk} in UK`}
                 <ChevronDownIcon className={cn("transition-transform", showJobs && "rotate-180")} />
@@ -191,7 +194,7 @@ export function CompanyCard({
         )}
       </div>
 
-      {showJobs && jobs && <JobsPanel jobs={jobs} careersUrl={careersUrl} />}
+      {showJobs && jobs && <JobsPanel jobs={jobs} careersUrl={careersUrl} rating={sponsor.rating} />}
       {children}
     </article>
   );

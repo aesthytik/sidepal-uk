@@ -13,10 +13,13 @@ import { useSponsorSearch } from "@/lib/useSponsorSearch";
 export function SponsorSearch() {
   const search = useSponsorSearch();
   const { filters, setFilters, items, total, status } = search;
-  const enrichment = useEnrichment(items.map((s) => s.id));
+  const enrichment = useEnrichment(
+    items.map((s) => s.id),
+    filters.role
+  );
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const filterCount = [filters.location, filters.visa, filters.rating].filter(Boolean).length;
+  const filterCount = [filters.location, filters.visa, filters.rating, filters.role, filters.sector].filter(Boolean).length;
   const loading = status === "loading";
 
   return (

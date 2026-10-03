@@ -25,7 +25,7 @@ const GREENHOUSE_JOBS = {
 const acmeSite = {
   "https://acmewidgets.co.uk": `<h1>Acme Widgets</h1><a href="/careers">Careers</a>`,
   "https://acmewidgets.co.uk/careers": `<script src="https://boards.greenhouse.io/embed/job_board/js?for=acme"></script>`,
-  "https://boards-api.greenhouse.io/v1/boards/acme/jobs": GREENHOUSE_JOBS,
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs?content=true": GREENHOUSE_JOBS,
 };
 
 function setup(routes: Record<string, string | object>, resolvable: string[] = ["acmewidgets.co.uk"]) {
@@ -123,7 +123,7 @@ describe("careers discovery", () => {
       "https://acmewidgets.co.uk": `Acme Widgets <a href="/careers">Careers</a>`,
       "https://acmewidgets.co.uk/careers": `<a href="/careers/jobs">View open roles</a>`,
       "https://acmewidgets.co.uk/careers/jobs": `<iframe src="https://jobs.ashbyhq.com/Acme%20Widgets"></iframe>`,
-      "https://api.ashbyhq.com/posting-api/job-board/Acme%20Widgets": {
+      "https://api.ashbyhq.com/posting-api/job-board/Acme%20Widgets?includeCompensation=true": {
         jobs: [{ title: "SRE", jobUrl: "https://ashby/1", location: "Remote", secondaryLocations: [{ location: "London" }] }],
       },
     });

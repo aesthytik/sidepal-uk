@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import type { SectorId } from "../sectors/taxonomy";
 import type { SearchPage, SearchQuery, Sponsor } from "../sponsorTypes";
 import { createDirectory, parseRegisterCsv, type Directory } from "./core";
 
@@ -38,6 +39,15 @@ async function findLocalCsv(): Promise<string | null> {
   }
 }
 
+/** AI-classified sectors from scripts/classify-sectors.ts, if that has been run. */
+async function loadSectorOverrides(): Promise<Record<string, SectorId | null>> {
+  try {
+    return JSON.parse(await fs.readFile(path.join(DATA_DIR, "sector-overrides.json"), "utf-8"));
+  } catch {
+    return {};
+  }
+}
+
 async function load(): Promise<Loaded> {
   if (current) return current;
   loading ??= (async () => {
@@ -45,7 +55,7 @@ async function load(): Promise<Loaded> {
     if (!csvPath) throw new Error(`No sponsor CSV found in ${DATA_DIR}`);
     const rows = parseRegisterCsv(await fs.readFile(csvPath, "utf-8"));
     current = {
-      directory: createDirectory(rows),
+      directory: createDirectory(rows, await loadSectorOverrides()),
       source: path.basename(csvPath),
       loadedAt: new Date().toISOString(),
     };
@@ -127,7 +137,7 @@ export async function refreshFromGovUk(): Promise<{ count: number; source: strin
   }
 
   current = {
-    directory: createDirectory(rows),
+    directory: createDirectory(rows, await loadSectorOverrides()),
     source: fileName,
     loadedAt: new Date().toISOString(),
   };

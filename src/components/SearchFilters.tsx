@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import type { SearchFilters as Filters } from "@/lib/searchParams";
+import { ROLE_FAMILIES, SECTORS, roleFamily, sectorLabel } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS, VISA_CATEGORIES } from "@/lib/sponsorTypes";
 import { SearchBar } from "./SearchBar";
 import { Chip } from "./ui/chip";
@@ -112,6 +113,38 @@ export function SearchFilters({
         </div>
       </Section>
 
+      <Section title="Role (narrows by likely sector)">
+        <div className="flex flex-wrap gap-2">
+          {ROLE_FAMILIES.map(({ id, label }) => (
+            <Chip
+              key={id}
+              selected={filters.role === id}
+              onClick={() => onChange({ role: filters.role === id ? undefined : id })}
+            >
+              {label}
+            </Chip>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Sector (estimated from company name)">
+        <div className="flex flex-wrap gap-2">
+          {SECTORS.map(({ id, label }) => (
+            <Chip
+              key={id}
+              selected={filters.sector === id}
+              onClick={() => onChange({ sector: filters.sector === id ? undefined : id })}
+            >
+              {label}
+            </Chip>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          The register has no job or industry data, so sectors are guessed from company names. Companies with unclear
+          names are hidden when a sector is chosen.
+        </p>
+      </Section>
+
       <Section title="Sponsor rating">
         <label className="flex cursor-pointer items-start gap-3 text-sm">
           <input
@@ -144,6 +177,8 @@ export function ActiveFilters({
     filters.q && { key: "q" as const, label: `“${filters.q}”` },
     filters.location && { key: "location" as const, label: filters.location },
     filters.visa && { key: "visa" as const, label: filters.visa },
+    filters.role && { key: "role" as const, label: roleFamily(filters.role)?.label ?? filters.role },
+    filters.sector && { key: "sector" as const, label: sectorLabel(filters.sector) },
     filters.rating && { key: "rating" as const, label: "A-rated only" },
   ].filter(Boolean) as { key: keyof Filters; label: string }[];
 
@@ -159,7 +194,7 @@ export function ActiveFilters({
         <button
           type="button"
           className="px-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-          onClick={() => onChange({ q: undefined, location: undefined, visa: undefined, rating: undefined })}
+          onClick={() => onChange({ q: undefined, location: undefined, visa: undefined, rating: undefined, sector: undefined, role: undefined })}
         >
           Clear all
         </button>

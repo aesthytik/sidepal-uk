@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { AskAi } from "@/components/AskAi";
 import { Marquee } from "@/components/Marquee";
 import { Button } from "@/components/ui/button";
 import { BriefcaseIcon, BookmarkIcon, SearchIcon, ShieldCheckIcon } from "@/components/ui/icons";
 import { directoryInfo } from "@/lib/directory";
+import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
 
 // Re-render hourly so the sponsor count and register date stay current
@@ -92,6 +94,8 @@ export default async function Home() {
           </Button>
         </form>
 
+        <AskAi className="mx-auto mt-4 max-w-xl text-left" />
+
         <div className="mt-5 flex flex-wrap justify-center gap-2 text-sm">
           <span className="py-1.5 text-muted-foreground">Popular:</span>
           {POPULAR_LOCATIONS.slice(0, 6).map((place) => (
@@ -101,6 +105,19 @@ export default async function Home() {
               className="rounded-full border border-border bg-card px-3 py-1.5 hover:border-primary/50 hover:bg-muted"
             >
               {place}
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-3 flex flex-wrap justify-center gap-2 text-sm">
+          <span className="py-1.5 text-muted-foreground">Roles:</span>
+          {ROLE_FAMILIES.slice(0, 6).map(({ id, label }) => (
+            <Link
+              key={id}
+              href={`/sponsors?role=${id}&visa=Skilled+Worker`}
+              className="rounded-full border border-border bg-card px-3 py-1.5 hover:border-primary/50 hover:bg-muted"
+            >
+              {label}
             </Link>
           ))}
         </div>
