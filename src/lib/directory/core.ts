@@ -1,5 +1,7 @@
 import Papa from "papaparse";
 import Fuse from "fuse.js";
+import { classifyByName } from "../sectors/classify";
+import { type SectorId, roleFamily } from "../sectors/taxonomy";
 import type { SearchPage, SearchQuery, Sponsor } from "../sponsorTypes";
 
 const DEFAULT_LIMIT = 20;
@@ -96,7 +98,7 @@ function normalisePlace(place: string): string {
     .replace(/(^|[\s-])\S/g, (c) => c.toUpperCase());
 }
 
-function toSponsors(rows: SponsorRow[]): Sponsor[] {
+function toSponsors(rows: SponsorRow[], overrides: Record<string, SectorId | null>): Sponsor[] {
   const usedIds = new Map<string, number>();
   return rows.map((row) => {
     const baseId = slugify(row.name) || "sponsor";
@@ -110,6 +112,7 @@ function toSponsors(rows: SponsorRow[]): Sponsor[] {
       location: formatLocation(row.city, row.county),
       rating: row.rating,
       routes: row.routes,
+      sector: classifyByName(row.name) ?? overrides[row.name] ?? undefined,
       visaTypes: Array.from(
         new Set(row.routes.filter(Boolean).map((r) => routeToVisaType(r.trim())))
       ),
@@ -127,8 +130,8 @@ export interface Directory {
 /**
  * Builds a searchable in-memory index of the register.
  */
-export function createDirectory(rows: SponsorRow[]): Directory {
-  const sponsors = toSponsors(rows);
+export function createDirectory(rows: SponsorRow[], overrides: Record<string, SectorId | null> = {}): Directory {
+  const sponsors = toSponsors(rows, overrides);
   const byId = new Map(sponsors.map((s) => [s.id, s]));
   const searchText = sponsors.map((s) => `${s.name} ${s.city} ${s.county}`.toLowerCase());
   const placeText = sponsors.map((s) => `${s.city} ${s.county}`.toLowerCase());
@@ -156,6 +159,11 @@ export function createDirectory(rows: SponsorRow[]): Directory {
     if (query.visa) {
       const visa = query.visa.toLowerCase();
       if (!s.visaTypes.some((v) => v.toLowerCase() === visa)) return false;
+    }
+    if (query.sector && s.sector !== query.sector) return false;
+    if (query.role) {
+      const family = roleFamily(query.role);
+      if (family && !(s.sector && (family.sectors as readonly string[]).includes(s.sector))) return false;
     }
     if (query.rating === "A" && !s.rating.startsWith("A")) return false;
     return true;

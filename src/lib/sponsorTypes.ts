@@ -1,3 +1,5 @@
+import type { SectorId, RoleId } from "./sectors/taxonomy";
+
 /**
  * One organisation from the register. The register has one row per
  * (organisation, route); rows are merged so each sponsor appears once.
@@ -11,6 +13,7 @@ export interface Sponsor {
   rating: string; // "A", "B", "A (SME+)", ...
   routes: string[]; // Raw register routes
   visaTypes: string[]; // Routes grouped into VISA_CATEGORIES
+  sector?: SectorId; // Estimated from the name; undefined when unclear
 }
 
 export interface SearchQuery {
@@ -18,6 +21,8 @@ export interface SearchQuery {
   location?: string; // Matches city or county
   visa?: string; // One of VISA_CATEGORIES
   rating?: "A"; // Only A-rated sponsors
+  sector?: SectorId;
+  role?: RoleId; // Matches sponsors in the role family's likely sectors
   page?: number;
   limit?: number;
 }
@@ -30,11 +35,20 @@ export interface SearchPage {
   fuzzy: boolean; // True when no exact match was found and these are near misses
 }
 
+export interface Salary {
+  min?: number;
+  max?: number;
+  currency: string; // ISO code, e.g. "GBP"
+  period: "year" | "month" | "week" | "day" | "hour";
+}
+
 export interface Job {
   title: string;
   url: string;
   location: string;
   uk: boolean;
+  salary?: Salary;
+  snippet?: string; // Start of the plain-text description
 }
 
 export type AtsProvider = "greenhouse" | "lever" | "ashby" | "workable";
@@ -42,6 +56,7 @@ export type AtsProvider = "greenhouse" | "lever" | "ashby" | "workable";
 export interface JobSummary {
   provider: AtsProvider;
   total: number;
+  matching?: number; // Roles matching the requested role family
   uk: number;
   top: Job[]; // A handful of roles, UK first
 }

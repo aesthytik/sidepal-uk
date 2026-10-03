@@ -1,5 +1,6 @@
 import dns from "dns/promises";
 import path from "path";
+import { roleFamily } from "../sectors/taxonomy";
 import type { Enrichment, JobSummary } from "../sponsorTypes";
 import { type AtsBoard, fetchJobs } from "./ats";
 import { findCareers } from "./careers";
@@ -24,7 +25,8 @@ export interface EnricherDeps {
 }
 
 export type Enricher = (
-  sponsors: { name: string; city?: string }[]
+  sponsors: { name: string; city?: string }[],
+  role?: string
 ) => Promise<Record<string, Enrichment>>;
 
 /** Runs `fn` over `items` with at most `limit` in flight. */
@@ -52,11 +54,11 @@ export function createEnricher(deps: EnricherDeps): Enricher {
   const now = deps.now ?? Date.now;
   const jobsCache = new Map<string, { at: number; jobs: JobSummary | null }>();
 
-  async function jobsFor(board: AtsBoard): Promise<JobSummary | null> {
-    const key = `${board.provider}:${board.slug}`;
+  async function jobsFor(board: AtsBoard, role?: string): Promise<JobSummary | null> {
+    const key = `${board.provider}:${board.slug}:${role ?? ""}`;
     const cached = jobsCache.get(key);
     if (cached && now() - cached.at < JOBS_TTL_MS) return cached.jobs;
-    const jobs = await fetchJobs(board, deps.http);
+    const jobs = await fetchJobs(board, deps.http, role ? roleFamily(role)?.titles : undefined);
     jobsCache.set(key, { at: now(), jobs });
     return jobs;
   }
@@ -88,7 +90,7 @@ export function createEnricher(deps: EnricherDeps): Enricher {
     return { rec, changed };
   }
 
-  return async function enrich(sponsors) {
+  return async function enrich(sponsors, role) {
     const batch = sponsors.slice(0, MAX_BATCH);
     const stored = await deps.store.get(batch.map((s) => s.name));
     const updates: Record<string, StoredEnrichment> = {};
@@ -101,7 +103,7 @@ export function createEnricher(deps: EnricherDeps): Enricher {
           website: rec.website ?? undefined,
           careersUrl: rec.careersUrl ?? undefined,
         };
-        if (rec.ats) enrichment.jobs = (await jobsFor(rec.ats)) ?? undefined;
+        if (rec.ats) enrichment.jobs = (await jobsFor(rec.ats, role)) ?? undefined;
         return [name, enrichment] as const;
       } catch (error) {
         // One unreachable site shouldn't fail the whole batch
@@ -118,7 +120,7 @@ export function createEnricher(deps: EnricherDeps): Enricher {
 let defaultEnricher: Enricher | null = null;
 
 /** The production enricher: real network, cache file in public/data. */
-export const enrich: Enricher = (sponsors) => {
+export const enrich: Enricher = (sponsors, role) => {
   defaultEnricher ??= createEnricher({
     store: createFileStore(path.join(process.cwd(), "public", "data", "enrichment-cache.json")),
     http: fetch,
@@ -135,5 +137,5 @@ export const enrich: Enricher = (sponsors) => {
         ? { key: process.env.GOOGLE_API_KEY, cx: process.env.GOOGLE_SEARCH_ENGINE_ID }
         : undefined,
   });
-  return defaultEnricher(sponsors);
+  return defaultEnricher(sponsors, role);
 };

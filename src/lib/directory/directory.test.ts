@@ -69,4 +69,11 @@ describe("directory", () => {
   it("looks sponsors up by id, skipping unknown ids", () => {
     expect(names({ items: directory.getByIds(["monzo-bank-limited", "nope"]) })).toEqual(["Monzo Bank Limited"]);
   });
+
+  it("filters by sector and by role family", () => {
+    expect(names(directory.search({ sector: "health" }))).toEqual(["Kent Care Homes"]);
+    expect(names(directory.search({ role: "software" }))).toEqual(["Acme Software Ltd"]);
+    expect(names(directory.search({ role: "health", sector: "health" }))).toEqual(["Kent Care Homes"]);
+    expect(directory.search({ role: "health", sector: "tech" }).total).toBe(0);
+  });
 });
