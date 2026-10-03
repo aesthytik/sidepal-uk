@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/guide/visa-basics" },
   title: "UK work visa basics",
   description: "How sponsored UK work visas work: the main routes, what employers must do, and how to apply.",
 };

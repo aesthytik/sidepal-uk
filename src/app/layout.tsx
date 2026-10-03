@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -8,18 +8,59 @@ import { ShortlistHydrator } from "@/components/ShortlistHydrator";
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], display: "swap", variable: "--font-space-grotesk" });
 
+const DESCRIPTION =
+  "Search every UK employer licensed to sponsor work visas, browse live jobs from them, check whether a role is likely sponsorable, and track your applications. Built on the official Home Office register.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://horus.to"),
   title: { default: "Horus | Find UK visa sponsor jobs", template: "%s | Horus" },
-  description:
-    "Search every UK employer licensed to sponsor work visas, see their open roles, and track your applications.",
+  description: DESCRIPTION,
+  applicationName: "Horus",
+  keywords: [
+    "UK visa sponsorship jobs",
+    "Skilled Worker visa jobs",
+    "licensed sponsors register",
+    "Home Office sponsor list",
+    "jobs that sponsor visas UK",
+    "Certificate of Sponsorship",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Horus",
+    locale: "en_GB",
+    url: "/",
+    title: "Horus | Find UK visa sponsor jobs",
+    description: DESCRIPTION,
+  },
+  twitter: { card: "summary_large_image", title: "Horus | Find UK visa sponsor jobs", description: DESCRIPTION },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" } },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8f6f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1020" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-GB">
       <head>
-        <link rel="icon" href="/globe.svg" type="image/svg+xml" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Horus",
+              url: "https://horus.to",
+              logo: "https://horus.to/icon.svg",
+              description: DESCRIPTION,
+            }),
+          }}
+        />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} flex min-h-screen flex-col font-sans`}>
         <ShortlistHydrator />

@@ -30,6 +30,21 @@ const STEPS = [
   },
 ];
 
+const FAQ = [
+  {
+    q: "Does being on the sponsor register mean a job will sponsor my visa?",
+    a: "No. A licence means an employer can sponsor workers, not that every role will. Look for visa sponsorship in the job ad or ask the recruiter.",
+  },
+  {
+    q: "What does an A or B sponsor rating mean?",
+    a: "A-rated sponsors can issue certificates of sponsorship. B-rated sponsors are on a Home Office action plan and cannot assign new certificates until it is resolved.",
+  },
+  {
+    q: "Why can't I find a company I know?",
+    a: "The register lists legal company names, which can differ from the brand. Look up the legal name on Companies House and search for that.",
+  },
+];
+
 async function getStats() {
   try {
     const [info, jobs] = await Promise.all([directoryInfo(), jobsInfo()]);
@@ -65,6 +80,21 @@ export default async function Home() {
               target: { "@type": "EntryPoint", urlTemplate: "https://horus.to/sponsors?q={search_term_string}" },
               "query-input": "required name=search_term_string",
             },
+          }),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQ.map(({ q, a }) => ({
+              "@type": "Question",
+              name: q,
+              acceptedAnswer: { "@type": "Answer", text: a },
+            })),
           }),
         }}
       />

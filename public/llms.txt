@@ -1,0 +1,20 @@
+# Horus
+
+> Horus (https://horus.to) helps people find UK jobs that can sponsor a work visa. It combines the Home Office's official register of licensed sponsors (about 127,000 organisations) with live job listings from sponsors' own job boards, and gives each role a rough sponsorship check. It is an independent site, not affiliated with the Home Office, and does not give immigration advice.
+
+## Main pages
+
+- [Jobs](https://horus.to/jobs): Latest UK roles from licensed sponsors, newest first. Filter by location, visa route, role, sector and "likely sponsorable". Each role links to the employer's own application page.
+- [Find sponsors](https://horus.to/sponsors): Search the whole register by company name, town, visa route and rating (A-rated sponsors can issue new certificates of sponsorship; B-rated ones are on an action plan).
+- [UK work visa basics](https://horus.to/guide/visa-basics): How sponsored work visas work, the main routes, and what employers must do.
+
+## About the data
+
+- Sponsor data: GOV.UK "Register of licensed sponsors: workers", refreshed daily. https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers
+- Jobs: read from public job boards (Greenhouse, Lever, Ashby, Workable) of sponsors we can match, updated daily. Coverage grows over time and is a subset of all sponsors.
+- Sectors and role filters are estimates inferred from company names, because the register has no industry data.
+- "Likely sponsorable" is a rule-based guide using the advertised salary and wording. A licence does not guarantee any particular role is sponsored; always check the job ad and GOV.UK.
+
+## Optional
+
+- [Sitemap](https://horus.to/sitemap.xml)
