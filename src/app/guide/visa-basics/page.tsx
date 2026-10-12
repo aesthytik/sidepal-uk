@@ -56,7 +56,7 @@ export default function VisaBasicsGuidePage() {
             <li>For people moved to the UK by an overseas employer, e.g. Senior or Specialist Worker, Graduate Trainee.</li>
             <li>Temporary: it does not lead to settlement on its own.</li>
             <li>
-              <Gov href="https://www.gov.uk/government/collections/global-business-mobility-visas">Global Business Mobility on GOV.UK</Gov>
+              <Gov href="https://www.gov.uk/browse/visas-immigration/work-visas">Global Business Mobility on GOV.UK</Gov>
             </li>
           </ul>
         </div>

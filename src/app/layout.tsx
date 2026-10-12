@@ -100,6 +100,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/sponsors" className="hover:text-foreground">Find sponsors</Link>
               <Link href="/saved" className="hover:text-foreground">My shortlist</Link>
               <Link href="/guide/visa-basics" className="hover:text-foreground">Visa guide</Link>
+              <Link href="/visa-sponsors" className="hover:text-foreground">Sponsors by place</Link>
+              <Link href="/visa-sponsorship-jobs" className="hover:text-foreground">Jobs by role</Link>
+              <Link href="/visa-routes" className="hover:text-foreground">Visa routes</Link>
+              <Link href="/about" className="hover:text-foreground">About the data</Link>
             </div>
             <div className="flex flex-col gap-2">
               <p className="font-medium text-foreground">Data</p>

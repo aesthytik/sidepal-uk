@@ -5,6 +5,7 @@ import { supabaseAdmin, supabaseRead } from "../supabase/client";
 import { SPONSOR_COLUMNS, type SponsorRow, rowToSponsor } from "../supabase/mappers";
 import { syncSponsors } from "../supabase/sync";
 import { parseRegisterCsv, toSponsors } from "./core";
+import { slug } from "../seo";
 
 const REGISTER_PAGE_URL =
   "https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers";
@@ -162,4 +163,70 @@ export async function refreshFromGovUk(): Promise<{ count: number; source: strin
   await syncSponsors(supabaseAdmin(), sponsors, { overrides, registerDate });
   infoCache = null;
   return { count: sponsors.length, source: url, saved: true };
+}
+
+export async function getSponsor(id: string): Promise<Sponsor | null> {
+  return (await getSponsors([id]))[0] ?? null;
+}
+
+export interface Place {
+  place: string;
+  count: number;
+}
+
+let placesCache: { at: number; value: Place[] } | null = null;
+
+/**
+ * Towns and counties ranked by how many sponsors mention them (rebuilt with each register import).
+ * `count` is for ranking only: it counts a sponsor once for its town and once for its county, so
+ * show `countSponsors({ location })` to people instead.
+ */
+export async function listPlaces(min = 1): Promise<Place[]> {
+  if (!placesCache || Date.now() - placesCache.at > INFO_CACHE_MS) {
+    const { data, error } = await supabaseRead().from("places").select("place,n").order("n", { ascending: false }).limit(5000);
+    if (error) throw new Error(`Places lookup failed: ${error.message}`);
+    // Spelling variants ("Burton-On-Trent", "Burton On Trent") share one page: merge them under the most common spelling
+    const bySlug = new Map<string, Place & { top: number }>();
+    for (const r of data ?? []) {
+      const place = r.place as string;
+      const count = r.n as number;
+      const key = slug(place);
+      const seen = bySlug.get(key);
+      if (!seen) bySlug.set(key, { place, count, top: count });
+      else {
+        seen.count += count;
+        if (count > seen.top) Object.assign(seen, { place, top: count });
+      }
+    }
+    placesCache = {
+      at: Date.now(),
+      value: [...bySlug.values()].map(({ place, count }) => ({ place, count })).sort((a, b) => b.count - a.count),
+    };
+  }
+  return placesCache.value.filter((p) => p.count >= min);
+}
+
+/** Total sponsors matching a filter, without fetching them. */
+export async function countSponsors(query: SearchQuery): Promise<number> {
+  return (await searchSponsors({ ...query, limit: 1 })).total;
+}
+
+/**
+ * Sponsor ids for one slice of the sitemap, in register order. Slices are
+ * ranges of `ord` so each sitemap file stays the same size as the register grows.
+ */
+export async function sponsorIdsInRange(fromOrd: number, toOrd: number): Promise<string[]> {
+  const db = supabaseRead();
+  const ids: string[] = [];
+  for (let from = fromOrd; from < toOrd; from += 1000) {
+    const { data, error } = await db
+      .from("sponsors")
+      .select("id")
+      .gte("ord", from)
+      .lt("ord", Math.min(toOrd, from + 1000))
+      .order("ord");
+    if (error) throw new Error(`Sponsor ids failed: ${error.message}`);
+    ids.push(...(data ?? []).map((r) => r.id as string));
+  }
+  return ids;
 }

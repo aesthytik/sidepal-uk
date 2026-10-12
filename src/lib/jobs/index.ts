@@ -105,3 +105,8 @@ export async function jobsInfo(): Promise<JobsInfo> {
   const index = await load();
   return { count: index.jobs.length, sponsors: index.sponsorsIndexed, generatedAt: index.generatedAt };
 }
+
+/** Every indexed role at one sponsor, newest first. */
+export async function jobsForSponsor(sponsorId: string): Promise<IndexedJob[]> {
+  return (await load()).jobs.filter((j) => j.sponsorId === sponsorId);
+}

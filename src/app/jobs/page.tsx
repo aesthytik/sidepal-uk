@@ -13,29 +13,22 @@ export const metadata: Metadata = {
 // Re-render hourly so the structured data tracks the index
 export const revalidate = 3600;
 
-/** schema.org JobPosting entries for the newest roles, so crawlers and AI tools can read them without running the page's scripts. */
+/**
+ * The newest roles as a plain ItemList. Google's job-posting rules forbid JobPosting markup on
+ * list pages (it belongs on a single job's own page, which here is the employer's), so this
+ * only describes the list.
+ */
 async function jobsJsonLd() {
   const { items } = await searchJobs({ limit: 25 }).catch(() => ({ items: [] }));
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
+    name: "Latest UK jobs from licensed visa sponsors",
     itemListElement: items.map((j, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      item: {
-        "@type": "JobPosting",
-        title: j.title,
-        description: j.snippet ?? `${j.title} at ${j.sponsor}, ${j.location}.`,
-        datePosted: j.postedAt?.slice(0, 10),
-        url: j.url,
-        directApply: false,
-        hiringOrganization: { "@type": "Organization", name: j.sponsor },
-        jobLocation: {
-          "@type": "Place",
-          address: { "@type": "PostalAddress", addressLocality: j.location, addressCountry: "GB" },
-        },
-        ...(j.department && { industry: j.department }),
-      },
+      name: `${j.title} at ${j.sponsor}`,
+      url: j.url,
     })),
   };
 }

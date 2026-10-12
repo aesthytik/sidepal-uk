@@ -8,6 +8,7 @@ import { JobCard } from "@/components/JobCard";
 import { jobsInfo, searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
+import { placePath, rolePath } from "@/lib/seo";
 import { Horus } from "@/components/game/Horus";
 import { StampRushLoader } from "@/components/game/StampRushLoader";
 
@@ -138,7 +139,7 @@ export default async function Home() {
                 {POPULAR_LOCATIONS.slice(0, 6).map((place) => (
                   <dd key={place}>
                     <Link
-                      href={`/sponsors?location=${encodeURIComponent(place)}&visa=Skilled+Worker`}
+                      href={placePath(place)}
                       className="underline decoration-border underline-offset-4 hover:decoration-foreground"
                     >
                       {place}
@@ -151,7 +152,7 @@ export default async function Home() {
                 {ROLE_FAMILIES.slice(0, 6).map(({ id, label }) => (
                   <dd key={id}>
                     <Link
-                      href={`/sponsors?role=${id}&visa=Skilled+Worker`}
+                      href={rolePath(id)}
                       className="underline decoration-border underline-offset-4 hover:decoration-foreground"
                     >
                       {label}

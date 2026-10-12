@@ -5,6 +5,7 @@ import { Badge } from "./ui/badge";
 import { JobVerdict } from "./JobVerdict";
 import { ExternalLinkIcon, MapPinIcon } from "./ui/icons";
 import { TrackedLink } from "./game/TrackedLink";
+import { sponsorPath } from "@/lib/seo";
 
 export function JobCard({ job }: { job: IndexedJob }) {
   const posted = postedAgo(job.postedAt);
@@ -18,7 +19,7 @@ export function JobCard({ job }: { job: IndexedJob }) {
             </a>
           </h2>
           <p className="mt-1 text-sm">
-            <Link href={`/sponsors?q=${encodeURIComponent(job.sponsor)}`} className="font-medium hover:underline">
+            <Link href={sponsorPath(job.sponsorId)} className="font-medium hover:underline">
               {job.sponsor}
             </Link>
           </p>
