@@ -7,8 +7,8 @@ import type { EnrichmentStore, StoredEnrichment } from "../enrichment/store";
 import { fetchAll } from "./client";
 import { SPONSOR_COLUMNS, type SponsorRow, jobToRow, rowToSponsor, sponsorToRow } from "./mappers";
 
-const BATCH = 1000;
-const CONCURRENCY = 4;
+const BATCH = 500;
+const CONCURRENCY = 3;
 
 async function inBatches<T>(rows: T[], size: number, run: (batch: T[]) => Promise<void>): Promise<void> {
   const batches: T[][] = [];
@@ -28,9 +28,17 @@ async function upsert(db: SupabaseClient, table: string, rows: object[], onConfl
   });
 }
 
+const SPONSOR_FIELDS = [
+  "id", "name", "city", "county", "location", "rating", "routes", "visa_types",
+  "sector", "sector_override", "override_set", "ord", "register_date",
+] as const;
+
+const signature = (row: Record<string, unknown>) => JSON.stringify(SPONSOR_FIELDS.map((f) => row[f] ?? null));
+
 /**
- * Replaces the register in Supabase: upserts every sponsor, removes organisations
- * that are no longer listed, and rebuilds the ranked places used for suggestions.
+ * Brings the register in Supabase in line with `sponsors`: upserts only organisations that
+ * are new or changed (rewriting all 127k rows is slow and bloats the indexes), removes ones no
+ * longer listed, and rebuilds the ranked places used for location suggestions.
  */
 export async function syncSponsors(
   db: SupabaseClient,
@@ -39,11 +47,24 @@ export async function syncSponsors(
 ): Promise<void> {
   const stamp = new Date().toISOString();
   const rows = sponsors.map((s, i) => sponsorToRow(s, i, { ...opts, stamp }));
-  // Names are the natural key (enrichment is keyed by them); ids may shift if slugs collide
-  await upsert(db, "sponsors", rows, "name");
 
-  const stale = await db.from("sponsors").delete().lt("updated_at", stamp);
-  if (stale.error) throw new Error(`sponsors cleanup: ${stale.error.message}`);
+  const existing = await fetchAll<Record<string, unknown>>((from, to) =>
+    db.from("sponsors").select(SPONSOR_FIELDS.join(",")).order("name").range(from, to).returns<Record<string, unknown>[]>()
+  );
+  const stored = new Map(existing.map((r) => [r.name as string, signature(r)]));
+
+  // Names are the natural key (enrichment is keyed by them); ids may shift if slugs collide
+  const changed = rows.filter((r) => stored.get(r.name) !== signature(r));
+  console.log(`Sponsors: ${changed.length} new or changed of ${rows.length}`);
+  await upsert(db, "sponsors", changed, "name");
+
+  const current = new Set(rows.map((r) => r.name));
+  const removed = existing.map((r) => r.name as string).filter((n) => !current.has(n));
+  for (let i = 0; i < removed.length; i += 100) {
+    const gone = await db.from("sponsors").delete().in("name", removed.slice(i, i + 100));
+    if (gone.error) throw new Error(`sponsors cleanup: ${gone.error.message}`);
+  }
+  if (removed.length) console.log(`Sponsors: removed ${removed.length} no longer listed`);
 
   const places = rankPlaces(sponsors).map(([place, n]) => ({ place, n }));
   const cleared = await db.from("places").delete().neq("place", "");
