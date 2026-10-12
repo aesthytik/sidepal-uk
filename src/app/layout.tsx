@@ -13,6 +13,8 @@ const fraunces = Fraunces({ subsets: ["latin"], display: "swap", variable: "--fo
 // Only used by the arcade-mode easter egg, so it isn't preloaded
 const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], display: "swap", preload: false, variable: "--font-pixel" });
 
+const SUPPORT_URL = "https://buymeacoffee.com/aesthytik";
+
 const DESCRIPTION =
   "Search every UK employer licensed to sponsor work visas, browse live jobs from them, check whether a role is likely sponsorable, and track your applications. Built on the official Home Office register.";
 
@@ -79,6 +81,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <p className="mt-3 max-w-sm">
                 Find UK employers licensed to sponsor your work visa, see who&apos;s hiring, and track your applications.
               </p>
+              <div className="mt-6 max-w-sm rounded-lg border border-border bg-card p-4">
+                <p className="text-foreground">Horus is free and independent.</p>
+                <p className="mt-1">If it helped your search, you can keep it running with a coffee.</p>
+                <a
+                  href={SUPPORT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex h-9 items-center gap-2 rounded-md bg-primary px-3.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  <span aria-hidden="true">☕</span> Buy me a coffee
+                </a>
+              </div>
               <SecretEye />
             </div>
             <div className="flex flex-col gap-2">
@@ -98,6 +112,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 GOV.UK sponsor register
               </a>
               <p>Not affiliated with the Home Office.</p>
+              <a className="hover:text-foreground" href={SUPPORT_URL} target="_blank" rel="noopener noreferrer">
+                Support Horus
+              </a>
             </div>
           </div>
         </footer>
