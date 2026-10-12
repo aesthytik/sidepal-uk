@@ -21,11 +21,15 @@ npm run dev
 npm test        # vitest
 ```
 
-The newest CSV in `public/data` is loaded on start. To download the latest register:
+All data lives in Supabase (sponsors, jobs, enrichment). Copy the Supabase variables below into `.env`,
+then load the latest GOV.UK register into the database:
 
 ```bash
 curl -X POST localhost:3000/api/update-sponsors   # add -H "Authorization: Bearer $CRON_SECRET" if set
 ```
+
+The daily job index runs in GitHub Actions (`.github/workflows/index-jobs.yml`) and writes to Supabase.
+To run it locally: `npx ts-node-script --transpile-only --compiler-options '{"module":"commonjs","moduleResolution":"node","esModuleInterop":true}' scripts/index-jobs.ts 5`.
 
 ## Code map
 
@@ -37,13 +41,15 @@ curl -X POST localhost:3000/api/update-sponsors   # add -H "Authorization: Beare
 | `src/lib/useEnrichment.ts`    | Batches `POST /api/enrich` for sponsors on screen                     |
 | `src/store/useShortlist.ts`   | Saved sponsors and their application status (localStorage)          |
 
-## Environment variables (all optional)
+## Environment variables
 
 | Variable                                    | Purpose                                                  |
 | ------------------------------------------- | -------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | **Required.** Supabase project for reads (RLS limits it to public data) |
+| `SUPABASE_SERVICE_ROLE_KEY`                 | **Required, server-only.** Register refresh, enrichment cache and the indexer |
+| `OPENROUTER_API_KEY`                        | Optional. AI search and `scripts/classify-sectors.ts`    |
 | `GOOGLE_API_KEY`, `GOOGLE_SEARCH_ENGINE_ID` | More accurate website lookup (falls back to DNS guesses) |
 | `SPONSOR_CSV_URL`                           | Override the register CSV URL                            |
 | `CRON_SECRET`                               | Require `Authorization: Bearer <secret>` on updates      |
 
-On read-only hosts (e.g. Vercel) the enrichment cache and a refreshed register are
-kept in memory per instance rather than written to disk.
+The schema (tables, RLS policies and the `search_sponsors` function) is applied through Supabase migrations.
