@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useShortlist } from "@/store/useShortlist";
 import { MenuIcon, XIcon } from "./ui/icons";
+import { HUD } from "./game/HUD";
 
 const LINKS = [
   { href: "/jobs", label: "Jobs" },
@@ -39,22 +40,29 @@ export function Navigation() {
 
   return (
     <header className="sticky top-3 z-30 px-3">
-      <nav className="container flex h-14 max-w-5xl items-center justify-between rounded-full border border-border/70 bg-background/80 px-5 shadow-sm backdrop-blur" aria-label="Main">
-        <Link href="/" className="font-display text-lg font-bold tracking-tight">
-          Hor<span className="text-primary">us</span>
+      <nav className="container flex h-14 max-w-5xl items-center justify-between gap-3 rounded-full border border-border/70 bg-background/80 px-5 shadow-sm backdrop-blur" aria-label="Main">
+        <Link href="/" className="flex items-center gap-1.5 font-display text-lg font-bold tracking-tight">
+          {/* eslint-disable-next-line @next/next/no-img-element -- tiny static SVG */}
+          <img src="/icon.svg" alt="" width={26} height={26} className="logo-wobble rounded-md" />
+          <span>
+            Hor<span className="text-primary">us</span>
+          </span>
         </Link>
-        <div className="hidden items-center gap-1 sm:flex">{links}</div>
-        <button
-          type="button"
-          className="-mr-2 rounded-lg p-2 hover:bg-muted sm:hidden"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((o) => !o)}
-        >
-          {open ? <XIcon width={20} height={20} /> : <MenuIcon width={20} height={20} />}
-        </button>
+        <div className="hidden items-center gap-1 md:flex">{links}</div>
+        <div className="flex items-center gap-1">
+          <HUD />
+          <button
+            type="button"
+            className="-mr-2 rounded-lg p-2 hover:bg-muted md:hidden"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? <XIcon width={20} height={20} /> : <MenuIcon width={20} height={20} />}
+          </button>
+        </div>
       </nav>
-      {open && <div className="container mt-2 flex max-w-5xl flex-col gap-1 rounded-3xl border border-border/70 bg-background p-3 sm:hidden">{links}</div>}
+      {open && <div className="container mt-2 flex max-w-5xl flex-col gap-1 rounded-3xl border border-border/70 bg-background p-3 md:hidden">{links}</div>}
     </header>
   );
 }

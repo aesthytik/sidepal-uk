@@ -6,6 +6,7 @@ import { type SearchFilters, parseSearchParams, toSearchParams } from "./searchP
 import type { SearchPage, Sponsor } from "./sponsorTypes";
 import type { IndexedJob } from "./jobs/indexer";
 import type { JobsInfo } from "./jobs";
+import { emit } from "@/store/useGame";
 
 const PAGE_SIZE = 20;
 
@@ -73,12 +74,16 @@ function useUrlSearch<T>(endpoint: string) {
         setItems(items);
         setMeta(rest);
         setStatus("ready");
+        const key = toSearchParams(filters).toString();
+        if (key) emit({ type: "search", key: `${endpoint}?${key}`, location: filters.location, ratingA: filters.rating === "A" });
+        if (rest.fuzzy) emit({ type: "fuzzy" });
+        if (rest.total === 0) emit({ type: "zero-results" });
       })
       .catch(() => {
         if (!controller.signal.aborted) setStatus("error");
       });
     return () => controller.abort();
-  }, [fetchPage, retry]);
+  }, [fetchPage, retry, endpoint, filters]);
 
   const loadMore = useCallback(async () => {
     setStatus("loading-more");
@@ -87,6 +92,7 @@ function useUrlSearch<T>(endpoint: string) {
       setItems((prev) => [...prev, ...more]);
       setMeta(rest);
       setStatus("ready");
+      emit({ type: "load-more" });
     } catch {
       setStatus("error");
     }

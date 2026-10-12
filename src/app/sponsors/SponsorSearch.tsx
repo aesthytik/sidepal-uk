@@ -5,6 +5,7 @@ import { CompanyCard, CompanyCardSkeleton } from "@/components/CompanyCard";
 import { SearchBar } from "@/components/SearchBar";
 import { ActiveFilters, SearchFilters } from "@/components/SearchFilters";
 import { Button } from "@/components/ui/button";
+import { Horus } from "@/components/game/Horus";
 import { SlidersIcon } from "@/components/ui/icons";
 import { Sheet } from "@/components/ui/sheet";
 import { useEnrichment } from "@/lib/useEnrichment";
@@ -75,7 +76,7 @@ export function SponsorSearch() {
               ? "Searching…"
               : status !== "error" &&
                 (search.fuzzy
-                  ? `No exact matches. Showing ${total.toLocaleString()} similar names.`
+                  ? `🩹 No exact matches, so Horus guessed: ${total.toLocaleString()} similar names.`
                   : `${total.toLocaleString()} sponsor${total === 1 ? "" : "s"}`)}
           </p>
 
@@ -90,6 +91,7 @@ export function SponsorSearch() {
             Array.from({ length: 4 }, (_, i) => <CompanyCardSkeleton key={i} />)
           ) : items.length === 0 ? (
             <div className="card p-8 text-center">
+              <Horus size={72} mood="shocked" say="Nothing?!" className="mb-4" />
               <h2 className="font-display text-xl font-semibold">No sponsors found</h2>
               <p className="mt-2 text-muted-foreground">
                 The register uses each company&apos;s legal name, which may differ from its brand.
@@ -118,9 +120,11 @@ export function SponsorSearch() {
             </div>
           ) : (
             <>
-              {items.map((s) => (
-                <CompanyCard key={s.id} sponsor={s} enrichment={enrichment.get(s.id)} pending={enrichment.isPending(s.id)} />
-              ))}
+              <div className="drop-in space-y-4">
+                {items.map((s) => (
+                  <CompanyCard key={s.id} sponsor={s} enrichment={enrichment.get(s.id)} pending={enrichment.isPending(s.id)} />
+                ))}
+              </div>
               {search.hasMore && (
                 <div className="flex flex-col items-center gap-2 pt-2">
                   <Button variant="outline" size="lg" onClick={search.loadMore} disabled={status === "loading-more"}>

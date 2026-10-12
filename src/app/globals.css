@@ -87,3 +87,218 @@
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
 }
+
+/* ───────────────────────── Game layer ───────────────────────── */
+
+.animate-horus-dizzy {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.xp-bar {
+  background: linear-gradient(90deg, #34d399, #06b6d4, #3b5bff, #f472b6);
+  background-size: 300% 100%;
+  animation: xp-shimmer 4s linear infinite;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes xp-shimmer {
+  to { background-position: 300% 0; }
+}
+
+.xp-float {
+  animation: xp-float 1.3s ease-out forwards;
+}
+@keyframes xp-float {
+  0% { opacity: 0; transform: translateY(6px) scale(0.6); }
+  20% { opacity: 1; transform: translateY(-6px) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-34px) scale(1); }
+}
+
+.toast-pop {
+  animation: toast-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes toast-pop {
+  from { opacity: 0; transform: translateX(40px) scale(0.8) rotate(4deg); }
+  to { opacity: 1; transform: none; }
+}
+
+.levelup-card {
+  animation: levelup 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes levelup {
+  from { opacity: 0; transform: scale(0.3) rotate(-12deg); }
+  to { opacity: 1; transform: none; }
+}
+
+.logo-wobble:hover {
+  animation: wobble 0.6s ease-in-out;
+}
+@keyframes wobble {
+  25% { transform: rotate(-12deg) scale(1.1); }
+  50% { transform: rotate(10deg) scale(1.1); }
+  75% { transform: rotate(-6deg); }
+}
+
+/* Results drop in one after another */
+.drop-in > * {
+  animation: drop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.drop-in > *:nth-child(2) { animation-delay: 40ms; }
+.drop-in > *:nth-child(3) { animation-delay: 80ms; }
+.drop-in > *:nth-child(4) { animation-delay: 120ms; }
+.drop-in > *:nth-child(5) { animation-delay: 160ms; }
+.drop-in > *:nth-child(6) { animation-delay: 200ms; }
+.drop-in > *:nth-child(n + 7) { animation-delay: 240ms; }
+@keyframes drop-in {
+  from { opacity: 0; transform: translateY(-14px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Loot cards: sponsor rarity frames */
+.loot {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  position: relative;
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) scale(1);
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+  isolation: isolate;
+}
+.loot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  mix-blend-mode: overlay;
+  background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.55), transparent 45%),
+    linear-gradient(115deg, transparent 20%, rgba(6, 182, 212, 0.35) 35%, rgba(244, 114, 182, 0.35) 50%, rgba(252, 211, 77, 0.35) 65%, transparent 80%);
+  background-size: 100% 100%, 250% 250%;
+  background-position: center, var(--mx) var(--my);
+  z-index: 1;
+}
+.loot:hover::after { opacity: 1; }
+.loot-rare { box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.55); }
+.loot-epic { box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.7), 0 10px 30px -12px rgba(168, 85, 247, 0.6); }
+.loot-legendary {
+  box-shadow: 0 0 0 3px #fcd34d, 0 14px 40px -12px rgba(252, 211, 77, 0.85);
+}
+.loot-legendary::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  padding: 3px;
+  background: conic-gradient(from var(--spin, 0deg), #fcd34d, #f472b6, #06b6d4, #34d399, #fcd34d);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: legendary-spin 4s linear infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+@property --spin {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes legendary-spin {
+  to { --spin: 360deg; }
+}
+.loot-reveal {
+  animation: loot-reveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+/* Same function list as .loot's transform, so the flip interpolates angle by angle */
+@keyframes loot-reveal {
+  0% { transform: perspective(900px) rotateX(0deg) rotateY(0deg) scale(1); }
+  45% { transform: perspective(900px) rotateX(0deg) rotateY(90deg) scale(1.03); }
+  100% { transform: perspective(900px) rotateX(0deg) rotateY(0deg) scale(1); }
+}
+
+/* Quest board */
+.quest-drop {
+  outline: 3px dashed hsl(var(--primary));
+  outline-offset: -3px;
+  background: hsl(var(--accent));
+}
+
+/* Arcade mode (Konami code) */
+html.arcade body {
+  font-family: var(--font-pixel), monospace;
+  letter-spacing: 0.02em;
+  padding-top: 28px;
+}
+/* Keep the sticky nav below the arcade banner */
+html.arcade header.sticky {
+  top: 36px;
+}
+html.arcade .font-display,
+html.arcade h1,
+html.arcade h2,
+html.arcade h3 {
+  font-family: var(--font-pixel), monospace;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+html.arcade h1 { font-size: clamp(1.4rem, 4vw, 2.6rem); }
+html.arcade .card,
+html.arcade button,
+html.arcade input,
+html.arcade a[class*="rounded"],
+html.arcade nav {
+  border-radius: 0 !important;
+}
+html.arcade .card {
+  border: 3px solid hsl(var(--foreground));
+  box-shadow: 6px 6px 0 hsl(var(--foreground));
+}
+html.arcade body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 79;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 0 2px, transparent 2px 4px);
+  animation: crt-flicker 6s infinite;
+}
+@keyframes crt-flicker {
+  0%, 97%, 100% { opacity: 1; }
+  98% { opacity: 0.6; }
+}
+html.arcade img,
+html.arcade svg {
+  image-rendering: pixelated;
+}
+
+/* Calm mode and reduced motion switch the game's motion off */
+html.calm .reveal,
+html.calm .animate-marquee,
+html.calm .loot,
+html.calm .loot::before,
+html.calm .xp-bar,
+html.calm .xp-float,
+html.calm .toast-pop,
+html.calm .levelup-card,
+html.calm .drop-in > *,
+html.calm .loot-reveal,
+html.calm .logo-wobble:hover {
+  animation: none !important;
+  transform: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .loot,
+  .loot::before,
+  .xp-bar,
+  .xp-float,
+  .toast-pop,
+  .levelup-card,
+  .drop-in > *,
+  .loot-reveal,
+  .logo-wobble:hover {
+    animation: none !important;
+    transform: none !important;
+  }
+}

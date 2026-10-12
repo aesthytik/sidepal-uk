@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { emit } from "./useGame";
 
 export const STATUSES = ["interested", "applied", "interviewing", "offer", "rejected"] as const;
 export type Status = (typeof STATUSES)[number];
@@ -40,6 +41,7 @@ export const useShortlist = create<Shortlist>()(
           const next = { ...items };
           if (next[id]) delete next[id];
           else next[id] = { status: "interested", savedAt: new Date().toISOString() };
+          emit(next[id] ? { type: "save", id } : { type: "unsave", id });
           return { items: next };
         }),
       remove: (id) =>
@@ -49,7 +51,13 @@ export const useShortlist = create<Shortlist>()(
           return { items: next };
         }),
       update: (id, changes) =>
-        set(({ items }) => (items[id] ? { items: { ...items, [id]: { ...items[id], ...changes } } } : { items })),
+        set(({ items }) => {
+          const item = items[id];
+          if (!item) return { items };
+          if (changes.status && changes.status !== item.status) emit({ type: "status", id, status: changes.status, from: item.status });
+          if (changes.note && changes.note !== item.note) emit({ type: "note", id });
+          return { items: { ...items, [id]: { ...item, ...changes } } };
+        }),
     }),
     {
       name: "sidepal-shortlist",

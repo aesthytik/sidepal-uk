@@ -5,7 +5,11 @@ import Link from "next/link";
 import { CompanyCard, CompanyCardSkeleton } from "@/components/CompanyCard";
 import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
-import { BookmarkIcon, DownloadIcon } from "@/components/ui/icons";
+import { DownloadIcon } from "@/components/ui/icons";
+import { Horus } from "@/components/game/Horus";
+import { QuestBoard } from "@/components/game/QuestBoard";
+import { TrophyRoom } from "@/components/game/TrophyRoom";
+import { emit } from "@/store/useGame";
 import type { Sponsor } from "@/lib/sponsorTypes";
 import { useEnrichment } from "@/lib/useEnrichment";
 import { cn } from "@/lib/utils";
@@ -98,6 +102,7 @@ export function Shortlist() {
   const [sponsors, setSponsors] = useState<Record<string, Sponsor>>({});
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Status | "all">("all");
+  const [view, setView] = useState<"board" | "list">("board");
   const [query, setQuery] = useState("");
 
   // Only refetch when an id we don't have yet appears, not on status changes
@@ -143,94 +148,132 @@ export function Shortlist() {
     return c;
   }, [rows]);
 
-  const visible = rows.filter(
-    ({ sponsor, item }) =>
-      (tab === "all" || item.status === tab) &&
-      (!query.trim() || `${sponsor.name} ${sponsor.location}`.toLowerCase().includes(query.trim().toLowerCase()))
+  const matching = rows.filter(
+    ({ sponsor }) => !query.trim() || `${sponsor.name} ${sponsor.location}`.toLowerCase().includes(query.trim().toLowerCase())
   );
+  const visible = matching.filter(({ item }) => tab === "all" || item.status === tab);
 
-  const enrichment = useEnrichment(visible.map((r) => r.sponsor.id));
+  // Export uses the websites found by enrichment, so the board view enriches too
+  const enrichment = useEnrichment((view === "list" ? visible : matching).map((r) => r.sponsor.id));
 
   if (hydrated && Object.keys(items).length === 0) {
     return (
-      <main className="container max-w-2xl px-4 py-16 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground">
-          <BookmarkIcon width={24} height={24} />
+      <main className="container max-w-5xl px-4 py-16">
+        <div className="mx-auto max-w-2xl text-center">
+          <Horus size={88} mood="sleepy" say="Wake me when you find one" />
+          <h1 className="mt-5 font-display text-3xl font-bold">Your quest log is empty</h1>
+          <p className="mt-3 text-muted-foreground">
+            Save sponsors while you search, then drag them from <em>Interested</em> all the way to <em>Offer</em>. Every
+            step earns XP. Your shortlist stays in this browser.
+          </p>
+          <Button asChild size="lg" className="mt-6">
+            <Link href="/sponsors">Start the quest →</Link>
+          </Button>
         </div>
-        <h1 className="mt-5 font-display text-3xl font-bold">Your shortlist is empty</h1>
-        <p className="mt-3 text-muted-foreground">
-          Save sponsors while you search, then track each one from <em>Interested</em> to <em>Offer</em>. Your
-          shortlist stays in this browser.
-        </p>
-        <Button asChild size="lg" className="mt-6">
-          <Link href="/sponsors">Find sponsors</Link>
-        </Button>
+        <TrophyRoom />
       </main>
     );
   }
 
   return (
-    <main className="container max-w-4xl px-4 py-6 sm:py-10">
+    <main className={cn("container px-4 py-6 sm:py-10", view === "board" ? "max-w-6xl" : "max-w-4xl")}>
       <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">My shortlist</h1>
-          <p className="mt-1 text-muted-foreground">Track where you are with each sponsor. Saved in this browser.</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">My quest board</h1>
+          <p className="mt-1 text-muted-foreground">Drag sponsors right as you progress. Saved in this browser.</p>
         </div>
-        <Button
-          variant="outline"
-          disabled={rows.length === 0}
-          onClick={() => exportCsv(rows, (id) => enrichment.get(id)?.website ?? "")}
-        >
-          <DownloadIcon /> Export CSV
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <div role="group" aria-label="View" className="flex rounded-full border border-border bg-card p-1">
+            {(["board", "list"] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                aria-pressed={view === v}
+                onClick={() => setView(v)}
+                className={cn(
+                  "rounded-full px-3 py-1 text-sm font-medium",
+                  view === v ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {v === "board" ? "🗂 Board" : "☰ List"}
+              </button>
+            ))}
+          </div>
+          <Button
+            variant="outline"
+            disabled={rows.length === 0}
+            onClick={() => {
+              exportCsv(rows, (id) => enrichment.get(id)?.website ?? "");
+              emit({ type: "export" });
+            }}
+          >
+            <DownloadIcon /> Export CSV
+          </Button>
+        </div>
       </header>
-
-      <div className="mb-4 -mx-4 overflow-x-auto px-4">
-        <div role="tablist" aria-label="Filter by status" className="flex gap-1 border-b border-border">
-          {(["all", ...STATUSES] as const).map((s) => (
-            <button
-              key={s}
-              role="tab"
-              aria-selected={tab === s}
-              onClick={() => setTab(s)}
-              className={cn(
-                "-mb-px flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-medium transition-colors",
-                tab === s
-                  ? "border-primary text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {s === "all" ? "All" : STATUS_LABELS[s]}
-              <span className="rounded-full bg-muted px-1.5 text-xs leading-5 text-muted-foreground">
-                {counts[s] ?? 0}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
 
       {rows.length > 5 && (
         <SearchBar value={query} onSearch={setQuery} placeholder="Search your shortlist" className="mb-4" delay={100} />
       )}
 
-      <div className="space-y-4">
-        {!hydrated || (loading && rows.length === 0) ? (
-          Array.from({ length: 3 }, (_, i) => <CompanyCardSkeleton key={i} />)
-        ) : visible.length === 0 ? (
-          <p className="card p-8 text-center text-muted-foreground">Nothing here yet.</p>
+      {view === "board" ? (
+        !hydrated || (loading && rows.length === 0) ? (
+          <div className="grid grid-cols-5 gap-3" aria-hidden="true">
+            {STATUSES.map((s) => (
+              <div key={s} className="h-72 animate-pulse rounded-2xl bg-muted" />
+            ))}
+          </div>
         ) : (
-          visible.map(({ sponsor, item }) => (
-            <CompanyCard
-              key={sponsor.id}
-              sponsor={sponsor}
-              enrichment={enrichment.get(sponsor.id)}
-              pending={enrichment.isPending(sponsor.id)}
-            >
-              <Note id={sponsor.id} note={item.note} />
-            </CompanyCard>
-          ))
-        )}
-      </div>
+          <QuestBoard rows={matching} />
+        )
+      ) : (
+        <>
+          <div className="mb-4 -mx-4 overflow-x-auto px-4">
+            <div role="tablist" aria-label="Filter by status" className="flex gap-1 border-b border-border">
+              {(["all", ...STATUSES] as const).map((s) => (
+                <button
+                  key={s}
+                  role="tab"
+                  aria-selected={tab === s}
+                  onClick={() => setTab(s)}
+                  className={cn(
+                    "-mb-px flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-medium transition-colors",
+                    tab === s
+                      ? "border-primary text-foreground"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {s === "all" ? "All" : STATUS_LABELS[s]}
+                  <span className="rounded-full bg-muted px-1.5 text-xs leading-5 text-muted-foreground">
+                    {counts[s] ?? 0}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {!hydrated || (loading && rows.length === 0) ? (
+              Array.from({ length: 3 }, (_, i) => <CompanyCardSkeleton key={i} />)
+            ) : visible.length === 0 ? (
+              <p className="card p-8 text-center text-muted-foreground">Nothing here yet.</p>
+            ) : (
+              visible.map(({ sponsor, item }) => (
+                <CompanyCard
+                  key={sponsor.id}
+                  sponsor={sponsor}
+                  enrichment={enrichment.get(sponsor.id)}
+                  pending={enrichment.isPending(sponsor.id)}
+                >
+                  <Note id={sponsor.id} note={item.note} />
+                </CompanyCard>
+              ))
+            )}
+          </div>
+        </>
+      )}
+
+      <TrophyRoom />
     </main>
   );
 }

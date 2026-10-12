@@ -6,6 +6,7 @@ import { JobCard } from "@/components/JobCard";
 import { SearchBar } from "@/components/SearchBar";
 import { ActiveFilters, SearchFilters } from "@/components/SearchFilters";
 import { Button } from "@/components/ui/button";
+import { Horus } from "@/components/game/Horus";
 import { SlidersIcon } from "@/components/ui/icons";
 import { Sheet } from "@/components/ui/sheet";
 import { useJobSearch } from "@/lib/useSponsorSearch";
@@ -93,6 +94,7 @@ export function JobSearch() {
             Array.from({ length: 4 }, (_, i) => <div key={i} className="card h-28 animate-pulse" aria-hidden="true" />)
           ) : items.length === 0 ? (
             <div className="card p-8 text-center">
+              <Horus size={72} mood="shocked" say="Nothing?!" className="mb-4" />
               <h2 className="font-display text-xl font-semibold">No jobs found</h2>
               <p className="mt-2 text-muted-foreground">
                 We only list roles from sponsors whose job boards we can read, so try fewer filters or browse all sponsors.
@@ -115,9 +117,11 @@ export function JobSearch() {
             </div>
           ) : (
             <>
-              {items.map((job) => (
-                <JobCard key={job.url} job={job} />
-              ))}
+              <div className="drop-in space-y-4">
+                {items.map((job) => (
+                  <JobCard key={job.url} job={job} />
+                ))}
+              </div>
               {search.hasMore && (
                 <div className="flex flex-col items-center gap-2 pt-2">
                   <Button variant="outline" size="lg" onClick={search.loadMore} disabled={status === "loading-more"}>

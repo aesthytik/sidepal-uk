@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Enrichment, Sponsor } from "@/lib/sponsorTypes";
 import { cn } from "@/lib/utils";
+import { RARITY_LABEL, type Rarity, rarityOf } from "@/lib/game/rarity";
+import { emit, useCalm } from "@/store/useGame";
 import { STATUSES, STATUS_LABELS, type Status, useShortlist } from "@/store/useShortlist";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -67,6 +69,7 @@ function SaveControl({ id }: { id: string }) {
 }
 
 function JobsPanel({ jobs, careersUrl, rating }: { jobs: NonNullable<Enrichment["jobs"]>; careersUrl?: string; rating?: string }) {
+  const track = (e: React.MouseEvent<HTMLAnchorElement>) => emit({ type: "apply-click", url: e.currentTarget.href });
   return (
     <div className="mt-3 rounded-lg border border-border bg-muted/40">
       <ul className="divide-y divide-border">
@@ -76,6 +79,7 @@ function JobsPanel({ jobs, careersUrl, rating }: { jobs: NonNullable<Enrichment[
               href={job.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={track}
               className="flex items-center justify-between gap-3 px-3 py-2.5 text-sm hover:bg-muted"
             >
               <span className="min-w-0">
@@ -105,6 +109,36 @@ function JobsPanel({ jobs, careersUrl, rating }: { jobs: NonNullable<Enrichment[
   );
 }
 
+const GEM: Record<Rarity, string> = {
+  common: "bg-muted text-muted-foreground",
+  rare: "bg-aqua/15 text-cyan-700 dark:text-aqua",
+  epic: "bg-purple-500/15 text-purple-700 dark:text-purple-300",
+  legendary: "bg-lemon text-black",
+};
+
+const GEM_ICON: Record<Rarity, string> = { common: "◆", rare: "◆", epic: "✦", legendary: "★" };
+
+/** Tilts the card toward the pointer and moves its holographic shine. */
+function useTilt(enabled: boolean) {
+  const ref = useRef<HTMLElement>(null);
+  const onPointerMove = (e: React.PointerEvent) => {
+    const el = ref.current;
+    if (!el || !enabled || e.pointerType !== "mouse") return;
+    const box = el.getBoundingClientRect();
+    const px = (e.clientX - box.left) / box.width;
+    const py = (e.clientY - box.top) / box.height;
+    el.style.setProperty("--ry", `${(px - 0.5) * 6}deg`);
+    el.style.setProperty("--rx", `${(0.5 - py) * 6}deg`);
+    el.style.setProperty("--mx", `${px * 100}%`);
+    el.style.setProperty("--my", `${py * 100}%`);
+  };
+  const onPointerLeave = () => {
+    ref.current?.style.setProperty("--rx", "0deg");
+    ref.current?.style.setProperty("--ry", "0deg");
+  };
+  return { ref, onPointerMove, onPointerLeave };
+}
+
 export function CompanyCard({
   sponsor,
   enrichment,
@@ -119,11 +153,36 @@ export function CompanyCard({
   const [showJobs, setShowJobs] = useState(false);
   const { website, careersUrl, jobs } = enrichment ?? {};
   const extraVisas = sponsor.visaTypes.length - MAX_VISA_BADGES;
+  const calm = useCalm();
+  const tilt = useTilt(!calm);
+  const rarity = rarityOf(sponsor, enrichment);
+  // Flip the card over when lookup reveals a better find than we knew about
+  const [reveal, setReveal] = useState(false);
+  const shown = useRef(rarity);
+  useEffect(() => {
+    const order: Rarity[] = ["common", "rare", "epic", "legendary"];
+    if (order.indexOf(rarity) > order.indexOf(shown.current) && order.indexOf(rarity) >= 2) setReveal(true);
+    shown.current = rarity;
+  }, [rarity]);
+  const track = (type: "careers-click" | "apply-click") => (e: React.MouseEvent<HTMLAnchorElement>) =>
+    emit({ type, url: e.currentTarget.href });
 
   return (
-    <article className="card p-4 sm:p-5">
+    <article
+      ref={tilt.ref}
+      onPointerMove={tilt.onPointerMove}
+      onPointerLeave={tilt.onPointerLeave}
+      onAnimationEnd={() => setReveal(false)}
+      className={cn("card loot p-4 sm:p-5", `loot-${rarity}`, reveal && "loot-reveal")}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
+          <p
+            className={cn("mb-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest", GEM[rarity])}
+            title="How good a find this is: A-rated is Rare, hiring is Epic, hiring for your role in the UK is Legendary"
+          >
+            {GEM_ICON[rarity]} {RARITY_LABEL[rarity]}
+          </p>
           <h3 className="font-display text-lg font-semibold leading-snug">{sponsor.name}</h3>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1">
@@ -171,7 +230,7 @@ export function CompanyCard({
             )}
             {careersUrl && (
               <Button asChild size="sm" variant={jobs?.total ? "outline" : "default"}>
-                <a href={careersUrl} target="_blank" rel="noopener noreferrer">
+                <a href={careersUrl} target="_blank" rel="noopener noreferrer" onClick={track("careers-click")}>
                   <BriefcaseIcon /> Careers page
                 </a>
               </Button>

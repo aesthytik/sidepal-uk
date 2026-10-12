@@ -1,13 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Press_Start_2P, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 import { ShortlistHydrator } from "@/components/ShortlistHydrator";
+import { GameLayer } from "@/components/game/GameLayer";
+import { SecretEye } from "@/components/game/SecretEye";
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], display: "swap", variable: "--font-space-grotesk" });
+// Only used by the arcade-mode easter egg, so it isn't preloaded
+const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], display: "swap", preload: false, variable: "--font-pixel" });
 
 const DESCRIPTION =
   "Search every UK employer licensed to sponsor work visas, browse live jobs from them, check whether a role is likely sponsorable, and track your applications. Built on the official Home Office register.";
@@ -63,8 +67,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} flex min-h-screen flex-col font-sans`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${pixel.variable} flex min-h-screen flex-col font-sans`}>
         <ShortlistHydrator />
+        <GameLayer />
         <Navigation />
         <div className="flex-1">{children}</div>
         <footer className="mt-16 border-t border-border bg-accent/40 py-14 text-sm text-muted-foreground">
@@ -76,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <p className="mt-3 max-w-sm">
                 Find UK employers licensed to sponsor your work visa, see who&apos;s hiring, and track your applications.
               </p>
+              <SecretEye />
             </div>
             <div className="flex flex-col gap-2">
               <p className="font-medium text-foreground">Product</p>

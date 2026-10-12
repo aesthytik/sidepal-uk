@@ -8,6 +8,8 @@ import { JobCard } from "@/components/JobCard";
 import { jobsInfo, searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
+import { Horus } from "@/components/game/Horus";
+import { StampRushLoader } from "@/components/game/StampRushLoader";
 
 // Re-render hourly so the sponsor count and register date stay current
 export const revalidate = 3600;
@@ -99,7 +101,10 @@ export default async function Home() {
         }}
       />
 
-      <section className="reveal container max-w-5xl px-4 pb-16 pt-14 text-center sm:pt-24">
+      <section className="reveal container max-w-5xl px-4 pb-16 pt-10 text-center sm:pt-16">
+        <div className="mb-6 flex justify-center">
+          <Horus size={104} />
+        </div>
         <p className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-sm text-accent-foreground">
           <ShieldCheckIcon className="text-emerald-600" />
           Official Home Office data{date && ` · updated ${date}`}
@@ -157,22 +162,28 @@ export default async function Home() {
         </div>
 
         <div className="mt-14 grid gap-4 text-left sm:grid-cols-3">
-          <Link href="/jobs" className="card group p-8 transition-colors hover:bg-accent/60">
-            <p className="eyebrow">Ready to apply</p>
+          <Link href="/jobs" className="card group p-8 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:bg-accent/60 hover:shadow-[6px_6px_0_hsl(var(--primary))]">
+            <p className="eyebrow">
+              <span aria-hidden="true">🎯</span> Quest 1 · Ready to apply
+            </p>
             <h2 className="mt-3 font-display text-2xl font-bold">Latest sponsored jobs</h2>
             <p className="mt-2 text-muted-foreground">
               {jobCount > 0 ? `${jobCount.toLocaleString("en-GB")} live roles, newest first.` : "Live roles from licensed sponsors."}
             </p>
             <p className="mt-6 font-medium text-primary group-hover:underline">Browse jobs →</p>
           </Link>
-          <Link href="/sponsors" className="card group p-8 transition-colors hover:bg-accent/60">
-            <p className="eyebrow">Looking for a sponsor</p>
+          <Link href="/sponsors" className="card group p-8 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:bg-accent/60 hover:shadow-[6px_6px_0_hsl(var(--primary))]">
+            <p className="eyebrow">
+              <span aria-hidden="true">🗺️</span> Quest 2 · Looking for a sponsor
+            </p>
             <h2 className="mt-3 font-display text-2xl font-bold">Browse licensed employers</h2>
             <p className="mt-2 text-muted-foreground">Filter by town, visa route and rating.</p>
             <p className="mt-6 font-medium text-primary group-hover:underline">Find sponsors →</p>
           </Link>
-          <Link href="/saved" className="card group p-8 transition-colors hover:bg-accent/60">
-            <p className="eyebrow">Already applying</p>
+          <Link href="/saved" className="card group p-8 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:bg-accent/60 hover:shadow-[6px_6px_0_hsl(var(--primary))]">
+            <p className="eyebrow">
+              <span aria-hidden="true">⚔️</span> Quest 3 · Already applying
+            </p>
             <h2 className="mt-3 font-display text-2xl font-bold">Track your applications</h2>
             <p className="mt-2 text-muted-foreground">Move sponsors from Interested to Offer.</p>
             <p className="mt-6 font-medium text-primary group-hover:underline">Open shortlist →</p>
@@ -204,6 +215,21 @@ export default async function Home() {
         </section>
       )}
 
+      <section className="container max-w-4xl px-4 pt-24" aria-labelledby="stamp-rush">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow">Insert coin · bonus level</p>
+            <h2 id="stamp-rush" className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Bored of forms? Play <span className="text-primary">Stamp Rush</span>.
+            </h2>
+            <p className="mt-2 max-w-xl text-muted-foreground">
+              Every stamp is a real A-rated sponsor. Catch a gold one and it might just be your next employer.
+            </p>
+          </div>
+        </div>
+        <StampRushLoader />
+      </section>
+
       <section className="container max-w-4xl px-4 py-24">
         <h2 className="text-balance font-display text-4xl font-bold tracking-tight sm:text-5xl">
           From register to <span className="text-muted-foreground">application in three steps.</span>
@@ -211,7 +237,10 @@ export default async function Home() {
         <ol className="mt-14 divide-y divide-border">
           {STEPS.map(({ icon: Icon, title, body }, i) => (
             <li key={title} className="grid gap-4 py-8 sm:grid-cols-[6rem_1fr]">
-              <span className="font-display text-5xl font-bold text-primary/30">0{i + 1}</span>
+              <span className="font-display font-bold text-primary/40">
+                <span className="block text-xs uppercase tracking-[0.3em]">World</span>
+                <span className="text-5xl">1-{i + 1}</span>
+              </span>
               <div>
                 <h3 className="flex items-center gap-2 font-display text-2xl font-semibold">
                   <Icon width={22} height={22} className="text-primary" /> {title}
