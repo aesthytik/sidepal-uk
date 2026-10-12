@@ -25,14 +25,14 @@ function Toasts() {
           key={id}
           type="button"
           onClick={() => dismiss(id)}
-          className="toast-pop pointer-events-auto flex items-center gap-3 rounded-2xl border-2 border-lemon bg-[#0B1020] p-3 text-left text-white shadow-xl"
+          className="toast-pop pointer-events-auto flex items-center gap-3 rounded-lg border border-border border-l-4 border-l-gold bg-card p-3 text-left text-card-foreground shadow-lg"
         >
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-lemon/20 text-2xl">{achievement.emoji}</span>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-gold/10 text-xl">{achievement.emoji}</span>
           <span className="min-w-0">
-            <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-lemon">Achievement unlocked</span>
-            <span className="block font-display text-base font-bold">{achievement.title}</span>
-            <span className="block text-xs opacity-80">
-              {achievement.description} <strong className="text-mint">+{achievement.xp} XP</strong>
+            <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-gold">Achievement unlocked</span>
+            <span className="block font-display text-base font-semibold">{achievement.title}</span>
+            <span className="block text-xs text-muted-foreground">
+              {achievement.description} <strong className="font-semibold text-sage">+{achievement.xp} XP</strong>
             </span>
           </span>
         </button>
@@ -58,12 +58,12 @@ function LevelUp() {
     <div
       role="status"
       onClick={dismiss}
-      className="fixed inset-0 z-[95] flex cursor-pointer items-center justify-center bg-background/70 p-6 backdrop-blur-sm animate-in fade-in"
+      className="fixed inset-0 z-[95] flex cursor-pointer items-center justify-center bg-background/80 p-6 animate-in fade-in"
     >
-      <div className="levelup-card max-w-sm rounded-[2rem] border-4 border-lemon bg-card p-8 text-center shadow-2xl">
+      <div className="levelup-card max-w-sm rounded-lg border border-border border-t-4 border-t-gold bg-card p-8 text-center shadow-lg">
         <Horus size={110} mood="party" interactive={false} />
-        <p className="mt-4 text-xs font-bold uppercase tracking-[0.3em] text-primary">Level up!</p>
-        <p className="mt-1 font-display text-4xl font-bold">
+        <p className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-gold">Level up!</p>
+        <p className="mt-1 font-display text-4xl font-semibold">
           <span className="text-muted-foreground">Lv {level + 1}</span> {info.title}
         </p>
         <p className="mt-3 text-muted-foreground">{info.blurb}</p>
@@ -76,9 +76,9 @@ function LevelUp() {
 function ArcadeBanner() {
   const set = useGame((s) => s.set);
   return (
-    <div className="arcade-banner fixed inset-x-0 top-0 z-[80] flex items-center justify-center gap-4 bg-black py-1.5 text-[10px] text-lemon">
-      <span className="animate-pulse">★ INSERT VISA TO CONTINUE ★</span>
-      <button type="button" onClick={() => set({ arcade: false })} className="rounded border border-lemon px-2 py-0.5 hover:bg-lemon hover:text-black">
+    <div className="arcade-banner fixed inset-x-0 top-0 z-[80] flex h-7 items-center justify-center gap-4 bg-foreground text-[10px] text-background">
+      <span>★ INSERT VISA TO CONTINUE ★</span>
+      <button type="button" onClick={() => set({ arcade: false })} className="rounded border border-background/60 px-2 py-0.5 hover:bg-background hover:text-foreground">
         EXIT
       </button>
     </div>

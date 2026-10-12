@@ -101,109 +101,114 @@ export default async function Home() {
         }}
       />
 
-      <section className="reveal container max-w-5xl px-4 pb-16 pt-10 text-center sm:pt-16">
-        <div className="mb-6 flex justify-center">
-          <Horus size={104} />
+      <section className="reveal container max-w-6xl px-4 pb-16 pt-12 sm:pt-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
+          <div className="max-w-3xl">
+            <p className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+              <ShieldCheckIcon className="text-sage" />
+              Official Home Office data{date && ` · updated ${date}`}
+            </p>
+            <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] sm:text-7xl">
+              Stop searching blind.{" "}
+              <span className="font-normal italic text-muted-foreground">Find UK jobs that can sponsor your visa.</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+              Search all {countLabel} licensed sponsors, see who&apos;s hiring, and keep track of where you&apos;ve applied.
+            </p>
+
+            <form action="/sponsors" className="mt-10 flex max-w-xl items-center gap-2 rounded-md border border-input bg-card p-1.5 focus-within:border-foreground/40">
+              <label className="relative flex-1">
+                <span className="sr-only">Company name</span>
+                <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" width={18} height={18} />
+                <input
+                  name="q"
+                  type="search"
+                  placeholder="Company name, e.g. Deliveroo"
+                  className="h-10 w-full bg-transparent pl-10 pr-3 text-base outline-none"
+                />
+              </label>
+              <Button type="submit">Search</Button>
+            </form>
+
+            <AskAi className="mt-3 max-w-xl text-left" />
+
+            <dl className="mt-8 grid max-w-xl gap-3 text-sm">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
+                <dt className="w-14 text-muted-foreground">Places</dt>
+                {POPULAR_LOCATIONS.slice(0, 6).map((place) => (
+                  <dd key={place}>
+                    <Link
+                      href={`/sponsors?location=${encodeURIComponent(place)}&visa=Skilled+Worker`}
+                      className="underline decoration-border underline-offset-4 hover:decoration-foreground"
+                    >
+                      {place}
+                    </Link>
+                  </dd>
+                ))}
+              </div>
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
+                <dt className="w-14 text-muted-foreground">Roles</dt>
+                {ROLE_FAMILIES.slice(0, 6).map(({ id, label }) => (
+                  <dd key={id}>
+                    <Link
+                      href={`/sponsors?role=${id}&visa=Skilled+Worker`}
+                      className="underline decoration-border underline-offset-4 hover:decoration-foreground"
+                    >
+                      {label}
+                    </Link>
+                  </dd>
+                ))}
+              </div>
+            </dl>
+          </div>
+          <div className="hidden justify-center lg:flex">
+            <Horus size={200} />
+          </div>
         </div>
-        <p className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-sm text-accent-foreground">
-          <ShieldCheckIcon className="text-emerald-600" />
-          Official Home Office data{date && ` · updated ${date}`}
-        </p>
-        <h1 className="mt-8 text-balance font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-7xl">
-          Stop searching blind.{" "}
-          <span className="text-muted-foreground">Find UK jobs that can sponsor your visa.</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-xl text-balance text-lg text-muted-foreground">
-          Search all {countLabel} licensed sponsors, see who&apos;s hiring, and keep track of where you&apos;ve applied.
-        </p>
 
-        <form action="/sponsors" className="mx-auto mt-10 flex max-w-xl items-center gap-2 rounded-full border border-border bg-card p-1.5 shadow-sm">
-          <label className="relative flex-1">
-            <span className="sr-only">Company name</span>
-            <SearchIcon className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" width={18} height={18} />
-            <input
-              name="q"
-              type="search"
-              placeholder="Company name, e.g. Deliveroo"
-              className="h-11 w-full rounded-full bg-transparent pl-11 pr-4 text-base outline-none"
-            />
-          </label>
-          <Button type="submit" size="lg">
-            Search
-          </Button>
-        </form>
-
-        <AskAi className="mx-auto mt-4 max-w-xl text-left" />
-
-        <div className="mt-5 flex flex-wrap justify-center gap-2 text-sm">
-          <span className="py-1.5 text-muted-foreground">Popular:</span>
-          {POPULAR_LOCATIONS.slice(0, 6).map((place) => (
-            <Link
-              key={place}
-              href={`/sponsors?location=${encodeURIComponent(place)}&visa=Skilled+Worker`}
-              className="rounded-full border border-border bg-card px-3 py-1.5 hover:border-primary/50 hover:bg-muted"
-            >
-              {place}
+        <div className="mt-16 grid border-y border-border text-left sm:grid-cols-3 sm:divide-x sm:divide-border">
+          {[
+            {
+              href: "/jobs",
+              eyebrow: "Ready to apply",
+              title: "Latest sponsored jobs",
+              body: jobCount > 0 ? `${jobCount.toLocaleString("en-GB")} live roles, newest first.` : "Live roles from licensed sponsors.",
+              cta: "Browse jobs",
+            },
+            { href: "/sponsors", eyebrow: "Looking for a sponsor", title: "Browse licensed employers", body: "Filter by town, visa route and rating.", cta: "Find sponsors" },
+            { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Move sponsors from Interested to Offer.", cta: "Open shortlist" },
+          ].map((c, i) => (
+            <Link key={c.href} href={c.href} className="group border-border py-8 sm:px-8 sm:first:pl-0 sm:last:pr-0 max-sm:border-b max-sm:last:border-b-0">
+              <p className="eyebrow">
+                <span className="tabular-nums">0{i + 1}</span> · {c.eyebrow}
+              </p>
+              <h2 className="mt-3 font-display text-2xl font-semibold">{c.title}</h2>
+              <p className="mt-2 text-muted-foreground">{c.body}</p>
+              <p className="mt-5 text-sm font-medium text-primary">
+                <span className="underline decoration-primary/30 underline-offset-4 group-hover:decoration-primary">{c.cta}</span> →
+              </p>
             </Link>
           ))}
-        </div>
-
-        <div className="mt-3 flex flex-wrap justify-center gap-2 text-sm">
-          <span className="py-1.5 text-muted-foreground">Roles:</span>
-          {ROLE_FAMILIES.slice(0, 6).map(({ id, label }) => (
-            <Link
-              key={id}
-              href={`/sponsors?role=${id}&visa=Skilled+Worker`}
-              className="rounded-full border border-border bg-card px-3 py-1.5 hover:border-primary/50 hover:bg-muted"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-
-        <div className="mt-14 grid gap-4 text-left sm:grid-cols-3">
-          <Link href="/jobs" className="card group p-8 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:bg-accent/60 hover:shadow-[6px_6px_0_hsl(var(--primary))]">
-            <p className="eyebrow">
-              <span aria-hidden="true">🎯</span> Quest 1 · Ready to apply
-            </p>
-            <h2 className="mt-3 font-display text-2xl font-bold">Latest sponsored jobs</h2>
-            <p className="mt-2 text-muted-foreground">
-              {jobCount > 0 ? `${jobCount.toLocaleString("en-GB")} live roles, newest first.` : "Live roles from licensed sponsors."}
-            </p>
-            <p className="mt-6 font-medium text-primary group-hover:underline">Browse jobs →</p>
-          </Link>
-          <Link href="/sponsors" className="card group p-8 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:bg-accent/60 hover:shadow-[6px_6px_0_hsl(var(--primary))]">
-            <p className="eyebrow">
-              <span aria-hidden="true">🗺️</span> Quest 2 · Looking for a sponsor
-            </p>
-            <h2 className="mt-3 font-display text-2xl font-bold">Browse licensed employers</h2>
-            <p className="mt-2 text-muted-foreground">Filter by town, visa route and rating.</p>
-            <p className="mt-6 font-medium text-primary group-hover:underline">Find sponsors →</p>
-          </Link>
-          <Link href="/saved" className="card group p-8 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:bg-accent/60 hover:shadow-[6px_6px_0_hsl(var(--primary))]">
-            <p className="eyebrow">
-              <span aria-hidden="true">⚔️</span> Quest 3 · Already applying
-            </p>
-            <h2 className="mt-3 font-display text-2xl font-bold">Track your applications</h2>
-            <p className="mt-2 text-muted-foreground">Move sponsors from Interested to Offer.</p>
-            <p className="mt-6 font-medium text-primary group-hover:underline">Open shortlist →</p>
-          </Link>
         </div>
       </section>
 
-      <section className="section-band py-20 text-center">
-        <p className="font-display text-6xl font-bold tracking-tight text-primary sm:text-8xl">{countLabel}</p>
-        <p className="mt-3 text-lg text-muted-foreground">licensed sponsors on the register</p>
+      <section className="section-band py-16">
+        <div className="container flex max-w-6xl flex-wrap items-end justify-between gap-6 px-4">
+          <div>
+            <p className="font-display text-6xl font-semibold tabular-nums sm:text-7xl">{countLabel}</p>
+            <p className="mt-2 text-muted-foreground">licensed sponsors on the register</p>
+          </div>
+        </div>
         <div className="mt-10">
           <Marquee items={POPULAR_LOCATIONS} />
         </div>
       </section>
 
       {latestJobs.length > 0 && (
-        <section className="container px-4 pt-20">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Latest sponsored jobs</h2>
-            <Link href="/jobs" className="font-medium text-primary hover:underline">
+        <section className="container max-w-6xl px-4 pt-20">
+          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
+            <h2 className="font-display text-3xl font-semibold sm:text-4xl">Latest sponsored jobs</h2>
+            <Link href="/jobs" className="text-sm font-medium text-primary hover:underline">
               See all {jobCount.toLocaleString("en-GB")} jobs →
             </Link>
           </div>
@@ -218,9 +223,9 @@ export default async function Home() {
       <section className="container max-w-4xl px-4 pt-24" aria-labelledby="stamp-rush">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="eyebrow">Insert coin · bonus level</p>
-            <h2 id="stamp-rush" className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              Bored of forms? Play <span className="text-primary">Stamp Rush</span>.
+            <p className="eyebrow">A short break</p>
+            <h2 id="stamp-rush" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+              Bored of forms? Play <span className="italic">Stamp Rush</span>.
             </h2>
             <p className="mt-2 max-w-xl text-muted-foreground">
               Every stamp is a real A-rated sponsor. Catch a gold one and it might just be your next employer.
@@ -231,19 +236,16 @@ export default async function Home() {
       </section>
 
       <section className="container max-w-4xl px-4 py-24">
-        <h2 className="text-balance font-display text-4xl font-bold tracking-tight sm:text-5xl">
-          From register to <span className="text-muted-foreground">application in three steps.</span>
+        <h2 className="font-display text-4xl font-semibold sm:text-5xl">
+          From register to <span className="font-normal italic text-muted-foreground">application in three steps.</span>
         </h2>
         <ol className="mt-14 divide-y divide-border">
           {STEPS.map(({ icon: Icon, title, body }, i) => (
             <li key={title} className="grid gap-4 py-8 sm:grid-cols-[6rem_1fr]">
-              <span className="font-display font-bold text-primary/40">
-                <span className="block text-xs uppercase tracking-[0.3em]">World</span>
-                <span className="text-5xl">1-{i + 1}</span>
-              </span>
+              <span className="font-display text-5xl font-normal italic text-muted-foreground/60">{i + 1}.</span>
               <div>
                 <h3 className="flex items-center gap-2 font-display text-2xl font-semibold">
-                  <Icon width={22} height={22} className="text-primary" /> {title}
+                  <Icon width={20} height={20} className="text-primary" /> {title}
                 </h3>
                 <p className="mt-2 max-w-xl text-lg text-muted-foreground">{body}</p>
               </div>
@@ -254,7 +256,7 @@ export default async function Home() {
 
       <section className="section-band py-20">
         <div className="container max-w-4xl px-4">
-          <h2 className="font-display text-3xl font-bold tracking-tight">Good to know</h2>
+          <h2 className="font-display text-3xl font-semibold">Good to know</h2>
           <ul className="mt-8 grid gap-8 text-muted-foreground md:grid-cols-3">
             <li>
               <strong className="block text-foreground">A licence isn&apos;t a promise.</strong> Being on the register means
@@ -278,11 +280,11 @@ export default async function Home() {
       </section>
 
       <section className="container px-4 py-20">
-        <div className="rounded-[2rem] bg-foreground px-6 py-16 text-center text-background">
-          <h2 className="text-balance font-display text-4xl font-bold tracking-tight sm:text-5xl">
+        <div className="rounded-lg bg-primary px-6 py-16 text-center text-primary-foreground">
+          <h2 className="font-display text-4xl font-semibold sm:text-5xl">
             Ready to find your sponsor?
           </h2>
-          <Button asChild size="lg" className="mt-8">
+          <Button asChild size="lg" className="mt-8 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
             <Link href="/sponsors">Search sponsors</Link>
           </Button>
         </div>

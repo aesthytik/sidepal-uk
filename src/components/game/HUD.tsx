@@ -15,7 +15,7 @@ function Floater({ id, amount }: { id: number; amount: number }) {
     return () => clearTimeout(t);
   }, [id, dismiss]);
   return (
-    <span className="xp-float pointer-events-none absolute -top-1 right-0 whitespace-nowrap font-display text-sm font-bold text-mint drop-shadow" aria-hidden="true">
+    <span className="xp-float pointer-events-none absolute -top-1 right-0 whitespace-nowrap text-xs font-semibold text-sage" aria-hidden="true">
       +{amount} XP
     </span>
   );
@@ -28,14 +28,14 @@ function Toggle({ label, hint, on, onChange }: { label: string; hint: string; on
       role="switch"
       aria-checked={on}
       onClick={() => onChange(!on)}
-      className="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left hover:bg-muted"
+      className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left hover:bg-muted"
     >
       <span>
         <span className="block text-sm font-medium">{label}</span>
         <span className="block text-xs text-muted-foreground">{hint}</span>
       </span>
-      <span className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-primary" : "bg-muted-foreground/30"}`}>
-        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${on ? "translate-x-5" : "translate-x-0.5"}`} />
+      <span className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-primary" : "bg-input"}`}>
+        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-card shadow-sm transition-transform ${on ? "translate-x-5" : "translate-x-0.5"}`} />
       </span>
     </button>
   );
@@ -67,7 +67,7 @@ export function HUD() {
     };
   }, [open]);
 
-  if (!hydrated) return <div className="h-9 w-[8.5rem]" aria-hidden="true" />;
+  if (!hydrated) return <div className="h-8 w-[8.5rem]" aria-hidden="true" />;
 
   return (
     <div ref={panel} className="relative">
@@ -76,15 +76,13 @@ export function HUD() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={`Level ${level.index + 1}, ${level.title}, ${xp} XP. Game settings`}
-        className="group relative flex h-9 items-center gap-2 rounded-full border border-border bg-card py-1 pl-1 pr-3 hover:border-primary/50"
+        className="group relative flex h-8 items-center gap-2 rounded-md border border-border bg-card px-2 hover:border-foreground/30"
       >
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary font-display text-xs font-bold text-primary-foreground">
-          {level.index + 1}
-        </span>
-        <span className="flex w-20 flex-col gap-0.5 text-left">
-          <span className="truncate text-[11px] font-semibold leading-none">{level.title}</span>
-          <span className="h-1.5 overflow-hidden rounded-full bg-muted">
-            <span className="xp-bar block h-full rounded-full" style={{ width: `${Math.max(4, level.progress * 100)}%` }} />
+        <span className="text-xs font-semibold tabular-nums text-muted-foreground">Lv {level.index + 1}</span>
+        <span className="flex w-20 flex-col gap-1 text-left">
+          <span className="truncate text-[11px] font-medium leading-none">{level.title}</span>
+          <span className="h-1 overflow-hidden rounded-sm bg-muted">
+            <span className="xp-bar block h-full" style={{ width: `${Math.max(4, level.progress * 100)}%` }} />
           </span>
         </span>
         {floaters.map((f) => (
@@ -93,11 +91,11 @@ export function HUD() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-11 z-40 w-72 rounded-3xl border border-border bg-card p-3 shadow-xl animate-in fade-in slide-in-from-top-2">
+        <div className="absolute right-0 top-10 z-40 w-72 rounded-lg border border-border bg-card p-2 shadow-lg animate-in fade-in">
           <div className="flex items-center gap-3 px-2 pb-3">
             <Horus size={44} />
             <div className="min-w-0">
-              <p className="font-display font-bold">
+              <p className="font-display font-semibold">
                 Lv {level.index + 1} · {level.title}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -108,7 +106,7 @@ export function HUD() {
           <Link
             href="/saved#trophies"
             onClick={() => setOpen(false)}
-            className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium hover:bg-muted"
+            className="flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
           >
             🏆 Trophy room
             <span className="text-muted-foreground">

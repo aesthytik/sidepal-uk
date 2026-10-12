@@ -2,41 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Horus brand: calm editorial. Warm paper, ink, one deep green accent.
+ * Every text/background pair here meets WCAG AA in both themes (see docs/branding.md).
+ */
 @layer base {
   :root {
-    --background: 40 33% 97%;
-    --foreground: 230 30% 9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 230 100% 62%;
+    --background: 42 36% 95%; /* paper #F6F3EC */
+    --foreground: 60 6% 10%; /* ink #1A1A17 */
+    --card: 43 47% 97%;
+    --card-foreground: 60 6% 10%;
+    --primary: 162 50% 24%; /* deep green #1F5C4A */
     --primary-foreground: 0 0% 100%;
-    --muted: 40 20% 93%;
-    --muted-foreground: 215 16% 40%;
-    --accent: 230 100% 97%;
-    --accent-foreground: 230 80% 45%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 35 15% 86%;
-    --input: 35 15% 80%;
-    --ring: 230 100% 62%;
-    --radius: 1rem;
+    --muted: 43 28% 90%;
+    --muted-foreground: 42 6% 39%;
+    --accent: 147 22% 92%;
+    --accent-foreground: 162 50% 24%;
+    --destructive: 15 49% 41%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 41 22% 85%;
+    --input: 41 19% 80%;
+    --ring: 162 50% 24%;
+    --gold: 42 60% 34%;
+    --clay: 15 49% 41%;
+    --sage: 151 28% 34%;
+    --radius: 0.5rem;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --background: 222 47% 6%;
-      --foreground: 210 40% 96%;
-      --card: 222 40% 10%;
-      --card-foreground: 210 40% 96%;
-      --primary: 230 100% 68%;
-      --muted: 217 33% 15%;
-      --muted-foreground: 215 20% 68%;
-      --accent: 230 50% 20%;
-      --accent-foreground: 230 100% 85%;
-      --destructive: 0 63% 45%;
-      --border: 217 25% 20%;
-      --input: 217 25% 26%;
-      --ring: 230 100% 70%;
+      --background: 40 7% 8%; /* warm charcoal #161513 */
+      --foreground: 40 28% 90%;
+      --card: 45 7% 11%;
+      --card-foreground: 40 28% 90%;
+      --primary: 152 27% 60%; /* sage #7FB59C */
+      --primary-foreground: 40 7% 8%;
+      --muted: 40 9% 13%;
+      --muted-foreground: 42 8% 61%;
+      --accent: 154 17% 16%;
+      --accent-foreground: 152 33% 74%;
+      --destructive: 16 58% 64%;
+      --destructive-foreground: 40 7% 8%;
+      --border: 40 7% 17%;
+      --input: 43 6% 21%;
+      --ring: 152 27% 60%;
+      --gold: 41 55% 62%;
+      --clay: 16 58% 64%;
+      --sage: 151 29% 66%;
     }
   }
 
@@ -46,31 +58,39 @@
 
   body {
     @apply bg-background text-foreground text-base antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
 
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.18);
+  }
 }
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-border/70 bg-card text-card-foreground;
+    @apply rounded-lg border border-border bg-card text-card-foreground;
   }
-}
-
-@layer components {
   .section-band {
-    @apply bg-accent/50;
+    @apply border-y border-border bg-muted/50;
   }
   .eyebrow {
-    @apply text-sm font-medium uppercase tracking-widest text-accent-foreground;
+    @apply text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground;
   }
 }
 
 @layer utilities {
   .reveal {
-    animation: reveal 0.6s ease-out both;
+    animation: reveal 0.5s ease-out both;
   }
   @media (prefers-reduced-motion: reduce) {
     .reveal,
@@ -84,11 +104,11 @@
 }
 
 @keyframes reveal {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
 
-/* ───────────────────────── Game layer ───────────────────────── */
+/* ───────────────────────── Game layer (quiet) ───────────────────────── */
 
 .animate-horus-dizzy {
   transform-box: fill-box;
@@ -96,136 +116,70 @@
 }
 
 .xp-bar {
-  background: linear-gradient(90deg, #34d399, #06b6d4, #3b5bff, #f472b6);
-  background-size: 300% 100%;
-  animation: xp-shimmer 4s linear infinite;
-  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes xp-shimmer {
-  to { background-position: 300% 0; }
+  background: hsl(var(--primary));
+  transition: width 0.5s ease-out;
 }
 
 .xp-float {
-  animation: xp-float 1.3s ease-out forwards;
+  animation: xp-float 1.2s ease-out forwards;
 }
 @keyframes xp-float {
-  0% { opacity: 0; transform: translateY(6px) scale(0.6); }
-  20% { opacity: 1; transform: translateY(-6px) scale(1.15); }
-  100% { opacity: 0; transform: translateY(-34px) scale(1); }
+  0% { opacity: 0; transform: translateY(4px); }
+  20% { opacity: 1; transform: translateY(-4px); }
+  100% { opacity: 0; transform: translateY(-22px); }
 }
 
 .toast-pop {
-  animation: toast-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: toast-in 0.3s ease-out both;
 }
-@keyframes toast-pop {
-  from { opacity: 0; transform: translateX(40px) scale(0.8) rotate(4deg); }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
 
 .levelup-card {
-  animation: levelup 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: levelup 0.35s ease-out both;
 }
 @keyframes levelup {
-  from { opacity: 0; transform: scale(0.3) rotate(-12deg); }
+  from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: none; }
 }
 
-.logo-wobble:hover {
-  animation: wobble 0.6s ease-in-out;
-}
-@keyframes wobble {
-  25% { transform: rotate(-12deg) scale(1.1); }
-  50% { transform: rotate(10deg) scale(1.1); }
-  75% { transform: rotate(-6deg); }
-}
-
-/* Results drop in one after another */
+/* Results fade in one after another */
 .drop-in > * {
-  animation: drop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: drop-in 0.3s ease-out both;
 }
-.drop-in > *:nth-child(2) { animation-delay: 40ms; }
-.drop-in > *:nth-child(3) { animation-delay: 80ms; }
-.drop-in > *:nth-child(4) { animation-delay: 120ms; }
-.drop-in > *:nth-child(5) { animation-delay: 160ms; }
-.drop-in > *:nth-child(6) { animation-delay: 200ms; }
-.drop-in > *:nth-child(n + 7) { animation-delay: 240ms; }
+.drop-in > *:nth-child(2) { animation-delay: 30ms; }
+.drop-in > *:nth-child(3) { animation-delay: 60ms; }
+.drop-in > *:nth-child(4) { animation-delay: 90ms; }
+.drop-in > *:nth-child(n + 5) { animation-delay: 120ms; }
 @keyframes drop-in {
-  from { opacity: 0; transform: translateY(-14px) scale(0.97); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: none; }
 }
 
-/* Loot cards: sponsor rarity frames */
-.loot {
-  --rx: 0deg;
-  --ry: 0deg;
-  --mx: 50%;
-  --my: 50%;
-  position: relative;
-  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) scale(1);
-  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
-  isolation: isolate;
-}
-.loot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
-  mix-blend-mode: overlay;
-  background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.55), transparent 45%),
-    linear-gradient(115deg, transparent 20%, rgba(6, 182, 212, 0.35) 35%, rgba(244, 114, 182, 0.35) 50%, rgba(252, 211, 77, 0.35) 65%, transparent 80%);
-  background-size: 100% 100%, 250% 250%;
-  background-position: center, var(--mx) var(--my);
-  z-index: 1;
-}
-.loot:hover::after { opacity: 1; }
-.loot-rare { box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.55); }
-.loot-epic { box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.7), 0 10px 30px -12px rgba(168, 85, 247, 0.6); }
+/* Sponsor rarity: a quiet frame, never a light show */
+.loot-epic { border-color: hsl(var(--primary) / 0.45); }
 .loot-legendary {
-  box-shadow: 0 0 0 3px #fcd34d, 0 14px 40px -12px rgba(252, 211, 77, 0.85);
-}
-.loot-legendary::before {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border-radius: inherit;
-  padding: 3px;
-  background: conic-gradient(from var(--spin, 0deg), #fcd34d, #f472b6, #06b6d4, #34d399, #fcd34d);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: legendary-spin 4s linear infinite;
-  pointer-events: none;
-  z-index: 2;
-}
-@property --spin {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-@keyframes legendary-spin {
-  to { --spin: 360deg; }
+  border-color: hsl(var(--gold) / 0.7);
+  box-shadow: inset 0 0 0 1px hsl(var(--gold) / 0.35);
 }
 .loot-reveal {
-  animation: loot-reveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: loot-reveal 0.6s ease-out;
 }
-/* Same function list as .loot's transform, so the flip interpolates angle by angle */
 @keyframes loot-reveal {
-  0% { transform: perspective(900px) rotateX(0deg) rotateY(0deg) scale(1); }
-  45% { transform: perspective(900px) rotateX(0deg) rotateY(90deg) scale(1.03); }
-  100% { transform: perspective(900px) rotateX(0deg) rotateY(0deg) scale(1); }
+  from { background-color: hsl(var(--accent)); }
+  to { background-color: hsl(var(--card)); }
 }
 
 /* Quest board */
 .quest-drop {
-  outline: 3px dashed hsl(var(--primary));
-  outline-offset: -3px;
+  outline: 2px dashed hsl(var(--primary));
+  outline-offset: -2px;
   background: hsl(var(--accent));
 }
 
-/* Arcade mode (Konami code) */
+/* Arcade mode (Konami code), still the hidden egg, drawn in ink and paper */
 html.arcade body {
   font-family: var(--font-pixel), monospace;
   letter-spacing: 0.02em;
@@ -233,7 +187,7 @@ html.arcade body {
 }
 /* Keep the sticky nav below the arcade banner */
 html.arcade header.sticky {
-  top: 36px;
+  top: 28px;
 }
 html.arcade .font-display,
 html.arcade h1,
@@ -242,18 +196,18 @@ html.arcade h3 {
   font-family: var(--font-pixel), monospace;
   line-height: 1.4;
   letter-spacing: 0;
+  font-weight: 400;
 }
 html.arcade h1 { font-size: clamp(1.4rem, 4vw, 2.6rem); }
 html.arcade .card,
 html.arcade button,
 html.arcade input,
-html.arcade a[class*="rounded"],
-html.arcade nav {
+html.arcade a[class*="rounded"] {
   border-radius: 0 !important;
 }
 html.arcade .card {
-  border: 3px solid hsl(var(--foreground));
-  box-shadow: 6px 6px 0 hsl(var(--foreground));
+  border: 2px solid hsl(var(--foreground));
+  box-shadow: 4px 4px 0 hsl(var(--foreground));
 }
 html.arcade body::after {
   content: "";
@@ -261,44 +215,25 @@ html.arcade body::after {
   inset: 0;
   pointer-events: none;
   z-index: 79;
-  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 0 2px, transparent 2px 4px);
-  animation: crt-flicker 6s infinite;
-}
-@keyframes crt-flicker {
-  0%, 97%, 100% { opacity: 1; }
-  98% { opacity: 0.6; }
-}
-html.arcade img,
-html.arcade svg {
-  image-rendering: pixelated;
+  background: repeating-linear-gradient(to bottom, hsl(var(--foreground) / 0.05) 0 1px, transparent 1px 3px);
 }
 
 /* Calm mode and reduced motion switch the game's motion off */
 html.calm .reveal,
 html.calm .animate-marquee,
-html.calm .loot,
-html.calm .loot::before,
-html.calm .xp-bar,
 html.calm .xp-float,
 html.calm .toast-pop,
 html.calm .levelup-card,
 html.calm .drop-in > *,
-html.calm .loot-reveal,
-html.calm .logo-wobble:hover {
+html.calm .loot-reveal {
   animation: none !important;
-  transform: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  .loot,
-  .loot::before,
-  .xp-bar,
   .xp-float,
   .toast-pop,
   .levelup-card,
   .drop-in > *,
-  .loot-reveal,
-  .logo-wobble:hover {
+  .loot-reveal {
     animation: none !important;
-    transform: none !important;
   }
 }

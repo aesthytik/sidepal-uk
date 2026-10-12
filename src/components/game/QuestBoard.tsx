@@ -9,10 +9,10 @@ import { STATUSES, STATUS_LABELS, type ShortlistItem, type Status, useShortlist 
 import { useCalm } from "@/store/useGame";
 
 const COLUMNS: Record<Status, { emoji: string; title: string; empty: string; tone: string }> = {
-  interested: { emoji: "🗺️", title: "Quest log", empty: "Drag sponsors you like here", tone: "border-t-aqua" },
+  interested: { emoji: "🗺️", title: "Quest log", empty: "Drag sponsors you like here", tone: "border-t-sage" },
   applied: { emoji: "📨", title: "Sent into the void", empty: "Applied? Drop it here. +50 XP", tone: "border-t-primary" },
-  interviewing: { emoji: "⚔️", title: "Boss fight", empty: "Interviews go here. +150 XP", tone: "border-t-coral" },
-  offer: { emoji: "🏆", title: "Victory!", empty: "The dream column. +500 XP", tone: "border-t-lemon" },
+  interviewing: { emoji: "⚔️", title: "Boss fight", empty: "Interviews go here. +150 XP", tone: "border-t-clay" },
+  offer: { emoji: "🏆", title: "Victory!", empty: "The dream column. +500 XP", tone: "border-t-gold" },
   rejected: { emoji: "🪦", title: "Graveyard", empty: "No shame. Drag back out to respawn", tone: "border-t-muted-foreground" },
 };
 
@@ -29,8 +29,8 @@ function QuestCard({ sponsor, item }: { sponsor: Sponsor; item: ShortlistItem })
       }}
       onDragEnd={() => setDragging(false)}
       className={cn(
-        "card cursor-grab p-3 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:cursor-grabbing",
-        dragging && "rotate-3 opacity-50",
+        "card cursor-grab p-3 text-sm transition-colors hover:border-foreground/30 active:cursor-grabbing",
+        dragging && "opacity-50",
         item.status === "rejected" && "opacity-70 grayscale"
       )}
     >
@@ -46,7 +46,7 @@ function QuestCard({ sponsor, item }: { sponsor: Sponsor; item: ShortlistItem })
         aria-label={`Status for ${sponsor.name}`}
         value={item.status}
         onChange={(e) => update(sponsor.id, { status: e.target.value as Status })}
-        className="mt-2 h-8 w-full rounded-lg border border-input bg-card px-2 text-xs"
+        className="mt-2 h-8 w-full rounded-md border border-input bg-card px-2 text-xs"
       >
         {STATUSES.map((s) => (
           <option key={s} value={s}>
@@ -87,16 +87,16 @@ export function QuestBoard({ rows }: { rows: { sponsor: Sponsor; item: Shortlist
                 update(id, { status });
                 if (status === "offer") confetti({ x: e.clientX, y: e.clientY, calm, count: 80 });
               }}
-              className={cn("flex min-h-[18rem] flex-col rounded-2xl border border-t-4 border-border/70 bg-muted/40 p-2 transition-colors", col.tone, over === status && "quest-drop")}
+              className={cn("flex min-h-[18rem] flex-col rounded-lg border border-t-2 border-border bg-muted/40 p-2 transition-colors", col.tone, over === status && "quest-drop")}
             >
               <header className="flex items-center justify-between px-1.5 pb-2 pt-1">
-                <h2 className="text-sm font-bold">
+                <h2 className="text-sm font-semibold">
                   <span aria-hidden="true">{col.emoji}</span> {col.title}
                 </h2>
-                <span className="rounded-full bg-card px-2 text-xs font-semibold leading-5">{cards.length}</span>
+                <span className="rounded bg-card px-1.5 text-xs font-medium leading-5 tabular-nums">{cards.length}</span>
               </header>
               {cards.length === 0 ? (
-                <p className="m-1 flex flex-1 items-center justify-center rounded-xl border-2 border-dashed border-border p-3 text-center text-xs text-muted-foreground">
+                <p className="m-1 flex flex-1 items-center justify-center rounded-md border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
                   {col.empty}
                 </p>
               ) : (

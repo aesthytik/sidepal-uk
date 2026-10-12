@@ -28,7 +28,7 @@ export function JobSearch() {
     <main className="container px-4 py-6 sm:py-10">
       <header className="mb-6 space-y-4">
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">UK jobs from visa sponsors</h1>
+          <h1 className="font-display text-3xl font-semibold sm:text-4xl">UK jobs from visa sponsors</h1>
           <p className="mt-1 text-muted-foreground">
             {info && info.count > 0
               ? `${info.count.toLocaleString()} live roles from ${info.sponsors.toLocaleString()} licensed sponsors${updated ? `, updated ${updated}` : ""}. `
@@ -51,7 +51,7 @@ export function JobSearch() {
             <SlidersIcon />
             Filters
             {filterCount > 0 && (
-              <span className="rounded-full bg-primary px-1.5 text-xs leading-5 text-primary-foreground">{filterCount}</span>
+              <span className="rounded bg-foreground px-1.5 text-xs leading-5 text-background tabular-nums">{filterCount}</span>
             )}
           </Button>
         </div>

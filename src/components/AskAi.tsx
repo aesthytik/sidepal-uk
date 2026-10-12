@@ -35,14 +35,14 @@ export function AskAi({ className }: { className?: string }) {
 
   return (
     <form onSubmit={submit} className={className}>
-      <div className="flex items-center gap-2 rounded-full border border-border bg-card p-1.5 shadow-sm">
+      <div className="flex items-center gap-2 rounded-md border border-input bg-card p-1.5 focus-within:border-foreground/40">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           maxLength={200}
           aria-label="Describe the sponsor you want"
           placeholder="e.g. A-rated skilled worker sponsors in Manchester"
-          className="h-11 min-w-0 flex-1 rounded-full bg-transparent px-4 text-base outline-none"
+          className="h-10 min-w-0 flex-1 bg-transparent px-3 text-base outline-none"
         />
         <Button type="submit" size="lg" disabled={busy}>
           {busy ? "Thinking…" : "Ask AI"}

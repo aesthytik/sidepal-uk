@@ -3,7 +3,8 @@
  * caller says the user wants calm, or when there is no browser.
  */
 
-const COLORS = ["#3B5BFF", "#06B6D4", "#F472B6", "#FCD34D", "#34D399", "#ffffff"];
+// Brand tones: green, sage, gold, clay, ink, paper
+const COLORS = ["#1F5C4A", "#7FB59C", "#B08D3C", "#B5654A", "#1A1A17", "#E2DDD2"];
 
 interface Piece {
   x: number;
@@ -66,11 +67,11 @@ function tick() {
     } else if (p.shape === "eye") {
       ctx.beginPath();
       ctx.ellipse(0, 0, p.size, p.size / 2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = "#F6F3EC";
       ctx.fill();
       ctx.beginPath();
       ctx.arc(0, 0, p.size / 3, 0, Math.PI * 2);
-      ctx.fillStyle = "#3B5BFF";
+      ctx.fillStyle = "#1F5C4A";
       ctx.fill();
     } else {
       ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
@@ -86,7 +87,7 @@ export function confetti(opts: { x?: number; y?: number; count?: number; calm?: 
   if (opts.calm || typeof window === "undefined") return;
   const x = opts.x ?? innerWidth / 2;
   const y = opts.y ?? innerHeight / 3;
-  const count = opts.count ?? 140;
+  const count = Math.round((opts.count ?? 140) * 0.6); // A gentle sprinkle, not a storm
   for (let i = 0; i < count; i++) {
     const angle = Math.random() * Math.PI * 2;
     const speed = 4 + Math.random() * 9;

@@ -161,7 +161,7 @@ export function Shortlist() {
       <main className="container max-w-5xl px-4 py-16">
         <div className="mx-auto max-w-2xl text-center">
           <Horus size={88} mood="sleepy" say="Wake me when you find one" />
-          <h1 className="mt-5 font-display text-3xl font-bold">Your quest log is empty</h1>
+          <h1 className="mt-5 font-display text-3xl font-semibold">Your quest log is empty</h1>
           <p className="mt-3 text-muted-foreground">
             Save sponsors while you search, then drag them from <em>Interested</em> all the way to <em>Offer</em>. Every
             step earns XP. Your shortlist stays in this browser.
@@ -179,11 +179,11 @@ export function Shortlist() {
     <main className={cn("container px-4 py-6 sm:py-10", view === "board" ? "max-w-6xl" : "max-w-4xl")}>
       <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">My quest board</h1>
+          <h1 className="font-display text-3xl font-semibold sm:text-4xl">My quest board</h1>
           <p className="mt-1 text-muted-foreground">Drag sponsors right as you progress. Saved in this browser.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <div role="group" aria-label="View" className="flex rounded-full border border-border bg-card p-1">
+          <div role="group" aria-label="View" className="flex rounded-md border border-border bg-card p-0.5">
             {(["board", "list"] as const).map((v) => (
               <button
                 key={v}
@@ -191,11 +191,11 @@ export function Shortlist() {
                 aria-pressed={view === v}
                 onClick={() => setView(v)}
                 className={cn(
-                  "rounded-full px-3 py-1 text-sm font-medium",
-                  view === v ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  "rounded px-3 py-1 text-sm font-medium",
+                  view === v ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                {v === "board" ? "🗂 Board" : "☰ List"}
+                {v === "board" ? "Board" : "List"}
               </button>
             ))}
           </div>
@@ -220,7 +220,7 @@ export function Shortlist() {
         !hydrated || (loading && rows.length === 0) ? (
           <div className="grid grid-cols-5 gap-3" aria-hidden="true">
             {STATUSES.map((s) => (
-              <div key={s} className="h-72 animate-pulse rounded-2xl bg-muted" />
+              <div key={s} className="h-72 animate-pulse rounded-lg bg-muted" />
             ))}
           </div>
         ) : (
@@ -244,7 +244,7 @@ export function Shortlist() {
                   )}
                 >
                   {s === "all" ? "All" : STATUS_LABELS[s]}
-                  <span className="rounded-full bg-muted px-1.5 text-xs leading-5 text-muted-foreground">
+                  <span className="rounded bg-muted px-1.5 text-xs leading-5 text-muted-foreground tabular-nums">
                     {counts[s] ?? 0}
                   </span>
                 </button>

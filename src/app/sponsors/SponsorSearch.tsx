@@ -27,7 +27,7 @@ export function SponsorSearch() {
     <main className="container px-4 py-6 sm:py-10">
       <header className="mb-6 space-y-4">
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Find a visa sponsor</h1>
+          <h1 className="font-display text-3xl font-semibold sm:text-4xl">Find a visa sponsor</h1>
           <p className="mt-1 text-muted-foreground">
             Every employer on the Home Office register, with their careers page and open roles where we can find them.
           </p>
@@ -42,7 +42,7 @@ export function SponsorSearch() {
             <SlidersIcon />
             Filters
             {filterCount > 0 && (
-              <span className="rounded-full bg-primary px-1.5 text-xs leading-5 text-primary-foreground">{filterCount}</span>
+              <span className="rounded bg-foreground px-1.5 text-xs leading-5 text-background tabular-nums">{filterCount}</span>
             )}
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { Inter, Press_Start_2P, Space_Grotesk } from "next/font/google";
+import { Fraunces, Inter, Press_Start_2P } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 import { ShortlistHydrator } from "@/components/ShortlistHydrator";
@@ -9,7 +9,7 @@ import { SecretEye } from "@/components/game/SecretEye";
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], display: "swap", variable: "--font-space-grotesk" });
+const fraunces = Fraunces({ subsets: ["latin"], display: "swap", variable: "--font-fraunces", axes: ["opsz", "SOFT"] });
 // Only used by the arcade-mode easter egg, so it isn't preloaded
 const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], display: "swap", preload: false, variable: "--font-pixel" });
 
@@ -44,8 +44,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8f6f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b1020" },
+    { media: "(prefers-color-scheme: light)", color: "#F6F3EC" },
+    { media: "(prefers-color-scheme: dark)", color: "#161513" },
   ],
 };
 
@@ -67,17 +67,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${pixel.variable} flex min-h-screen flex-col font-sans`}>
+      <body className={`${inter.variable} ${fraunces.variable} ${pixel.variable} flex min-h-screen flex-col font-sans`}>
         <ShortlistHydrator />
         <GameLayer />
         <Navigation />
         <div className="flex-1">{children}</div>
-        <footer className="mt-16 border-t border-border bg-accent/40 py-14 text-sm text-muted-foreground">
-          <div className="container grid gap-10 px-4 sm:grid-cols-[2fr_1fr_1fr]">
+        <footer className="mt-16 border-t border-border py-14 text-sm text-muted-foreground">
+          <div className="container grid max-w-6xl gap-10 px-4 sm:grid-cols-[2fr_1fr_1fr]">
             <div>
-              <p className="font-display text-3xl font-bold tracking-tight text-foreground">
-                Hor<span className="text-primary">us</span>
-              </p>
+              <p className="font-display text-3xl font-semibold text-foreground">Horus</p>
               <p className="mt-3 max-w-sm">
                 Find UK employers licensed to sponsor your work visa, see who&apos;s hiring, and track your applications.
               </p>

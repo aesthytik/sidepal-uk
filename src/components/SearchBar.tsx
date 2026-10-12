@@ -70,7 +70,7 @@ export function SearchBar({
           onTextChange?.(e.target.value);
         }}
         onKeyDown={(e) => e.key === "Enter" && send(text)}
-        className="h-11 w-full rounded-lg border border-input bg-card pl-10 pr-10 text-base shadow-sm placeholder:text-muted-foreground/80 focus:border-primary [&::-webkit-search-cancel-button]:hidden"
+        className="h-11 w-full rounded-md border border-input bg-card pl-10 pr-10 text-base placeholder:text-muted-foreground/80 focus:border-foreground/40 [&::-webkit-search-cancel-button]:hidden"
       />
       {text && (
         <button

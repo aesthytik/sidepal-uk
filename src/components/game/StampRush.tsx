@@ -11,12 +11,50 @@ const LIVES = 3;
 const PLAYER = 52;
 
 type Rarity = "common" | "rare" | "epic" | "legendary";
-const RARITIES: { rarity: Rarity; chance: number; points: number; fill: string; ink: string }[] = [
-  { rarity: "legendary", chance: 0.04, points: 150, fill: "#FCD34D", ink: "#422006" },
-  { rarity: "epic", chance: 0.12, points: 50, fill: "#C084FC", ink: "#2e1065" },
-  { rarity: "rare", chance: 0.3, points: 25, fill: "#22D3EE", ink: "#083344" },
-  { rarity: "common", chance: 1, points: 10, fill: "#E0E7FF", ink: "#1e1b4b" },
+const RARITIES: { rarity: Rarity; chance: number; points: number }[] = [
+  { rarity: "legendary", chance: 0.04, points: 150 },
+  { rarity: "epic", chance: 0.12, points: 50 },
+  { rarity: "rare", chance: 0.3, points: 25 },
+  { rarity: "common", chance: 1, points: 10 },
 ];
+
+/** The desk the game is played on, in the brand's light and dark tones. */
+interface Theme {
+  bg: string;
+  rule: string;
+  ink: string;
+  muted: string;
+  tape: string;
+  stamp: Record<Rarity, { fill: string; ink: string }>;
+}
+const LIGHT: Theme = {
+  bg: "#F6F3EC",
+  rule: "#E9E4D9",
+  ink: "#1A1A17",
+  muted: "#6B675E",
+  tape: "#B5654A",
+  stamp: {
+    legendary: { fill: "#B08D3C", ink: "#FBF9F4" },
+    epic: { fill: "#1F5C4A", ink: "#FBF9F4" },
+    rare: { fill: "#DCE8E1", ink: "#1F5C4A" },
+    common: { fill: "#FBF9F4", ink: "#1A1A17" },
+  },
+};
+const DARK: Theme = {
+  bg: "#1E1D1A",
+  rule: "#272622",
+  ink: "#ECE7DD",
+  muted: "#A39E92",
+  tape: "#C9785C",
+  stamp: {
+    legendary: { fill: "#D4B36A", ink: "#161513" },
+    epic: { fill: "#7FB59C", ink: "#161513" },
+    rare: { fill: "#22302A", ink: "#A8D3BF" },
+    common: { fill: "#2A2925", ink: "#ECE7DD" },
+  },
+};
+const theme = (): Theme =>
+  typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
 const RED_TAPE = ["Missing form", "Wrong route", "Expired CoS", "Unpaid fee", "Typo in name", "Lost passport", "B-rated", "No reply"];
 const FALLBACK = [
   { id: "", name: "Visa Vibes Ltd" },
@@ -79,7 +117,6 @@ interface World {
   shake: number;
   ouch: number;
   keys: { left: boolean; right: boolean };
-  stars: { x: number; y: number; r: number; tw: number }[];
   legendary: Sponsorish[];
 }
 
@@ -100,7 +137,6 @@ function newWorld(w: number, h: number): World {
     shake: 0,
     ouch: 0,
     keys: { left: false, right: false },
-    stars: Array.from({ length: 50 }, () => ({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.4 + 0.3, tw: Math.random() * 6 })),
     legendary: [],
   };
 }
@@ -125,14 +161,14 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   const bob = Math.sin(t * 8) * 2;
   ctx.save();
   ctx.translate(x, y + bob);
-  ctx.fillStyle = "#3B5BFF";
+  ctx.fillStyle = "#1F5C4A";
   roundRect(ctx, -s / 2, -s / 2, s, s, 12);
   ctx.fill();
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = "#F6F3EC";
   ctx.beginPath();
   if (ouch) {
     // X_X
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = "#F6F3EC";
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
     for (const dx of [-10, 10]) {
@@ -145,20 +181,20 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   } else {
     ctx.ellipse(0, -4, 20, 11, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#3B5BFF";
+    ctx.fillStyle = "#3E7E68";
     ctx.beginPath();
     ctx.arc(look * 7, -6, 7.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#0B1020";
+    ctx.fillStyle = "#1A1A17";
     ctx.beginPath();
     ctx.arc(look * 7, -6, 3.2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#F6F3EC";
     ctx.beginPath();
     ctx.arc(look * 7 + 2.5, -8.5, 1.4, 0, Math.PI * 2);
     ctx.fill();
   }
-  ctx.strokeStyle = "#fff";
+  ctx.strokeStyle = "#F6F3EC";
   ctx.lineWidth = 3.5;
   ctx.lineCap = "round";
   ctx.beginPath();
@@ -169,29 +205,29 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   ctx.restore();
 }
 
-function drawItem(ctx: CanvasRenderingContext2D, it: Item) {
+function drawItem(ctx: CanvasRenderingContext2D, it: Item, t: Theme) {
   ctx.save();
   ctx.translate(it.x, it.y);
   ctx.rotate(it.rot + Math.sin(it.wobble) * 0.18);
   if (it.kind === "tape") {
-    ctx.fillStyle = "#EF4444";
-    roundRect(ctx, -it.w / 2, -it.h / 2, it.w, it.h, it.h / 2);
+    ctx.fillStyle = t.tape;
+    roundRect(ctx, -it.w / 2, -it.h / 2, it.w, it.h, 4);
     ctx.fill();
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#FBF9F4";
     ctx.font = "bold 11px ui-sans-serif, system-ui";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(`✕ ${it.label}`, 0, 1);
   } else {
-    const r = RARITIES.find((x) => x.rarity === it.rarity)!;
-    if (it.rarity === "legendary") {
-      ctx.shadowColor = "#FCD34D";
-      ctx.shadowBlur = 18;
-    }
+    const r = t.stamp[it.rarity];
     ctx.fillStyle = r.fill;
-    roundRect(ctx, -it.w / 2, -it.h / 2, it.w, it.h, 6);
+    roundRect(ctx, -it.w / 2, -it.h / 2, it.w, it.h, 4);
     ctx.fill();
-    ctx.shadowBlur = 0;
+    if (it.rarity === "common") {
+      ctx.strokeStyle = t.rule;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
     // Perforated postage-stamp edge
     ctx.setLineDash([3, 3]);
     ctx.strokeStyle = r.ink;
@@ -324,15 +360,16 @@ export default function StampRush() {
         if (hit) {
           if (it.kind === "stamp") {
             const r = RARITIES.find((x) => x.rarity === it.rarity)!;
+            const color = theme().stamp[it.rarity].fill;
             w.combo++;
             const mult = Math.min(5, 1 + Math.floor(w.combo / 5));
             const gained = r.points * mult;
             w.score += gained;
-            w.pops.push({ x: it.x, y: it.y - 20, text: `+${gained}${mult > 1 ? ` ×${mult}` : ""}`, life: 0.9, color: r.fill });
-            for (let i = 0; i < (still ? 6 : 18); i++) {
+            w.pops.push({ x: it.x, y: it.y - 20, text: `+${gained}${mult > 1 ? ` ×${mult}` : ""}`, life: 0.9, color: it.rarity === "common" ? theme().ink : color });
+            for (let i = 0; i < (still ? 4 : 10); i++) {
               const a = Math.random() * Math.PI * 2;
               const v = 60 + Math.random() * 200;
-              w.particles.push({ x: it.x, y: it.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 80, life: 0.6 + Math.random() * 0.4, color: r.fill });
+              w.particles.push({ x: it.x, y: it.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 80, life: 0.6 + Math.random() * 0.4, color: it.rarity === "common" ? theme().muted : color });
             }
             if (it.rarity === "legendary" && it.sponsor && !w.legendary.some((s) => s.name === it.sponsor!.name)) {
               w.legendary.push(it.sponsor);
@@ -343,7 +380,7 @@ export default function StampRush() {
             w.combo = 0;
             w.shake = still ? 0 : 0.35;
             w.ouch = 0.5;
-            w.pops.push({ x: it.x, y: it.y - 20, text: "OUCH! −1 ♥", life: 1, color: "#F87171" });
+            w.pops.push({ x: it.x, y: it.y - 20, text: "Ouch! −1 ♥", life: 1, color: theme().tape });
             playSound("bonk", sfx);
           }
           continue;
@@ -380,25 +417,15 @@ export default function StampRush() {
     ctx.clearRect(0, 0, w.w, w.h);
     if (w.shake > 0) ctx.translate((Math.random() - 0.5) * 12 * w.shake, (Math.random() - 0.5) * 12 * w.shake);
 
-    const sky = ctx.createLinearGradient(0, 0, 0, w.h);
-    sky.addColorStop(0, "#0B1020");
-    sky.addColorStop(1, "#1E2A6B");
-    ctx.fillStyle = sky;
+    const t = theme();
+    // A ruled desk blotter
+    ctx.fillStyle = t.bg;
     ctx.fillRect(-10, -10, w.w + 20, w.h + 20);
-    for (const s of w.stars) {
-      ctx.globalAlpha = 0.4 + 0.4 * Math.sin(w.t * 2 + s.tw);
-      ctx.fillStyle = "#fff";
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
+    ctx.fillStyle = t.rule;
+    for (let y = 28; y < w.h; y += 28) ctx.fillRect(0, y, w.w, 1);
+    ctx.fillRect(0, w.h - 14, w.w, 1);
 
-    // Ground
-    ctx.fillStyle = "rgba(255,255,255,0.06)";
-    ctx.fillRect(0, w.h - 14, w.w, 14);
-
-    for (const it of w.items) drawItem(ctx, it);
+    for (const it of w.items) drawItem(ctx, it, t);
     for (const p of w.particles) {
       ctx.globalAlpha = Math.min(1, p.life * 2);
       ctx.fillStyle = p.color;
@@ -421,17 +448,17 @@ export default function StampRush() {
 
     // HUD
     ctx.textAlign = "left";
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 20px ui-sans-serif, system-ui";
+    ctx.fillStyle = t.ink;
+    ctx.font = "600 20px ui-sans-serif, system-ui";
     ctx.fillText(Math.round(w.score).toLocaleString("en-GB"), 16, 32);
     ctx.font = "bold 12px ui-sans-serif, system-ui";
-    ctx.fillStyle = "#34D399";
+    ctx.fillStyle = t.stamp.epic.fill;
     if (w.combo >= 5) ctx.fillText(`COMBO ×${Math.min(5, 1 + Math.floor(w.combo / 5))}`, 16, 50);
     ctx.textAlign = "right";
-    ctx.fillStyle = "#FCD34D";
-    ctx.font = "bold 16px ui-sans-serif, system-ui";
+    ctx.fillStyle = t.muted;
+    ctx.font = "600 15px ui-sans-serif, system-ui";
     ctx.fillText(`⏱ ${Math.max(0, Math.ceil(ROUND_SECONDS - w.t))}s`, w.w - 16, 30);
-    ctx.fillStyle = "#F472B6";
+    ctx.fillStyle = t.tape;
     ctx.fillText("♥".repeat(Math.max(0, w.lives)) + "♡".repeat(LIVES - Math.max(0, w.lives)), w.w - 16, 52);
     ctx.restore();
   }, []);
@@ -439,7 +466,7 @@ export default function StampRush() {
   const start = useCallback(() => {
     resize();
     const w = world.current!;
-    world.current = { ...newWorld(w.w, w.h), stars: w.stars };
+    world.current = newWorld(w.w, w.h);
     draw(); // Resizing cleared the canvas; don't wait for the first frame
     setResult(null);
     setPhase("playing");
@@ -466,9 +493,13 @@ export default function StampRush() {
       resize();
       draw();
     };
+    // Repaint in the new palette if the OS switches between light and dark
+    const scheme = window.matchMedia("(prefers-color-scheme: dark)");
     window.addEventListener("resize", onResize);
+    scheme.addEventListener("change", draw);
     return () => {
       window.removeEventListener("resize", onResize);
+      scheme.removeEventListener("change", draw);
       cancelAnimationFrame(raf.current);
     };
   }, [resize, draw]);
@@ -507,7 +538,7 @@ export default function StampRush() {
   }
 
   return (
-    <div ref={wrap} className="relative overflow-hidden rounded-[2rem] border-4 border-foreground bg-[#0B1020] shadow-[8px_8px_0_hsl(var(--foreground))]">
+    <div ref={wrap} className="relative overflow-hidden rounded-lg border border-border bg-card">
       <canvas
         ref={canvas}
         tabIndex={0}
@@ -519,42 +550,42 @@ export default function StampRush() {
       />
 
       {phase !== "playing" && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/55 p-6 text-center text-white backdrop-blur-[2px]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/85 p-6 text-center text-foreground">
           {phase === "idle" ? (
             <>
-              <p className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
-                STAMP <span className="text-lemon">RUSH</span>
+              <p className="font-display text-4xl font-semibold sm:text-5xl">
+                Stamp <span className="italic text-primary">Rush</span>
               </p>
-              <p className="max-w-sm text-sm text-white/80">
+              <p className="max-w-sm text-sm text-muted-foreground">
                 Catch visa stamps from <strong>real sponsors</strong>. Dodge the red tape. Gold stamps are legendary.
                 <br />
-                <span className="text-white/60">← → or drag · {ROUND_SECONDS} seconds · 3 lives</span>
+                <span className="text-xs">← → or drag · {ROUND_SECONDS} seconds · 3 lives</span>
               </p>
-              <Button size="lg" onClick={start} className="bg-lemon text-black hover:bg-lemon/90">
-                ▶ Press start
+              <Button size="lg" onClick={start}>
+                Start
               </Button>
-              {best > 0 && <p className="text-xs text-white/60">Your best: {best.toLocaleString("en-GB")}</p>}
+              {best > 0 && <p className="text-xs text-muted-foreground">Your best: {best.toLocaleString("en-GB")}</p>}
             </>
           ) : (
             result && (
               <div aria-live="polite" className="flex flex-col items-center gap-3">
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/60">Game over</p>
-                <p className="font-display text-5xl font-bold">{result.score.toLocaleString("en-GB")}</p>
+                <p className="eyebrow">Game over</p>
+                <p className="font-display text-5xl font-semibold">{result.score.toLocaleString("en-GB")}</p>
                 {result.record ? (
-                  <p className="rounded-full bg-lemon px-3 py-1 text-sm font-bold text-black">🏆 New high score!</p>
+                  <p className="rounded bg-gold/10 px-2.5 py-1 text-sm font-medium text-gold">New high score</p>
                 ) : (
-                  <p className="text-sm text-white/70">Best: {best.toLocaleString("en-GB")}</p>
+                  <p className="text-sm text-muted-foreground">Best: {best.toLocaleString("en-GB")}</p>
                 )}
-                <p className="text-sm text-mint">+{Math.min(150, Math.floor(result.score / 10))} XP</p>
+                <p className="text-sm font-medium text-sage">+{Math.min(150, Math.floor(result.score / 10))} XP</p>
                 {result.legendary.length > 0 && (
                   <div className="text-sm">
-                    <p className="text-white/70">Legendary stamps you caught (they&apos;re real sponsors!):</p>
+                    <p className="text-muted-foreground">Gold stamps you caught (they&apos;re real sponsors!):</p>
                     <div className="mt-2 flex flex-wrap justify-center gap-2">
                       {result.legendary.map((s) => (
                         <Link
                           key={s.id}
                           href={`/sponsors?q=${encodeURIComponent(s.name)}`}
-                          className="rounded-full bg-lemon/20 px-3 py-1 text-lemon hover:bg-lemon hover:text-black"
+                          className="rounded border border-gold/40 px-2.5 py-1 text-gold hover:bg-gold/10"
                         >
                           ★ {s.name}
                         </Link>
@@ -562,8 +593,8 @@ export default function StampRush() {
                     </div>
                   </div>
                 )}
-                <Button size="lg" onClick={start} className="mt-1 bg-lemon text-black hover:bg-lemon/90">
-                  ↻ Play again
+                <Button size="lg" onClick={start} className="mt-1">
+                  Play again
                 </Button>
               </div>
             )

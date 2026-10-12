@@ -31,7 +31,7 @@ export default function VisaBasicsGuidePage() {
   return (
     <main className="container max-w-3xl space-y-6 px-4 py-10">
       <header>
-        <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">UK work visa basics</h1>
+        <h1 className="font-display text-3xl font-semibold sm:text-4xl">UK work visa basics</h1>
         <p className="mt-2 text-muted-foreground">
           A short overview. Rules and salary thresholds change often, so always check the linked GOV.UK pages before
           you apply.
