@@ -1,28 +1,91 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { JobCard } from "@/components/JobCard";
 import { SearchBar } from "@/components/SearchBar";
 import { ActiveFilters, SearchFilters } from "@/components/SearchFilters";
 import { Button } from "@/components/ui/button";
 import { Horus } from "@/components/game/Horus";
-import { SlidersIcon } from "@/components/ui/icons";
+import { ListIcon, MapIcon, SlidersIcon } from "@/components/ui/icons";
 import { Sheet } from "@/components/ui/sheet";
 import { useJobSearch } from "@/lib/useSponsorSearch";
+import { cn } from "@/lib/utils";
+import { SortSelect } from "./SortSelect";
+
+// MapLibre is heavy, so it only loads when someone opens the map
+const JobMap = dynamic(() => import("./JobMap"), {
+  ssr: false,
+  loading: () => <div className="card h-[55vh] min-h-[22rem] animate-pulse lg:h-[72vh]" aria-hidden="true" />,
+});
 
 export function JobSearch() {
   const search = useJobSearch();
   const { filters, setFilters, items, total, status, info } = search;
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const filterCount = [filters.location, filters.visa, filters.rating, filters.role, filters.sector, filters.sponsored].filter(
+  const filterCount = [filters.location, filters.visa, filters.rating, filters.role, filters.sector, filters.sponsored, filters.place].filter(
     Boolean
   ).length;
   const loading = status === "loading";
+  const mapView = filters.view === "map";
   const updated = info?.generatedAt
     ? new Date(info.generatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long" })
     : null;
+
+  const results =
+    status === "error" ? (
+      <div className="card p-8 text-center">
+        <p className="font-medium">Couldn&apos;t load jobs.</p>
+        <Button className="mt-4" variant="outline" onClick={search.retry}>
+          Try again
+        </Button>
+      </div>
+    ) : loading ? (
+      Array.from({ length: 4 }, (_, i) => <div key={i} className="card h-28 animate-pulse" aria-hidden="true" />)
+    ) : items.length === 0 ? (
+      <div className="card p-8 text-center">
+        <Horus size={72} mood="shocked" say="Nothing?!" className="mb-4" />
+        <h2 className="font-display text-xl font-semibold">No jobs found</h2>
+        <p className="mt-2 text-muted-foreground">
+          We only list roles from sponsors whose job boards we can read, so try fewer filters or browse all sponsors.
+        </p>
+        <div className="mt-5 flex flex-wrap justify-center gap-2">
+          {filterCount > 0 && (
+            <Button
+              variant="outline"
+              onClick={() =>
+                setFilters({ location: undefined, visa: undefined, rating: undefined, role: undefined, sector: undefined, sponsored: undefined, place: undefined })
+              }
+            >
+              Remove filters
+            </Button>
+          )}
+          <Button asChild variant="ghost">
+            <Link href="/sponsors">Browse sponsors</Link>
+          </Button>
+        </div>
+      </div>
+    ) : (
+      <>
+        <div className="drop-in space-y-4">
+          {items.map((job) => (
+            <JobCard key={job.url} job={job} />
+          ))}
+        </div>
+        {search.hasMore && (
+          <div className="flex flex-col items-center gap-2 pt-2">
+            <Button variant="outline" size="lg" onClick={search.loadMore} disabled={status === "loading-more"}>
+              {status === "loading-more" ? "Loading…" : "Show more jobs"}
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              Showing {items.length.toLocaleString()} of {total.toLocaleString()}
+            </span>
+          </div>
+        )}
+      </>
+    );
 
   return (
     <main className="container px-4 py-6 sm:py-10">
@@ -79,60 +142,48 @@ export function JobSearch() {
 
         <section aria-label="Results" className="min-w-0 space-y-4">
           <ActiveFilters filters={filters} onChange={setFilters} />
-          <p className="text-sm text-muted-foreground" aria-live="polite">
-            {loading ? "Searching…" : status !== "error" && `${total.toLocaleString()} job${total === 1 ? "" : "s"}, newest first`}
-          </p>
-
-          {status === "error" ? (
-            <div className="card p-8 text-center">
-              <p className="font-medium">Couldn&apos;t load jobs.</p>
-              <Button className="mt-4" variant="outline" onClick={search.retry}>
-                Try again
-              </Button>
-            </div>
-          ) : loading ? (
-            Array.from({ length: 4 }, (_, i) => <div key={i} className="card h-28 animate-pulse" aria-hidden="true" />)
-          ) : items.length === 0 ? (
-            <div className="card p-8 text-center">
-              <Horus size={72} mood="shocked" say="Nothing?!" className="mb-4" />
-              <h2 className="font-display text-xl font-semibold">No jobs found</h2>
-              <p className="mt-2 text-muted-foreground">
-                We only list roles from sponsors whose job boards we can read, so try fewer filters or browse all sponsors.
-              </p>
-              <div className="mt-5 flex flex-wrap justify-center gap-2">
-                {filterCount > 0 && (
-                  <Button
-                    variant="outline"
-                    onClick={() =>
-                      setFilters({ location: undefined, visa: undefined, rating: undefined, role: undefined, sector: undefined, sponsored: undefined })
-                    }
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {mapView
+                ? "Tap a bubble or a place to see its jobs"
+                : loading
+                  ? "Searching…"
+                  : status !== "error" &&
+                    `${total.toLocaleString()} job${total === 1 ? "" : "s"}, ${filters.sort === "salary" ? "highest salary" : "newest"} first`}
+            </p>
+            <div className="flex items-center gap-2">
+              {!mapView && <SortSelect value={filters.sort} onChange={(sort) => setFilters({ sort }, { replace: true })} />}
+              <div role="group" aria-label="View" className="inline-flex rounded-md border bg-card p-0.5">
+                {(
+                  [
+                    [false, "List", ListIcon],
+                    [true, "Map", MapIcon],
+                  ] as const
+                ).map(([map, label, Icon]) => (
+                  <button
+                    key={label}
+                    type="button"
+                    aria-pressed={mapView === map}
+                    onClick={() => setFilters({ view: map ? "map" : undefined }, { replace: true })}
+                    className={cn(
+                      "inline-flex h-7 items-center gap-1.5 rounded px-2.5 text-xs font-medium transition-colors",
+                      mapView === map ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                    )}
                   >
-                    Remove filters
-                  </Button>
-                )}
-                <Button asChild variant="ghost">
-                  <Link href="/sponsors">Browse sponsors</Link>
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="drop-in space-y-4">
-                {items.map((job) => (
-                  <JobCard key={job.url} job={job} />
+                    <Icon width={14} height={14} />
+                    {label}
+                  </button>
                 ))}
               </div>
-              {search.hasMore && (
-                <div className="flex flex-col items-center gap-2 pt-2">
-                  <Button variant="outline" size="lg" onClick={search.loadMore} disabled={status === "loading-more"}>
-                    {status === "loading-more" ? "Loading…" : "Show more jobs"}
-                  </Button>
-                  <span className="text-xs text-muted-foreground">
-                    Showing {items.length.toLocaleString()} of {total.toLocaleString()}
-                  </span>
-                </div>
-              )}
-            </>
+            </div>
+          </div>
+
+          {mapView ? (
+            <JobMap filters={filters} onChange={setFilters}>
+              {results}
+            </JobMap>
+          ) : (
+            results
           )}
         </section>
       </div>

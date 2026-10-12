@@ -17,6 +17,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "fuse.js": "^7.1.0",
+    "maplibre-gl": "^5.24.0",
     "next": "15.3.8",
     "papaparse": "^5.5.2",
     "react": "^19.0.0",

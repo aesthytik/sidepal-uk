@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import { PLACE_BY_ID } from "@/lib/geo/places";
 import type { SearchFilters as Filters } from "@/lib/searchParams";
 import { ROLE_FAMILIES, SECTORS, roleFamily, sectorLabel } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS, VISA_CATEGORIES } from "@/lib/sponsorTypes";
@@ -202,6 +203,7 @@ export function ActiveFilters({
     filters.sector && { key: "sector" as const, label: sectorLabel(filters.sector) },
     filters.rating && { key: "rating" as const, label: "A-rated only" },
     filters.sponsored && { key: "sponsored" as const, label: "Likely sponsorable" },
+    filters.place && { key: "place" as const, label: filters.place === "remote" ? "Remote / UK-wide" : (PLACE_BY_ID.get(filters.place)?.name ?? filters.place) },
   ].filter(Boolean) as { key: keyof Filters; label: string }[];
 
   if (active.length === 0) return null;
@@ -216,7 +218,7 @@ export function ActiveFilters({
         <button
           type="button"
           className="px-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-          onClick={() => onChange({ q: undefined, location: undefined, visa: undefined, rating: undefined, sector: undefined, role: undefined, sponsored: undefined })}
+          onClick={() => onChange({ q: undefined, location: undefined, visa: undefined, rating: undefined, sector: undefined, role: undefined, sponsored: undefined, place: undefined })}
         >
           Clear all
         </button>

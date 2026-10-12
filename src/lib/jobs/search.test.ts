@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { postedAgo } from "../postedAgo";
 import type { IndexedJob } from "./indexer";
-import { filterJobs, paginate } from "./index";
+import { filterJobs, groupByPlace, paginate, sortJobs } from "./index";
 
 const job = (over: Partial<IndexedJob>): IndexedJob => ({
   title: "Software Engineer",
@@ -35,6 +35,30 @@ describe("filterJobs", () => {
   });
   it("keeps only likely sponsorable roles", () => {
     expect(filterJobs(jobs, { sponsored: "likely" }).map((j) => j.title)).toEqual(["Software Engineer", "Chef"]);
+  });
+});
+
+describe("map places and sorting", () => {
+  const spread = [
+    ...jobs,
+    job({ title: "Analyst", location: "London / New York", salary: { min: 400, currency: "GBP", period: "day" } }),
+    job({ title: "Support", location: "Remote - UK" }),
+    job({ title: "Sales", location: "Sydney, Australia" }),
+  ];
+  it("filters by map place, including remote", () => {
+    expect(filterJobs(spread, { place: "london" }).map((j) => j.title)).toEqual(["Software Engineer", "Analyst"]);
+    expect(filterJobs(spread, { place: "remote" }).map((j) => j.title)).toEqual(["Support"]);
+  });
+  it("counts jobs per place, busiest first", () => {
+    const map = groupByPlace(spread);
+    expect(map.places.map((p) => [p.id, p.count])).toEqual([["london", 2], ["leeds", 1], ["manchester", 1]]);
+    expect(map).toMatchObject({ remote: 1, unplaced: 1, total: 6 });
+  });
+  it("sorts by yearly pay with unpaid roles last", () => {
+    expect(sortJobs(spread, { sort: "salary" }).slice(0, 2).map((j) => j.title)).toEqual(["Analyst", "Software Engineer"]);
+    const dollars = job({ title: "US role", salary: { max: 120000, currency: "USD", period: "year" } });
+    expect(sortJobs([dollars, ...spread], { sort: "salary" }).map((j) => j.title).indexOf("US role")).toBe(1);
+    expect(sortJobs(spread, {})).toBe(spread);
   });
 });
 

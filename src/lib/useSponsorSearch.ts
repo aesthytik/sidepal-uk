@@ -36,6 +36,9 @@ function useUrlSearch<T>(endpoint: string) {
     const { page, ...rest } = parseSearchParams(new URLSearchParams(paramsKey));
     return rest;
   }, [paramsKey]);
+  // What the results depend on: switching between list and map doesn't refetch
+  const queryKey = toSearchParams({ ...filters, view: undefined }).toString();
+  const query = useMemo(() => parseSearchParams(new URLSearchParams(queryKey)), [queryKey]);
 
   const [items, setItems] = useState<T[]>([]);
   const [meta, setMeta] = useState<{ total: number; page: number; pageCount: number; fuzzy?: boolean; info?: JobsInfo }>({
@@ -58,12 +61,12 @@ function useUrlSearch<T>(endpoint: string) {
 
   const fetchPage = useCallback(
     async (page: number, signal?: AbortSignal): Promise<Omit<SearchPage, "items"> & { items: T[]; info?: JobsInfo }> => {
-      const params = toSearchParams({ ...filters, page, limit: PAGE_SIZE });
+      const params = toSearchParams({ ...query, page, limit: PAGE_SIZE });
       const res = await fetch(`${endpoint}?${params}`, { signal });
       if (!res.ok) throw new Error(`Search failed: ${res.status}`);
       return res.json();
     },
-    [filters, endpoint]
+    [query, endpoint]
   );
 
   useEffect(() => {
@@ -74,8 +77,7 @@ function useUrlSearch<T>(endpoint: string) {
         setItems(items);
         setMeta(rest);
         setStatus("ready");
-        const key = toSearchParams(filters).toString();
-        if (key) emit({ type: "search", key: `${endpoint}?${key}`, location: filters.location, ratingA: filters.rating === "A" });
+        if (queryKey) emit({ type: "search", key: `${endpoint}?${queryKey}`, location: query.location, ratingA: query.rating === "A" });
         if (rest.fuzzy) emit({ type: "fuzzy" });
         if (rest.total === 0) emit({ type: "zero-results" });
       })
@@ -83,7 +85,7 @@ function useUrlSearch<T>(endpoint: string) {
         if (!controller.signal.aborted) setStatus("error");
       });
     return () => controller.abort();
-  }, [fetchPage, retry, endpoint, filters]);
+  }, [fetchPage, retry, endpoint, query, queryKey]);
 
   const loadMore = useCallback(async () => {
     setStatus("loading-more");

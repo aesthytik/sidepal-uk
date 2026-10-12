@@ -1,6 +1,8 @@
 import { assess } from "../eligibility/assess";
+import { placeOf } from "../geo/geocode";
+import type { Place } from "../geo/places";
 import { roleFamily } from "../sectors/taxonomy";
-import type { SearchQuery } from "../sponsorTypes";
+import type { Salary, SearchQuery } from "../sponsorTypes";
 import { fetchAll, supabaseRead } from "../supabase/client";
 import { type JobRow, rowToJob } from "../supabase/mappers";
 import type { IndexedJob } from "./indexer";
@@ -16,6 +18,17 @@ export interface JobPage {
   total: number;
   page: number;
   pageCount: number;
+}
+
+export interface MapPlace extends Place {
+  count: number;
+}
+
+export interface JobMap {
+  places: MapPlace[]; // Busiest first
+  remote: number; // Anywhere in the UK, or remote
+  unplaced: number; // Locations we couldn't put on the map
+  total: number;
 }
 
 export interface JobsInfo {
@@ -85,8 +98,50 @@ export function filterJobs(jobs: IndexedJob[], query: SearchQuery): IndexedJob[]
     if (query.sector && j.sector !== query.sector) return false;
     if (titles && !titles.test(j.title)) return false;
     if (query.sponsored === "likely" && assess(j, j.rating).verdict !== "likely") return false;
+    if (query.place && placeKey(j) !== query.place) return false;
     return true;
   });
+}
+
+function placeKey(job: IndexedJob): string | null {
+  const p = placeOf(job.location);
+  return p === "remote" ? "remote" : (p?.id ?? null);
+}
+
+const PER_YEAR: Record<Salary["period"], number> = { year: 1, month: 12, week: 52, day: 230, hour: 1800 };
+
+// Approximate pounds per unit, only so pay in other currencies sorts sensibly
+const TO_GBP: Record<string, number> = { GBP: 1, USD: 0.75, EUR: 0.85, CAD: 0.55, AUD: 0.5, SGD: 0.57, CHF: 0.9 };
+
+/** Rough yearly pay in pounds, for ordering only. Roles without pay (or in other currencies) come last. */
+function yearlyPay(job: IndexedJob): number {
+  const s = job.salary;
+  const amount = s?.max ?? s?.min;
+  const rate = s && TO_GBP[s.currency];
+  return s && amount && rate ? amount * PER_YEAR[s.period] * rate : -1;
+}
+
+/** Jobs arrive newest first, so only salary needs sorting (stable, so ties stay newest first). */
+export function sortJobs(jobs: IndexedJob[], query: SearchQuery): IndexedJob[] {
+  return query.sort === "salary" ? [...jobs].sort((a, b) => yearlyPay(b) - yearlyPay(a)) : jobs;
+}
+
+/** How many matching jobs sit at each place, for the map. */
+export function groupByPlace(jobs: IndexedJob[]): JobMap {
+  const counts = new Map<string, MapPlace>();
+  let remote = 0;
+  let unplaced = 0;
+  for (const j of jobs) {
+    const p = placeOf(j.location);
+    if (p === "remote") remote++;
+    else if (!p) unplaced++;
+    else {
+      const entry = counts.get(p.id) ?? { ...p, count: 0 };
+      entry.count++;
+      counts.set(p.id, entry);
+    }
+  }
+  return { places: [...counts.values()].sort((a, b) => b.count - a.count), remote, unplaced, total: jobs.length };
 }
 
 export function paginate(items: IndexedJob[], query: SearchQuery): JobPage {
@@ -98,7 +153,13 @@ export function paginate(items: IndexedJob[], query: SearchQuery): JobPage {
 
 export async function searchJobs(query: SearchQuery): Promise<JobPage> {
   const index = await load();
-  return paginate(filterJobs(index.jobs, query), query);
+  return paginate(sortJobs(filterJobs(index.jobs, query), query), query);
+}
+
+/** Matching jobs counted by place. Ignores `place` itself so the other pins stay visible. */
+export async function jobMap(query: SearchQuery): Promise<JobMap> {
+  const index = await load();
+  return groupByPlace(filterJobs(index.jobs, { ...query, place: undefined }));
 }
 
 export async function jobsInfo(): Promise<JobsInfo> {

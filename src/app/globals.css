@@ -237,3 +237,39 @@ html.calm .loot-reveal {
     animation: none !important;
   }
 }
+
+/* Jobs map: MapLibre's popup and controls in the site's palette */
+.job-map-tip .maplibregl-popup-content > div {
+  display: grid;
+  gap: 2px;
+}
+.job-map-tip .maplibregl-popup-content {
+  padding: 8px 12px;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  font: 13px/1.35 inherit;
+  box-shadow: 0 6px 20px -8px hsl(var(--foreground) / 0.35);
+  animation: drop-in 0.18s ease-out both;
+}
+.job-map-tip .maplibregl-popup-content span { color: hsl(var(--muted-foreground)); font-size: 12px; }
+.job-map-tip.maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: hsl(var(--card)); }
+.job-map-tip.maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: hsl(var(--card)); }
+.job-map-tip.maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: hsl(var(--card)); }
+.job-map-tip.maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: hsl(var(--card)); }
+.maplibregl-ctrl-group {
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border));
+  box-shadow: none !important;
+}
+.maplibregl-ctrl-group button + button { border-top-color: hsl(var(--border)) !important; }
+@media (prefers-color-scheme: dark) {
+  .maplibregl-ctrl-group .maplibregl-ctrl-icon { filter: invert(1); }
+  .maplibregl-ctrl-attrib { background: hsl(var(--card) / 0.8) !important; color: hsl(var(--muted-foreground)); }
+  .maplibregl-ctrl-attrib a { color: inherit; }
+}
+html.calm .job-map-tip .maplibregl-popup-content { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .job-map-tip .maplibregl-popup-content { animation: none; }
+}
