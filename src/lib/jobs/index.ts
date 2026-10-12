@@ -1,11 +1,13 @@
-import fs from "fs/promises";
-import path from "path";
 import { assess } from "../eligibility/assess";
 import { roleFamily } from "../sectors/taxonomy";
 import type { SearchQuery } from "../sponsorTypes";
-import type { IndexedJob, JobIndex } from "./indexer";
+import { fetchAll, supabaseRead } from "../supabase/client";
+import { type JobRow, rowToJob } from "../supabase/mappers";
+import type { IndexedJob } from "./indexer";
 
-const FILE = path.join(process.cwd(), "public", "data", "jobs.json");
+// The index is small (hundreds of roles) and refreshed once a day, so each
+// server instance keeps a copy for a few minutes instead of querying per request
+const CACHE_MS = 5 * 60_000;
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
@@ -22,14 +24,46 @@ export interface JobsInfo {
   generatedAt: string | null;
 }
 
-let loaded: Promise<JobIndex | null> | null = null;
+interface LoadedJobs {
+  jobs: IndexedJob[];
+  sponsorsIndexed: number;
+  generatedAt: string | null;
+}
 
-function load(): Promise<JobIndex | null> {
-  loaded ??= fs
-    .readFile(FILE, "utf-8")
-    .then((text) => JSON.parse(text) as JobIndex)
-    .catch(() => null); // No index built yet
-  return loaded;
+let cached: { at: number; index: LoadedJobs } | null = null;
+let loading: Promise<LoadedJobs> | null = null;
+
+async function fetchIndex(): Promise<LoadedJobs> {
+  const db = supabaseRead();
+  const [rows, run] = await Promise.all([
+    fetchAll<JobRow>((from, to) =>
+      db.from("jobs_view").select("*").order("posted_at", { ascending: false, nullsFirst: false }).order("url").range(from, to)
+    ),
+    db.from("index_runs").select("generated_at,sponsors_indexed").order("generated_at", { ascending: false }).limit(1).maybeSingle(),
+  ]);
+  return {
+    jobs: rows.map(rowToJob),
+    sponsorsIndexed: run.data?.sponsors_indexed ?? 0,
+    generatedAt: run.data?.generated_at ? new Date(run.data.generated_at).toISOString() : null,
+  };
+}
+
+async function load(): Promise<LoadedJobs> {
+  if (cached && Date.now() - cached.at < CACHE_MS) return cached.index;
+  loading ??= fetchIndex()
+    .then((index) => {
+      cached = { at: Date.now(), index };
+      return index;
+    })
+    .catch((error) => {
+      console.error("Could not load jobs from Supabase:", error);
+      // Serve the last good copy rather than an empty page
+      return cached?.index ?? { jobs: [], sponsorsIndexed: 0, generatedAt: null };
+    })
+    .finally(() => {
+      loading = null;
+    });
+  return loading;
 }
 
 /** Filters jobs the same way for the API and for tests. */
@@ -64,10 +98,10 @@ export function paginate(items: IndexedJob[], query: SearchQuery): JobPage {
 
 export async function searchJobs(query: SearchQuery): Promise<JobPage> {
   const index = await load();
-  return paginate(filterJobs(index?.jobs ?? [], query), query);
+  return paginate(filterJobs(index.jobs, query), query);
 }
 
 export async function jobsInfo(): Promise<JobsInfo> {
   const index = await load();
-  return { count: index?.jobs.length ?? 0, sponsors: index?.sponsorsIndexed ?? 0, generatedAt: index?.generatedAt ?? null };
+  return { count: index.jobs.length, sponsors: index.sponsorsIndexed, generatedAt: index.generatedAt };
 }

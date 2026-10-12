@@ -98,7 +98,25 @@ function normalisePlace(place: string): string {
     .replace(/(^|[\s-])\S/g, (c) => c.toUpperCase());
 }
 
-function toSponsors(rows: SponsorRow[], overrides: Record<string, SectorId | null>): Sponsor[] {
+/**
+ * Places ranked by how many sponsors they have, for location suggestions.
+ * Places used only once or twice are mostly typos ("Manchster") and are dropped.
+ */
+export function rankPlaces(sponsors: Pick<Sponsor, "city" | "county">[]): [string, number][] {
+  const placeCounts = new Map<string, number>();
+  for (const s of sponsors) {
+    for (const place of [s.city, s.county]) {
+      if (!place) continue;
+      const key = normalisePlace(place);
+      placeCounts.set(key, (placeCounts.get(key) ?? 0) + 1);
+    }
+  }
+  return Array.from(placeCounts.entries())
+    .filter(([place, n]) => place && n >= 3)
+    .sort((a, b) => b[1] - a[1]);
+}
+
+export function toSponsors(rows: SponsorRow[], overrides: Record<string, SectorId | null>): Sponsor[] {
   const usedIds = new Map<string, number>();
   return rows.map((row) => {
     const baseId = slugify(row.name) || "sponsor";
@@ -138,20 +156,7 @@ export function createDirectory(rows: SponsorRow[], overrides: Record<string, Se
   const placeText = sponsors.map((s) => `${s.city} ${s.county}`.toLowerCase());
   let fuse: Fuse<Sponsor> | null = null; // Built on first fuzzy search
 
-  // Places ranked by how many sponsors they have, for location suggestions
-  const placeCounts = new Map<string, number>();
-  for (const s of sponsors) {
-    for (const place of [s.city, s.county]) {
-      if (!place) continue;
-      const key = normalisePlace(place);
-      placeCounts.set(key, (placeCounts.get(key) ?? 0) + 1);
-    }
-  }
-  // Places used only once or twice are mostly typos ("Manchster")
-  const places = Array.from(placeCounts.entries())
-    .filter(([place, n]) => place && n >= 3)
-    .sort((a, b) => b[1] - a[1])
-    .map(([place]) => place);
+  const places = rankPlaces(sponsors).map(([place]) => place);
 
   function matchesFilters(s: Sponsor, i: number, query: SearchQuery): boolean {
     if (query.location && !placeText[i].includes(query.location.trim().toLowerCase())) {

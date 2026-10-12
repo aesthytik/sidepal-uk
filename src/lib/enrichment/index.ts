@@ -1,11 +1,12 @@
 import dns from "dns/promises";
-import path from "path";
 import { roleFamily } from "../sectors/taxonomy";
 import type { Enrichment, JobSummary } from "../sponsorTypes";
 import { type AtsBoard, fetchJobs } from "./ats";
 import { findCareers } from "./careers";
 import type { Http } from "./http";
-import { type EnrichmentStore, type StoredEnrichment, createFileStore } from "./store";
+import { supabaseAdmin } from "../supabase/client";
+import { createSupabaseStore } from "../supabase/sync";
+import type { EnrichmentStore, StoredEnrichment } from "./store";
 import { type WebsiteDeps, findWebsite } from "./website";
 
 export { createMemoryStore, type EnrichmentStore } from "./store";
@@ -119,10 +120,10 @@ export function createEnricher(deps: EnricherDeps): Enricher {
 
 let defaultEnricher: Enricher | null = null;
 
-/** The production enricher: real network, cache file in public/data. */
+/** The production enricher: real network, results cached in Supabase. */
 export const enrich: Enricher = (sponsors, role) => {
   defaultEnricher ??= createEnricher({
-    store: createFileStore(path.join(process.cwd(), "public", "data", "enrichment-cache.json")),
+    store: createSupabaseStore(supabaseAdmin()),
     http: fetch,
     resolves: async (domain) => {
       try {

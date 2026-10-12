@@ -1,41 +1,38 @@
 /**
- * Builds public/data/jobs.json: finds job boards for sponsors and collects their UK roles.
- * Resumable (boards found or ruled out are remembered in public/data/enrichment-cache.json).
+ * Builds the job index in Supabase: finds job boards for sponsors and collects their UK roles.
+ * Resumable (boards found or ruled out are remembered in the sponsor_enrichment table).
+ * Needs NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.
  *
  *   npx ts-node-script --transpile-only \
  *     --compiler-options '{"module":"commonjs","moduleResolution":"node","esModuleInterop":true}' \
  *     scripts/index-jobs.ts [budgetMinutes=40]
  */
-import fs from "fs";
-import path from "path";
-import { createDirectory, parseRegisterCsv } from "../src/lib/directory/core";
-import { createFileStore } from "../src/lib/enrichment/store";
+import "./env";
 import { buildIndex } from "../src/lib/jobs/indexer";
-
-const dir = path.join(process.cwd(), "public", "data");
+import { supabaseAdmin } from "../src/lib/supabase/client";
+import { createSupabaseStore, fetchAllSponsors, syncJobs } from "../src/lib/supabase/sync";
 
 async function main() {
   const minutes = process.argv[2] === undefined ? 40 : Number(process.argv[2]);
   const budgetMs = (Number.isFinite(minutes) ? minutes : 40) * 60_000;
-  const csv = fs.readdirSync(dir).filter((f) => f.endsWith(".csv")).sort().pop();
-  if (!csv) throw new Error(`No register CSV in ${dir}`);
-  const overridesFile = path.join(dir, "sector-overrides.json");
-  const overrides = fs.existsSync(overridesFile) ? JSON.parse(fs.readFileSync(overridesFile, "utf-8")) : {};
-  const sponsors = createDirectory(parseRegisterCsv(fs.readFileSync(path.join(dir, csv), "utf-8")), overrides).all();
+  const db = supabaseAdmin();
 
-  const store = createFileStore(path.join(dir, "enrichment-cache.json"));
+  const sponsors = await fetchAllSponsors(db);
+  if (sponsors.length === 0) throw new Error("No sponsors in Supabase; run scripts/migrate-to-supabase.ts first");
+  console.log(`${sponsors.length} sponsors loaded`);
+
   const index = await buildIndex({
     sponsors,
-    store,
+    store: createSupabaseStore(db),
     http: fetch,
     budgetMs,
     onProgress: (m) => console.log(m),
   });
 
-  fs.writeFileSync(path.join(dir, "jobs.json"), JSON.stringify(index));
+  // An empty result almost certainly means the boards were unreachable; keep yesterday's jobs
+  if (index.jobs.length === 0) throw new Error("Index found no jobs; leaving the existing jobs untouched");
+  await syncJobs(db, index.jobs, { generatedAt: index.generatedAt, sponsorsIndexed: index.sponsorsIndexed });
   console.log(`${index.jobs.length} UK jobs from ${index.sponsorsIndexed} sponsors`);
-  // The cache store writes after a short delay
-  await new Promise((r) => setTimeout(r, 2000));
 }
 
 main().catch((e) => {
