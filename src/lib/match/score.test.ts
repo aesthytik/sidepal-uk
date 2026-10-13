@@ -52,17 +52,18 @@ describe("scoreJob", () => {
     expect(scoreJob(remote, { ...engineer, remoteOk: false })!.reasons).toContain("Not in London");
   });
 
-  it("uses the new-entrant floor for new entrants", () => {
-    const pay = job({ salary: { max: 35000, currency: "GBP", period: "year" } });
+  it("uses the role's going rate, and the new-entrant rate for new entrants", () => {
+    const pay = job({ salary: { max: 40000, currency: "GBP", period: "year" } }); // Software engineer: going rate £54,700
     const general = scoreJob(pay, engineer)!;
     const newEntrant = scoreJob(pay, { ...engineer, visaStatus: "new-entrant" })!;
     expect(newEntrant.score).toBeGreaterThan(general.score);
-    expect(general.reasons.join()).toMatch(/under your £41,700 floor/);
+    expect(general.reasons.join()).toMatch(/under the £54,700 visa minimum for this role/);
+    expect(newEntrant.reasons.join()).toMatch(/Pays up to £40,000/);
   });
 
   it("respects a personal salary floor above the visa minimum", () => {
-    const m = scoreJob(job({ salary: { max: 50000, currency: "GBP", period: "year" } }), { ...engineer, minSalary: 60000 })!;
-    expect(m.reasons.join()).toMatch(/under your £60,000 floor/);
+    const m = scoreJob(job({ salary: { max: 58000, currency: "GBP", period: "year" } }), { ...engineer, minSalary: 60000 })!;
+    expect(m.reasons.join()).toMatch(/under the £60,000 floor you set/);
   });
 });
 

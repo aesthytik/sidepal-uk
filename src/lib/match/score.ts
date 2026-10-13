@@ -4,7 +4,7 @@ import { placeOf } from "../geo/geocode";
 import { PLACE_BY_ID } from "../geo/places";
 import type { IndexedJob } from "../jobs/indexer";
 import { countMentions } from "../profile/skills";
-import { type Profile, hasMatchable, isNewEntrant } from "../profile/types";
+import { type Profile, hasMatchable, isExistingWorker, isNewEntrant } from "../profile/types";
 import { roleFamily } from "../sectors/taxonomy";
 
 export interface Match {
@@ -63,18 +63,21 @@ export function scoreJob(job: IndexedJob, profile: Profile | null | undefined): 
   }
 
   const newEntrant = isNewEntrant(profile);
+  const assessment = assess(job, job.rating, { newEntrant, existingWorker: isExistingWorker(profile) });
   const pay = annualGbp(job.salary);
-  const floor = Math.max(profile.minSalary ?? 0, newEntrant ? THRESHOLDS.newEntrant : THRESHOLDS.general);
+  // The visa minimum for this role (its going rate when the occupation is known), or the user's own floor if higher
+  const visaMin = assessment.required ?? (newEntrant ? THRESHOLDS.newEntrant : THRESHOLDS.general);
+  const floor = Math.max(profile.minSalary ?? 0, visaMin);
   if (pay === null) add("salary", 0.5);
   else if (pay >= floor) {
     add("salary", 1);
     good.push(`Pays up to ${fmt(pay)}`);
   } else {
     add("salary", 0);
-    bad.push(`Pays up to ${fmt(pay)}, under your ${fmt(floor)} floor`);
+    bad.push(`Pays up to ${fmt(pay)}, under the ${fmt(floor)} ${floor === visaMin ? "visa minimum for this role" : "floor you set"}`);
   }
 
-  const verdict = assess(job, job.rating, { newEntrant }).verdict;
+  const { verdict } = assessment;
   add("sponsorship", VERDICT_VALUE[verdict]);
   if (verdict === "likely") good.push("Looks sponsorable");
   if (verdict === "unlikely") bad.push("Sponsorship looks unlikely");

@@ -9,7 +9,7 @@ export const VISA_STATUS_LABELS: Record<VisaStatus, string> = {
   "new-entrant": "New entrant (recent graduate, under 26, or early career)",
   graduate: "On a Graduate visa",
   switching: "Switching from another visa",
-  "skilled-worker": "Already on a Skilled Worker visa",
+  "skilled-worker": "Already on a Skilled Worker visa (since before 22 July 2025)",
 };
 
 /**
@@ -34,6 +34,9 @@ const MAX_SKILLS = 40;
 
 /** Whether the lower new-entrant salary rate is likely to apply. Graduate visa holders switching in usually qualify. */
 export const isNewEntrant = (p: Pick<Profile, "visaStatus">) => p.visaStatus === "new-entrant" || p.visaStatus === "graduate";
+
+/** Already sponsored, so occupations closed to new applicants since 22 July 2025 may still be open. */
+export const isExistingWorker = (p: Pick<Profile, "visaStatus">) => p.visaStatus === "skilled-worker";
 
 /** Enough to rank jobs meaningfully. */
 export const hasMatchable = (p: Profile | null | undefined): p is Profile => Boolean(p && (p.skills.length || p.roles.length));

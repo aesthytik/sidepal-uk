@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { type Assessment, type Verdict, assess } from "@/lib/eligibility/assess";
 import { SOURCE_URL } from "@/lib/eligibility/thresholds";
-import { isNewEntrant } from "@/lib/profile/types";
+import { isExistingWorker, isNewEntrant } from "@/lib/profile/types";
 import type { Job } from "@/lib/sponsorTypes";
 import { useProfile } from "@/store/useProfile";
 import { Badge } from "./ui/badge";
@@ -23,7 +24,8 @@ interface AiCheck {
 /** A rule-based sponsorship verdict for one job, with the reasons and an optional AI second opinion. */
 export function JobVerdict({ job, rating }: { job: Job; rating?: string }) {
   const newEntrant = useProfile((s) => (s.profile ? isNewEntrant(s.profile) : false));
-  const result: Assessment = assess(job, rating, { newEntrant });
+  const existingWorker = useProfile((s) => (s.profile ? isExistingWorker(s.profile) : false));
+  const result: Assessment = assess(job, rating, { newEntrant, existingWorker });
   const { text, tone } = LABEL[result.verdict];
   const [ai, setAi] = useState<AiCheck | null>(null);
   const [state, setState] = useState<"idle" | "loading" | "error">("idle");
@@ -77,6 +79,14 @@ export function JobVerdict({ job, rating }: { job: Job; rating?: string }) {
             {state === "loading" ? "Asking AI…" : state === "error" ? "AI unavailable, retry" : "Get an AI second opinion"}
           </button>
         )}
+        <p>
+          <Link
+            href={`/visa-salary-checker?title=${encodeURIComponent(job.title)}`}
+            className="font-medium text-primary hover:underline"
+          >
+            {result.occupation ? `Check the going rate for SOC ${result.occupation.code} →` : "Look up this job's going rate →"}
+          </Link>
+        </p>
         <p>
           A rough guide, not immigration advice.{" "}
           <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer" className="underline">
