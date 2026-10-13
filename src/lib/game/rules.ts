@@ -19,6 +19,7 @@ export type GameEvent =
   | { type: "profile" }
   | { type: "follow-up"; id: string }
   | { type: "tailor"; id: string }
+  | { type: "quest"; day: string; streak: number }
   | { type: "match-open"; score: number }
   | { type: "konami" }
   | { type: "poke" };
@@ -46,6 +47,8 @@ export interface GameStats {
   bestMatch: number; // Highest match score of a job opened
   followUps: number; // Reminders marked done
   tailored: number; // Applications tailored with AI
+  quests: number; // Daily quests completed
+  bestQuestStreak: number; // Longest run of consecutive daily quests
   days: string[]; // Distinct active days (YYYY-MM-DD), newest last, capped
 }
 
@@ -72,6 +75,8 @@ export const EMPTY_STATS: GameStats = {
   bestMatch: 0,
   followUps: 0,
   tailored: 0,
+  quests: 0,
+  bestQuestStreak: 0,
   days: [],
 };
 
@@ -104,6 +109,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: "perfect-match", emoji: "💘", title: "Perfect Match", description: "Opened a job that's a 90%+ match for you.", xp: 60, unlocked: (s) => s.bestMatch >= 90 },
   { id: "persistent", emoji: "🔁", title: "Politely Persistent", description: "Followed up on 5 reminders. Recruiters notice.", xp: 50, unlocked: (s) => s.followUps >= 5 },
   { id: "tailor-made", emoji: "🧵", title: "Tailor-Made", description: "Tailored your CV and cover letter to a job.", xp: 40, unlocked: (s) => s.tailored >= 1 },
+  { id: "daily-driver", emoji: "🎯", title: "Daily Driver", description: "Completed your first daily quest.", xp: 30, unlocked: (s) => s.quests >= 1 },
+  { id: "quest-week", emoji: "📅", title: "Quest Week", description: "Completed the daily quest 7 days in a row.", xp: 150, unlocked: (s) => s.bestQuestStreak >= 7 },
   { id: "streak-3", emoji: "🔥", title: "On Fire", description: "Came back 3 days in a row.", xp: 50, unlocked: (s) => streak(s.days) >= 3 },
   { id: "stamp-champ", emoji: "🏅", title: "Stamp Champ", description: "Scored 1,000+ in Stamp Rush.", xp: 50, unlocked: (s) => s.bestScore >= 1000 },
   { id: "eye-poker", emoji: "👉", title: "Eye Poker", description: "Poked Horus in the eye 10 times. He forgives you.", xp: 10, unlocked: (s) => s.pokes >= 10 },
@@ -212,6 +219,12 @@ export function applyEvent(
     case "follow-up":
       s.followUps++;
       once(`follow-up:${event.id}`, 15);
+      break;
+    case "quest":
+      if (ctx.claimed.has(`quest:${event.day}`)) break;
+      s.quests++;
+      s.bestQuestStreak = Math.max(s.bestQuestStreak, event.streak);
+      once(`quest:${event.day}`, 50 + 10 * Math.min(event.streak - 1, 5)); // Longer streaks pay a little more
       break;
     case "tailor":
       s.tailored++;

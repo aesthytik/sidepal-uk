@@ -119,6 +119,18 @@ describe("applyEvent", () => {
     expect(applyEvent(first.stats, { type: "tailor", id: "https://j/1" }, ctx(first.claimed, ["tailor-made"])).xp).toBe(0);
   });
 
+  it("pays for a daily quest once per day, more for streaks", () => {
+    const day1 = applyEvent(EMPTY_STATS, { type: "quest", day: "2026-10-13", streak: 1 }, ctx());
+    expect(day1.xp).toBe(50);
+    expect(day1.unlocked.map((a) => a.id)).toContain("daily-driver");
+    const again = applyEvent(day1.stats, { type: "quest", day: "2026-10-13", streak: 1 }, ctx(day1.claimed, ["daily-driver"]));
+    expect(again.xp).toBe(0);
+    expect(again.stats.quests).toBe(1);
+    const week = applyEvent(day1.stats, { type: "quest", day: "2026-10-19", streak: 7 }, ctx(day1.claimed, ["daily-driver"]));
+    expect(week.xp).toBe(100);
+    expect(week.unlocked.map((a) => a.id)).toContain("quest-week");
+  });
+
   it("records the active day once", () => {
     const a = applyEvent(EMPTY_STATS, { type: "poke" }, ctx());
     const b = applyEvent(a.stats, { type: "poke" }, ctx());

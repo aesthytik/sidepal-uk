@@ -8,6 +8,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { ActiveFilters, SearchFilters } from "@/components/SearchFilters";
 import { Button } from "@/components/ui/button";
 import { Horus } from "@/components/game/Horus";
+import { DailyQuest } from "@/components/DailyQuest";
 import { ListIcon, MapIcon, SlidersIcon } from "@/components/ui/icons";
 import { Sheet } from "@/components/ui/sheet";
 import { hasMatchable } from "@/lib/profile/types";
@@ -145,6 +146,7 @@ export function JobSearch() {
         </Sheet>
 
         <section aria-label="Results" className="min-w-0 space-y-4">
+          {!mapView && <DailyQuest />}
           <ActiveFilters filters={filters} onChange={setFilters} />
           {profileLoaded && !canMatch && (
             <Link
