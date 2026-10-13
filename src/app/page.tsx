@@ -182,7 +182,7 @@ export default async function Home() {
               cta: "Browse jobs",
             },
             { href: "/sponsors", eyebrow: "Looking for a sponsor", title: "Browse licensed employers", body: "Filter by town, visa route and rating.", cta: "Find sponsors" },
-            { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Move sponsors from Interested to Offer.", cta: "Open shortlist" },
+            { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Save jobs and sponsors, and get reminded when to follow up.", cta: "Open tracker" },
           ].map((c, i) => (
             <Link key={c.href} href={c.href} className="group border-border py-8 sm:px-8 sm:first:pl-0 sm:last:pr-0 max-sm:border-b max-sm:last:border-b-0">
               <p className="eyebrow">
@@ -198,7 +198,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="container max-w-6xl px-4 pb-20" aria-labelledby="salary-check">
+      <section className="container max-w-6xl px-4 pb-6" aria-labelledby="salary-check">
         <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>
             <p className="eyebrow">New · Visa salary checker</p>
@@ -239,6 +239,66 @@ export default async function Home() {
               </Link>
             </p>
           </form>
+        </div>
+      </section>
+
+      <section className="container max-w-6xl px-4 pb-20" aria-labelledby="tailor">
+        <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+          <div>
+            <p className="eyebrow">New · Tailor my application</p>
+            <h2 id="tailor" className="mt-3 font-display text-3xl font-semibold sm:text-4xl">
+              Fit your CV to the job <span className="italic">in seconds.</span>
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              Pick any job and Horus reads the full ad, shows which of its keywords your CV already covers, and drafts CV bullets and a cover
+              letter in the employer&apos;s own words, upfront about needing sponsorship.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Button asChild size="lg">
+                <Link href="/jobs?sort=match">Find a job to tailor</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="/profile">Add your CV</Link>
+              </Button>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              The keyword check runs in your browser. AI only runs when you ask, and nothing is stored.
+            </p>
+          </div>
+
+          <ol className="space-y-3 text-sm" aria-label="How it works">
+            <li className="rounded-lg border border-border bg-background p-4">
+              <p className="font-medium">
+                <span className="tabular-nums text-muted-foreground">1</span> · Reads the whole job ad
+              </p>
+              <p className="mt-1 text-muted-foreground">Straight from the company&apos;s job board, not just the preview.</p>
+            </li>
+            <li className="rounded-lg border border-border bg-background p-4">
+              <p className="font-medium">
+                <span className="tabular-nums text-muted-foreground">2</span> · Checks your keywords
+              </p>
+              <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Example keyword check">
+                {["Python", "AWS", "PostgreSQL"].map((k) => (
+                  <li key={k} className="rounded-md bg-sage/10 px-2 py-0.5 text-sage">
+                    ✓ {k}
+                  </li>
+                ))}
+                {["Kafka", "Go"].map((k) => (
+                  <li key={k} className="rounded-md bg-clay/10 px-2 py-0.5 text-clay">
+                    {k}
+                  </li>
+                ))}
+              </ul>
+            </li>
+            <li className="rounded-lg border border-border bg-background p-4">
+              <p className="font-medium">
+                <span className="tabular-nums text-muted-foreground">3</span> · Drafts bullets and a cover letter
+              </p>
+              <p className="mt-2 border-l-2 border-primary/40 pl-3 italic text-muted-foreground">
+                &ldquo;Reduced chargeback losses by 18% by building rule-based fraud checks into payment flows.&rdquo;
+              </p>
+            </li>
+          </ol>
         </div>
       </section>
 
