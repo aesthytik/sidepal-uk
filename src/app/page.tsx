@@ -11,6 +11,11 @@ import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
 import { placePath, rolePath } from "@/lib/seo";
 import { Horus } from "@/components/game/Horus";
 import { StampRushLoader } from "@/components/game/StampRushLoader";
+import { THRESHOLDS } from "@/lib/eligibility/thresholds";
+import { OCCUPATIONS, occupationByCode } from "@/lib/soc";
+
+const fmt = (n: number) => `£${n.toLocaleString("en-GB")}`;
+const goingRate = (code: string) => occupationByCode(code)?.goingRate ?? THRESHOLDS.general;
 
 // Re-render hourly so the sponsor count and register date stay current
 export const revalidate = 3600;
@@ -190,6 +195,50 @@ export default async function Home() {
               </p>
             </Link>
           ))}
+        </div>
+      </section>
+
+      <section className="container max-w-6xl px-4 pb-20" aria-labelledby="salary-check">
+        <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+          <div>
+            <p className="eyebrow">New · Visa salary checker</p>
+            <h2 id="salary-check" className="mt-3 font-display text-3xl font-semibold sm:text-4xl">
+              Is the salary high enough <span className="italic">to sponsor you?</span>
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              Each job has its own going rate, not just the {fmt(THRESHOLDS.general)} minimum. A software developer needs {fmt(goingRate("2134"))},
+              a civil engineer {fmt(goingRate("2121"))}. Check yours in seconds, including new-entrant rates.
+            </p>
+          </div>
+          <form action="/visa-salary-checker" className="grid gap-3 sm:grid-cols-[1.4fr_1fr_auto] sm:items-end">
+            <label className="block space-y-1.5">
+              <span className="text-sm font-medium">Job title</span>
+              <input
+                name="title"
+                required
+                placeholder="e.g. Data engineer"
+                className="h-11 w-full rounded-md border border-input bg-card px-3 text-base outline-none focus:border-foreground/40"
+              />
+            </label>
+            <label className="block space-y-1.5">
+              <span className="text-sm font-medium">Salary (£ a year)</span>
+              <input
+                name="salary"
+                inputMode="numeric"
+                placeholder="Optional"
+                className="h-11 w-full rounded-md border border-input bg-card px-3 text-base outline-none focus:border-foreground/40"
+              />
+            </label>
+            <Button type="submit" size="lg">
+              Check
+            </Button>
+            <p className="text-xs text-muted-foreground sm:col-span-3">
+              Uses the official going rates for all {OCCUPATIONS.length} occupation codes.{" "}
+              <Link href="/visa-salary-checker" className="underline underline-offset-2 hover:text-foreground">
+                Browse all rates
+              </Link>
+            </p>
+          </form>
         </div>
       </section>
 
