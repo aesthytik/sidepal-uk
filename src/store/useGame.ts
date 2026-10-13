@@ -56,6 +56,8 @@ function moodFor(event: GameEvent): Mood | null {
       return "delighted";
     case "konami":
       return "party";
+    case "tailor":
+      return "delighted";
     case "match-open":
       return event.score >= 90 ? "party" : event.score >= 70 ? "delighted" : null;
     default:

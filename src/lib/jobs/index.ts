@@ -199,3 +199,8 @@ export async function jobsForOccupation(code: string, limit = 6): Promise<{ item
   const all = byOccupation.map.get(code) ?? [];
   return { items: all.slice(0, limit), total: all.length };
 }
+
+/** One indexed role by its URL, or null if it isn't in today's index. */
+export async function jobByUrl(url: string): Promise<IndexedJob | null> {
+  return (await load()).jobs.find((j) => j.url === url) ?? null;
+}

@@ -4,6 +4,7 @@ import { postedAgo } from "@/lib/postedAgo";
 import { Badge } from "./ui/badge";
 import { JobActions } from "./JobActions";
 import { JobMatch } from "./JobMatch";
+import { JobTailorButton } from "./JobTailor";
 import { JobVerdict } from "./JobVerdict";
 import { MapPinIcon } from "./ui/icons";
 import { sponsorPath } from "@/lib/seo";
@@ -37,8 +38,9 @@ export function JobCard({ job }: { job: IndexedJob }) {
         {posted && <span>Posted {posted}</span>}
         <Badge tone={job.rating.startsWith("A") ? "success" : "warning"}>Verified sponsor ✓ · {job.rating || "?"}-rated</Badge>
       </div>
-      <div className="mt-2 empty:hidden">
+      <div className="mt-2 flex flex-wrap items-start gap-x-4 gap-y-2">
         <JobMatch job={job} />
+        <JobTailorButton job={job} className="py-0.5 text-xs font-medium text-primary hover:underline" />
       </div>
 
       <div className="-mx-3 mt-2 border-t border-border pt-2">
