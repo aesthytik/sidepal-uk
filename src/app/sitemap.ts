@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { directoryInfo, listPlaces, sponsorIdsInRange } from "@/lib/directory";
 import { jobsInfo } from "@/lib/jobs";
-import { MIN_PLACE_SPONSORS, ROLE_IDS, SITE, placePath, rolePath, routePath, sponsorPath } from "@/lib/seo";
+import { MIN_PLACE_SPONSORS, ROLE_IDS, SITE, occupationPath, placePath, rolePath, routePath, sponsorPath } from "@/lib/seo";
+import { OCCUPATIONS, SNAPSHOT_DATE } from "@/lib/soc";
 import { VISA_CATEGORIES } from "@/lib/sponsorTypes";
 
 // Sitemaps may hold 50,000 URLs each; sponsors are split into slices of the register
@@ -38,7 +39,13 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     { url: `${SITE}/visa-routes`, changeFrequency: "monthly", priority: 0.7 },
     ...VISA_CATEGORIES.map((v) => ({ url: `${SITE}${routePath(v)}`, changeFrequency: "weekly" as const, priority: 0.7 })),
     { url: `${SITE}/guide/visa-basics`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE}/visa-salary-checker`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/visa-salary-checker`, changeFrequency: "monthly", priority: 0.8, lastModified: new Date(SNAPSHOT_DATE) },
+    ...OCCUPATIONS.map((o) => ({
+      url: `${SITE}${occupationPath(o)}`,
+      changeFrequency: "monthly" as const,
+      priority: o.status === "ineligible" ? 0.4 : 0.6,
+      lastModified: new Date(SNAPSHOT_DATE),
+    })),
     { url: `${SITE}/about`, changeFrequency: "monthly", priority: 0.5 },
   ];
 }

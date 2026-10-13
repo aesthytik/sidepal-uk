@@ -2,6 +2,7 @@ import { assess } from "../eligibility/assess";
 import { placeOf } from "../geo/geocode";
 import type { Place } from "../geo/places";
 import { rankJobs } from "../match/score";
+import { matchOccupation } from "../soc/match";
 import type { Profile } from "../profile/types";
 import { roleFamily } from "../sectors/taxonomy";
 import type { Salary, SearchQuery } from "../sponsorTypes";
@@ -177,4 +178,24 @@ export async function jobsInfo(): Promise<JobsInfo> {
 /** Every indexed role at one sponsor, newest first. */
 export async function jobsForSponsor(sponsorId: string): Promise<IndexedJob[]> {
   return (await load()).jobs.filter((j) => j.sponsorId === sponsorId);
+}
+
+let byOccupation: { index: LoadedJobs; map: Map<string, IndexedJob[]> } | null = null;
+
+/** Live roles whose titles map to an occupation code, newest first. Grouped once per index load. */
+export async function jobsForOccupation(code: string, limit = 6): Promise<{ items: IndexedJob[]; total: number }> {
+  const index = await load();
+  if (byOccupation?.index !== index) {
+    const map = new Map<string, IndexedJob[]>();
+    for (const j of index.jobs) {
+      const occ = matchOccupation(j.title)?.occupation.code;
+      if (!occ) continue;
+      const list = map.get(occ);
+      if (list) list.push(j);
+      else map.set(occ, [j]);
+    }
+    byOccupation = { index, map };
+  }
+  const all = byOccupation.map.get(code) ?? [];
+  return { items: all.slice(0, limit), total: all.length };
 }

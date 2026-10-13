@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { occupationPath } from "@/lib/seo";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Chip } from "@/components/ui/chip";
 import { isExistingWorker, isNewEntrant } from "@/lib/profile/types";
-import { OCCUPATIONS, type Occupation, type OccupationStatus, SNAPSHOT_SOURCES, STATUS_LABELS, salaryRule } from "@/lib/soc";
+import { type Occupation, type OccupationStatus, STATUS_LABELS, salaryRule } from "@/lib/soc";
 import { suggestOccupations } from "@/lib/soc/match";
 import { cn } from "@/lib/utils";
 import { useProfile } from "@/store/useProfile";
@@ -66,6 +67,9 @@ function OccupationResult({ occ, salary, who }: { occ: Occupation; salary: numbe
       {occ.examples.length > 0 && (
         <p className="mt-2 text-xs text-muted-foreground">Includes: {occ.examples.slice(0, 8).join(" · ")}</p>
       )}
+      <Link href={occupationPath(occ)} className="mt-3 inline-block text-sm font-medium text-primary hover:underline">
+        Full details, FAQs and live jobs for SOC {occ.code} →
+      </Link>
     </article>
   );
 }
@@ -81,8 +85,6 @@ export function SalaryChecker() {
   const [picked, setPicked] = useState<string | null>(null);
   const [newEntrant, setNewEntrant] = useState<boolean | null>(null);
   const [existing, setExisting] = useState<boolean | null>(null);
-  const [filter, setFilter] = useState<OccupationStatus | "all">("all");
-  const [search, setSearch] = useState("");
 
   const who = {
     newEntrant: newEntrant ?? (profile ? isNewEntrant(profile) : false),
@@ -102,15 +104,9 @@ export function SalaryChecker() {
     router.replace(`${pathname}${p.size ? `?${p}` : ""}`, { scroll: false });
   }
 
-  const q = search.trim().toLowerCase();
-  const rows = OCCUPATIONS.filter(
-    (o) =>
-      (filter === "all" || o.status === filter) &&
-      (!q || o.code.startsWith(q) || `${o.title} ${o.examples.join(" ")}`.toLowerCase().includes(q))
-  );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <section className="card space-y-4 p-5" aria-label="Check a job">
         <div className="grid gap-3 sm:grid-cols-[2fr_1fr]">
           <label className="block space-y-1.5">
@@ -185,73 +181,6 @@ export function SalaryChecker() {
           </p>
         ))}
 
-      <section aria-labelledby="all-heading">
-        <h2 id="all-heading" className="font-display text-2xl font-semibold">
-          All occupation codes
-        </h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {(["all", "eligible", "shortage", "health-education", "existing-only", "ineligible"] as const).map((s) => (
-            <Chip key={s} selected={filter === s} onClick={() => setFilter(s)}>
-              {s === "all" ? "All" : STATUS_LABELS[s]}
-            </Chip>
-          ))}
-        </div>
-        <input
-          className={cn(INPUT, "mt-3")}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by code, occupation or job title"
-          aria-label="Search occupations"
-        />
-        <div className="mt-3 overflow-x-auto rounded-lg border border-border">
-          <table className="w-full min-w-[36rem] text-left text-sm">
-            <thead className="bg-muted/60 text-xs text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 font-medium">Code</th>
-                <th className="px-3 py-2 font-medium">Occupation</th>
-                <th className="px-3 py-2 text-right font-medium">Going rate</th>
-                <th className="px-3 py-2 text-right font-medium">New entrant</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {rows.map((o) => (
-                <tr key={o.code} className={cn(o.status === "ineligible" && "text-muted-foreground")}>
-                  <td className="px-3 py-2 tabular-nums">{o.code}</td>
-                  <td className="px-3 py-2">
-                    <button
-                      type="button"
-                      className="text-left hover:underline"
-                      onClick={() => {
-                        setTitle(o.examples[0] ?? o.title);
-                        setPicked(o.code);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                    >
-                      {o.title}
-                    </button>
-                    <span className="block text-xs text-muted-foreground">{STATUS_LABELS[o.status]}</span>
-                  </td>
-                  <td className="px-3 py-2 text-right tabular-nums">{o.goingRate ? fmt(o.goingRate) : o.status === "health-education" ? "Pay scale" : "—"}</td>
-                  <td className="px-3 py-2 text-right tabular-nums">{o.newEntrantRate ? fmt(o.newEntrantRate) : "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          {rows.length} of {OCCUPATIONS.length} codes. Rates are for a 37.5-hour week. Sources:{" "}
-          {SNAPSHOT_SOURCES.map((url, i) => (
-            <span key={url}>
-              {i > 0 && ", "}
-              <a href={url} target="_blank" rel="noopener noreferrer" className="underline">
-                {i === 0 ? "Appendix Skilled Occupations" : "Temporary Shortage List"}
-              </a>
-            </span>
-          ))}
-          . A guide, not immigration advice. PhD discounts, the Immigration Salary List and pre-April-2024 transitional rates aren&apos;t
-          covered. <Link href="/guide/visa-basics" className="underline">Visa basics</Link>.
-        </p>
-      </section>
     </div>
   );
 }

@@ -3,6 +3,9 @@ import { jobsInfo } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { MIN_PLACE_SPONSORS, SITE, formatDate, n, placePath, rolePath, routePath } from "@/lib/seo";
 import { VISA_CATEGORIES } from "@/lib/sponsorTypes";
+import { THRESHOLDS } from "@/lib/eligibility/thresholds";
+import { OCCUPATIONS, SNAPSHOT_DATE, occupationByCode, salaryRule } from "@/lib/soc";
+import { occupationPath } from "@/lib/seo";
 
 export const revalidate = 86400;
 
@@ -29,6 +32,7 @@ export async function GET() {
 - "Visa sponsors in <town>?" See ${SITE}/visa-sponsors/<town>, for example ${SITE}${placePath("London")} or ${SITE}${placePath("Manchester")}.
 - "<Role> jobs with visa sponsorship?" See ${SITE}/visa-sponsorship-jobs/<role>.
 - "Who can sponsor a <route> visa?" See ${SITE}/visa-routes/<route>.
+- "What salary do I need for a Skilled Worker visa as a <job>?" See ${SITE}/visa-salary-checker (type the job title), or the page for its SOC 2020 code at ${SITE}/visa-salary-checker/<code>-<occupation>, for example ${SITE}${occupationPath(occupationByCode("2134")!)}. All ${OCCUPATIONS.length} codes with going rates are in ${SITE}/visa-salary-checker/going-rates.json.
 
 ## Main pages
 
@@ -37,6 +41,7 @@ export async function GET() {
 - [Visa sponsors by place](${SITE}/visa-sponsors): Every UK town and county with its number of licensed sponsors.
 - [Jobs with visa sponsorship by role](${SITE}/visa-sponsorship-jobs)
 - [Visa routes](${SITE}/visa-routes): Each sponsored route and the employers licensed for it.
+- [Visa salary checker](${SITE}/visa-salary-checker): The minimum salary for a Skilled Worker visa for any job title, with the going rate and new-entrant rate for every SOC 2020 occupation code.
 - [UK work visa basics](${SITE}/guide/visa-basics): How sponsored work visas work.
 - [About the data](${SITE}/about): Sources, update schedule and limitations.
 
@@ -55,6 +60,14 @@ ${places
   .map((p) => `- [Visa sponsors in ${p.place}](${SITE}${placePath(p.place)})`)
   .join("\n")}
 
+## Skilled Worker salary rules (as of ${SNAPSHOT_DATE})
+
+- Salary must be at least £${THRESHOLDS.general.toLocaleString("en-GB")} a year or the occupation's going rate, whichever is higher. New entrants need £${THRESHOLDS.newEntrant.toLocaleString("en-GB")} or 70% of the going rate.
+- Listed health and education jobs need at least £${THRESHOLDS.healthEducation.toLocaleString("en-GB")} and the national pay scale rate.
+- Since 22 July 2025 most jobs below degree level can only be sponsored for people already on a Skilled Worker visa; some (e.g. drivers) never can.
+- Examples: ${["2134", "2133", "2237", "2121", "2421"].map((c) => occupationByCode(c)!).map((o) => `${o.title} (SOC ${o.code}) ${salaryRule(o).minimum ? `£${salaryRule(o).minimum!.toLocaleString("en-GB")}` : ""}`).join("; ")}.
+- Machine-readable: ${SITE}/visa-salary-checker/going-rates.json (JSON, Open Government Licence).
+
 ## About the data
 
 - Sponsors: GOV.UK "Register of licensed sponsors: workers", imported daily. https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers
@@ -66,6 +79,7 @@ ${places
 ## Optional
 
 - [Sitemap index](${SITE}/sitemap.xml)
+- [Going rates JSON](${SITE}/visa-salary-checker/going-rates.json)
 `;
   return new Response(text, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" } });
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { type Assessment, type Verdict, assess } from "@/lib/eligibility/assess";
 import { SOURCE_URL } from "@/lib/eligibility/thresholds";
 import { isExistingWorker, isNewEntrant } from "@/lib/profile/types";
+import { occupationPath } from "@/lib/seo";
 import type { Job } from "@/lib/sponsorTypes";
 import { useProfile } from "@/store/useProfile";
 import { Badge } from "./ui/badge";
@@ -81,7 +82,7 @@ export function JobVerdict({ job, rating }: { job: Job; rating?: string }) {
         )}
         <p>
           <Link
-            href={`/visa-salary-checker?title=${encodeURIComponent(job.title)}`}
+            href={result.occupation ? occupationPath(result.occupation) : `/visa-salary-checker?title=${encodeURIComponent(job.title)}`}
             className="font-medium text-primary hover:underline"
           >
             {result.occupation ? `Check the going rate for SOC ${result.occupation.code} →` : "Look up this job's going rate →"}
