@@ -7,6 +7,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { DownloadIcon } from "@/components/ui/icons";
 import { JobTailorButton } from "@/components/JobTailor";
+import { DailyQuest } from "@/components/DailyQuest";
 import { Horus } from "@/components/game/Horus";
 import { type BoardCard, QuestBoard } from "@/components/game/QuestBoard";
 import { TrophyRoom } from "@/components/game/TrophyRoom";
@@ -399,6 +400,7 @@ export function Shortlist() {
         </div>
       </header>
 
+      <DailyQuest className="mb-6" />
       {hydrated && <DueReminders jobs={jobRows} />}
 
       {total > 5 && (

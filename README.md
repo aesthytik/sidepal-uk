@@ -19,6 +19,8 @@ your applications. Data comes from the GOV.UK
 - **Tailor my application** on any job: fetches the full ad from the job board, shows which of its keywords your
   profile/CV covers (no AI), and, opt-in, uses AI to suggest CV bullets in the ad's language and draft a cover letter
   that is upfront about needing sponsorship
+- **Daily quest**: once you have a profile, Horus picks three strong matches each day (stable all day, different
+  employers, swappable). Apply to any one to complete the quest and grow your 🔥 streak (XP and achievements)
 - Tracker for saved **jobs and sponsors** (Interested → Applied → Interviewing → Offer / Rejected) as a board or
   list, with notes and CSV export. After clicking Apply, one tap tracks the job as applied; follow-up reminders are
   set automatically (a week after applying, two days after an interview), shown when due, and downloadable as
@@ -53,6 +55,7 @@ To run it locally: `npx ts-node-script --transpile-only --compiler-options '{"mo
 | `src/lib/useEnrichment.ts`    | Batches `POST /api/enrich` for sponsors on screen                     |
 | `src/store/useShortlist.ts`   | Saved sponsors and jobs, their application status and follow-up dates (localStorage) |
 | `src/lib/soc/`         | `OCCUPATIONS` (GOV.UK snapshot), `salaryRule(occupation, who)`, `matchOccupation(title)` |
+| `src/lib/quest/`       | `pickDaily(candidates, day, exclude)` (deterministic per day), `questStreak(days, today)` |
 | `src/lib/tracker/`     | Follow-up dates (`followUpFor`, `dueState`) and `.ics` calendar events |
 | `src/lib/profile/`     | `extractProfile(cvText)`, the skills lexicon, `sanitizeProfile`, `readCv(file)` (browser only) |
 | `src/lib/match/`       | `scoreJob(job, profile)` → 0–100 with reasons; `rankJobs` for the "match" sort |

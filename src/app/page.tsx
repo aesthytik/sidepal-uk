@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { BriefcaseIcon, BookmarkIcon, SearchIcon, ShieldCheckIcon } from "@/components/ui/icons";
 import { directoryInfo } from "@/lib/directory";
 import { JobCard } from "@/components/JobCard";
+import { DailyQuest } from "@/components/DailyQuest";
 import { jobsInfo, searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
@@ -196,6 +197,7 @@ export default async function Home() {
             </Link>
           ))}
         </div>
+        <DailyQuest className="mt-10" />
       </section>
 
       <section className="container max-w-6xl px-4 pb-6" aria-labelledby="salary-check">
