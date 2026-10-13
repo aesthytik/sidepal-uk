@@ -6,6 +6,7 @@ import { CompanyCard, CompanyCardSkeleton } from "@/components/CompanyCard";
 import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { DownloadIcon } from "@/components/ui/icons";
+import { JobTailorButton } from "@/components/JobTailor";
 import { Horus } from "@/components/game/Horus";
 import { type BoardCard, QuestBoard } from "@/components/game/QuestBoard";
 import { TrophyRoom } from "@/components/game/TrophyRoom";
@@ -233,6 +234,7 @@ function JobRow({ saved }: { saved: SavedJob }) {
             <DownloadIcon /> Add to calendar
           </Button>
         )}
+        <JobTailorButton job={job} className="text-sm font-medium text-primary hover:underline" />
       </div>
       <Note note={note} onSave={(n) => updateJob(job.url, { note: n })} />
     </article>

@@ -18,6 +18,7 @@ export type GameEvent =
   | { type: "game"; score: number }
   | { type: "profile" }
   | { type: "follow-up"; id: string }
+  | { type: "tailor"; id: string }
   | { type: "match-open"; score: number }
   | { type: "konami" }
   | { type: "poke" };
@@ -44,6 +45,7 @@ export interface GameStats {
   profile: boolean; // Filled in a complete profile
   bestMatch: number; // Highest match score of a job opened
   followUps: number; // Reminders marked done
+  tailored: number; // Applications tailored with AI
   days: string[]; // Distinct active days (YYYY-MM-DD), newest last, capped
 }
 
@@ -69,6 +71,7 @@ export const EMPTY_STATS: GameStats = {
   profile: false,
   bestMatch: 0,
   followUps: 0,
+  tailored: 0,
   days: [],
 };
 
@@ -100,6 +103,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: "know-thyself", emoji: "🪞", title: "Know Thyself", description: "Filled in your profile so Horus can match you.", xp: 40, unlocked: (s) => s.profile },
   { id: "perfect-match", emoji: "💘", title: "Perfect Match", description: "Opened a job that's a 90%+ match for you.", xp: 60, unlocked: (s) => s.bestMatch >= 90 },
   { id: "persistent", emoji: "🔁", title: "Politely Persistent", description: "Followed up on 5 reminders. Recruiters notice.", xp: 50, unlocked: (s) => s.followUps >= 5 },
+  { id: "tailor-made", emoji: "🧵", title: "Tailor-Made", description: "Tailored your CV and cover letter to a job.", xp: 40, unlocked: (s) => s.tailored >= 1 },
   { id: "streak-3", emoji: "🔥", title: "On Fire", description: "Came back 3 days in a row.", xp: 50, unlocked: (s) => streak(s.days) >= 3 },
   { id: "stamp-champ", emoji: "🏅", title: "Stamp Champ", description: "Scored 1,000+ in Stamp Rush.", xp: 50, unlocked: (s) => s.bestScore >= 1000 },
   { id: "eye-poker", emoji: "👉", title: "Eye Poker", description: "Poked Horus in the eye 10 times. He forgives you.", xp: 10, unlocked: (s) => s.pokes >= 10 },
@@ -208,6 +212,10 @@ export function applyEvent(
     case "follow-up":
       s.followUps++;
       once(`follow-up:${event.id}`, 15);
+      break;
+    case "tailor":
+      s.tailored++;
+      once(`tailor:${event.id}`, 30);
       break;
     case "match-open":
       s.bestMatch = Math.max(s.bestMatch, event.score);

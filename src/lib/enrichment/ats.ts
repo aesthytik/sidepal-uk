@@ -63,16 +63,64 @@ const SNIPPET_LENGTH = 600;
 /** Plain text from an HTML or plain description, cut to a short snippet. */
 export function toSnippet(text: unknown): string | undefined {
   if (typeof text !== "string") return undefined;
-  const plain = text
+  const plain = toPlainText(text).replace(/\s+/g, " ").trim();
+  return plain ? plain.slice(0, SNIPPET_LENGTH) : undefined;
+}
+
+/** Readable plain text from a job description's HTML, keeping paragraphs and list items on their own lines. */
+export function toPlainText(text: string): string {
+  return text
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&rsquo;/g, "’")
+    .replace(/<li[^>]*>/gi, "\n• ")
+    .replace(/<\/(p|div|h[1-6]|ul|ol|li)>|<br\s*\/?>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
-    .replace(/\s+/g, " ")
+    .replace(/[ \t]+/g, " ")
+    .replace(/ *\n */g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
-  return plain ? plain.slice(0, SNIPPET_LENGTH) : undefined;
 }
+
+/* eslint-disable @typescript-eslint/no-explicit-any -- untyped third-party JSON */
+/**
+ * The full description of one job on a known board, or null. Only builds URLs on the
+ * providers' own API hosts, so it can't be pointed at arbitrary sites.
+ */
+export async function fetchJobDescription(jobUrl: string, board: AtsBoard, http: Http): Promise<string | null> {
+  const slug = encodeURIComponent(board.slug);
+  switch (board.provider) {
+    case "greenhouse": {
+      const id = jobUrl.match(/[?&]gh_jid=(\d+)/)?.[1] ?? jobUrl.match(/\/jobs\/(\d+)/)?.[1];
+      if (!id) return null;
+      const data = await getJson<any>(http, `https://boards-api.greenhouse.io/v1/boards/${slug}/jobs/${id}`);
+      return typeof data?.content === "string" ? toPlainText(data.content) : null;
+    }
+    case "lever": {
+      const id = jobUrl.match(/jobs\.lever\.co\/[^/]+\/([0-9a-f-]{36})/i)?.[1];
+      if (!id) return null;
+      const j = await getJson<any>(http, `https://api.lever.co/v0/postings/${slug}/${id}?mode=json`);
+      if (!j) return null;
+      const lists = (j.lists ?? []).map((l: any) => `${l.text}\n${toPlainText(String(l.content ?? ""))}`);
+      return [j.descriptionPlain, ...lists, j.additionalPlain].filter((s) => typeof s === "string" && s.trim()).join("\n\n").trim() || null;
+    }
+    case "ashby": {
+      const data = await getJson<any>(http, `https://api.ashbyhq.com/posting-api/job-board/${slug}`);
+      const j = data?.jobs?.find((x: any) => x.jobUrl === jobUrl || x.applyUrl === jobUrl);
+      const text = j?.descriptionPlain ?? (j?.descriptionHtml && toPlainText(j.descriptionHtml));
+      return typeof text === "string" ? text.trim() : null;
+    }
+    case "workable": {
+      const data = await getJson<any>(http, `https://apply.workable.com/api/v1/widget/accounts/${slug}?details=true`);
+      const j = data?.jobs?.find((x: any) => x.url === jobUrl || x.shortlink === jobUrl);
+      return typeof j?.description === "string" ? toPlainText(j.description) : null;
+    }
+  }
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const PERIODS: Record<string, Salary["period"]> = {
   year: "year", yearly: "year", annual: "year", "per-year-salary": "year", "1 year": "year",

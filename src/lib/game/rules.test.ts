@@ -112,6 +112,13 @@ describe("applyEvent", () => {
     expect(unlocked).toContain("persistent");
   });
 
+  it("pays once per tailored job and unlocks Tailor-Made", () => {
+    const first = applyEvent(EMPTY_STATS, { type: "tailor", id: "https://j/1" }, ctx());
+    expect(first.xp).toBe(30);
+    expect(first.unlocked.map((a) => a.id)).toContain("tailor-made");
+    expect(applyEvent(first.stats, { type: "tailor", id: "https://j/1" }, ctx(first.claimed, ["tailor-made"])).xp).toBe(0);
+  });
+
   it("records the active day once", () => {
     const a = applyEvent(EMPTY_STATS, { type: "poke" }, ctx());
     const b = applyEvent(a.stats, { type: "poke" }, ctx());
