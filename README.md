@@ -12,8 +12,10 @@ your applications. Data comes from the GOV.UK
 - **My profile**: upload a CV (PDF, .docx or text, read in the browser) or pick skills, roles, places, salary floor and
   visa situation. Every job gets a match score with reasons, a "Best match for me" sort, and a sponsorship check that
   uses the new-entrant salary rate when it applies. Stored in the browser; AI reading of the CV is opt-in
-- Shortlist tracker (Interested → Applied → Interviewing → Offer / Rejected), notes and CSV export,
-  stored in the browser
+- Tracker for saved **jobs and sponsors** (Interested → Applied → Interviewing → Offer / Rejected) as a board or
+  list, with notes and CSV export. After clicking Apply, one tap tracks the job as applied; follow-up reminders are
+  set automatically (a week after applying, two days after an interview), shown when due, and downloadable as
+  calendar events. Stored in the browser
 - Daily refresh of the register via `/api/update-sponsors` (Vercel cron, see `vercel.json`)
 
 ## Development
@@ -42,7 +44,8 @@ To run it locally: `npx ts-node-script --transpile-only --compiler-options '{"mo
 | `src/lib/enrichment/`  | `enrich(sponsors)` → website, careers page and job summary per sponsor. Built by `createEnricher({ store, http, resolves })` so tests inject a memory store and fake network |
 | `src/lib/useSponsorSearch.ts` | Search state, kept in the URL; load-more paging                      |
 | `src/lib/useEnrichment.ts`    | Batches `POST /api/enrich` for sponsors on screen                     |
-| `src/store/useShortlist.ts`   | Saved sponsors and their application status (localStorage)          |
+| `src/store/useShortlist.ts`   | Saved sponsors and jobs, their application status and follow-up dates (localStorage) |
+| `src/lib/tracker/`     | Follow-up dates (`followUpFor`, `dueState`) and `.ics` calendar events |
 | `src/lib/profile/`     | `extractProfile(cvText)`, the skills lexicon, `sanitizeProfile`, `readCv(file)` (browser only) |
 | `src/lib/match/`       | `scoreJob(job, profile)` → 0–100 with reasons; `rankJobs` for the "match" sort |
 | `src/store/useProfile.ts`     | The user's profile (localStorage); CV text only kept if they opt in   |

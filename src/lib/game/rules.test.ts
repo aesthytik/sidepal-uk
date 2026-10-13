@@ -98,6 +98,20 @@ describe("applyEvent", () => {
     expect(perfect.unlocked.map((a) => a.id)).toContain("perfect-match");
   });
 
+  it("pays once per reminder and unlocks Politely Persistent after 5", () => {
+    let stats = EMPTY_STATS;
+    let claimed: string[] = [];
+    let unlocked: string[] = [];
+    for (const id of ["a", "a", "b", "c", "d", "e"]) {
+      const out = applyEvent(stats, { type: "follow-up", id }, ctx(claimed, unlocked));
+      stats = out.stats;
+      claimed = [...claimed, ...out.claimed];
+      unlocked = [...unlocked, ...out.unlocked.map((a) => a.id)];
+    }
+    expect(claimed.filter((k) => k.startsWith("follow-up:"))).toHaveLength(5);
+    expect(unlocked).toContain("persistent");
+  });
+
   it("records the active day once", () => {
     const a = applyEvent(EMPTY_STATS, { type: "poke" }, ctx());
     const b = applyEvent(a.stats, { type: "poke" }, ctx());

@@ -18,7 +18,7 @@ const LINKS = [
 
 export function Navigation() {
   const pathname = usePathname();
-  const savedCount = useShortlist((s) => Object.keys(s.items).length);
+  const savedCount = useShortlist((s) => Object.keys(s.items).length + Object.keys(s.jobs).length);
   const [open, setOpen] = useState(false);
 
   const links = LINKS.map(({ href, label }) => (
