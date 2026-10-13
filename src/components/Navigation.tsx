@@ -12,12 +12,13 @@ const LINKS = [
   { href: "/jobs", label: "Jobs" },
   { href: "/sponsors", label: "Find sponsors" },
   { href: "/saved", label: "My shortlist" },
+  { href: "/profile", label: "My profile" },
   { href: "/guide/visa-basics", label: "Visa guide" },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
-  const savedCount = useShortlist((s) => Object.keys(s.items).length);
+  const savedCount = useShortlist((s) => Object.keys(s.items).length + Object.keys(s.jobs).length);
   const [open, setOpen] = useState(false);
 
   const links = LINKS.map(({ href, label }) => (

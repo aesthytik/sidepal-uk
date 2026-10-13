@@ -6,7 +6,9 @@ import { type SearchFilters, parseSearchParams, toSearchParams } from "./searchP
 import type { SearchPage, Sponsor } from "./sponsorTypes";
 import type { IndexedJob } from "./jobs/indexer";
 import type { JobsInfo } from "./jobs";
+import { hasMatchable } from "./profile/types";
 import { emit } from "@/store/useGame";
+import { useProfile, useProfileHydrated } from "@/store/useProfile";
 
 const PAGE_SIZE = 20;
 
@@ -21,12 +23,21 @@ export function useSponsorSearch() {
   return useUrlSearch<Sponsor>("/api/companies");
 }
 
-/** The jobs search, newest first. `info` describes the index (size and age). */
+/**
+ * The jobs search, newest first. `info` describes the index (size and age).
+ * Sorting by match posts the profile, so skills never end up in the URL.
+ */
 export function useJobSearch() {
-  return useUrlSearch<IndexedJob>("/api/jobs");
+  const profile = useProfile((s) => s.profile);
+  const hydrated = useProfileHydrated();
+  const matching = useSearchParams().get("sort") === "match";
+  const rank = useMemo(() => (matching && hasMatchable(profile) ? { profile } : undefined), [matching, profile]);
+  // Wait for the saved profile before the first ranked fetch, rather than fetching twice
+  return useUrlSearch<IndexedJob>("/api/jobs", rank, !matching || hydrated);
 }
 
-function useUrlSearch<T>(endpoint: string) {
+/** `body` turns each fetch into a POST of { params, ...body }; nothing is fetched until `ready`. */
+function useUrlSearch<T>(endpoint: string, body?: object, ready = true) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -62,14 +73,22 @@ function useUrlSearch<T>(endpoint: string) {
   const fetchPage = useCallback(
     async (page: number, signal?: AbortSignal): Promise<Omit<SearchPage, "items"> & { items: T[]; info?: JobsInfo }> => {
       const params = toSearchParams({ ...query, page, limit: PAGE_SIZE });
-      const res = await fetch(`${endpoint}?${params}`, { signal });
+      const res = body
+        ? await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ params: params.toString(), ...body }),
+            signal,
+          })
+        : await fetch(`${endpoint}?${params}`, { signal });
       if (!res.ok) throw new Error(`Search failed: ${res.status}`);
       return res.json();
     },
-    [query, endpoint]
+    [query, endpoint, body]
   );
 
   useEffect(() => {
+    if (!ready) return;
     const controller = new AbortController();
     setStatus("loading");
     fetchPage(1, controller.signal)
@@ -85,7 +104,7 @@ function useUrlSearch<T>(endpoint: string) {
         if (!controller.signal.aborted) setStatus("error");
       });
     return () => controller.abort();
-  }, [fetchPage, retry, endpoint, query, queryKey]);
+  }, [fetchPage, retry, endpoint, query, queryKey, ready]);
 
   const loadMore = useCallback(async () => {
     setStatus("loading-more");

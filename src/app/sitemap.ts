@@ -38,6 +38,7 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     { url: `${SITE}/visa-routes`, changeFrequency: "monthly", priority: 0.7 },
     ...VISA_CATEGORIES.map((v) => ({ url: `${SITE}${routePath(v)}`, changeFrequency: "weekly" as const, priority: 0.7 })),
     { url: `${SITE}/guide/visa-basics`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE}/visa-salary-checker`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/about`, changeFrequency: "monthly", priority: 0.5 },
   ];
 }

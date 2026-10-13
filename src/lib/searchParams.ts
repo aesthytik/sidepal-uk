@@ -21,7 +21,7 @@ export function parseSearchParams(params: URLSearchParams): SearchFilters & { pa
     role: isRoleId(get("role")) ? (get("role") as SearchQuery["role"]) : undefined,
     sponsored: get("sponsored") === "likely" ? ("likely" as const) : undefined,
     place: get("place")?.toLowerCase(),
-    sort: get("sort") === "salary" ? ("salary" as const) : undefined,
+    sort: get("sort") === "salary" || get("sort") === "match" ? (get("sort") as SearchQuery["sort"]) : undefined,
     view: get("view") === "map" ? ("map" as const) : undefined,
     page: Number(get("page")) || undefined,
   };

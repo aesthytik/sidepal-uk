@@ -83,6 +83,35 @@ describe("applyEvent", () => {
     expect(out.stats.bestScore).toBe(5000);
   });
 
+  it("pays for a complete profile once and unlocks Know Thyself", () => {
+    const first = applyEvent(EMPTY_STATS, { type: "profile" }, ctx());
+    expect(first.xp).toBe(50);
+    expect(first.unlocked.map((a) => a.id)).toContain("know-thyself");
+    expect(applyEvent(first.stats, { type: "profile" }, ctx(first.claimed, ["know-thyself"])).xp).toBe(0);
+  });
+
+  it("unlocks Perfect Match only for a 90+ match", () => {
+    const ok = applyEvent(EMPTY_STATS, { type: "match-open", score: 75 }, ctx());
+    expect(ok.unlocked.map((a) => a.id)).not.toContain("perfect-match");
+    const perfect = applyEvent(ok.stats, { type: "match-open", score: 93 }, ctx());
+    expect(perfect.stats.bestMatch).toBe(93);
+    expect(perfect.unlocked.map((a) => a.id)).toContain("perfect-match");
+  });
+
+  it("pays once per reminder and unlocks Politely Persistent after 5", () => {
+    let stats = EMPTY_STATS;
+    let claimed: string[] = [];
+    let unlocked: string[] = [];
+    for (const id of ["a", "a", "b", "c", "d", "e"]) {
+      const out = applyEvent(stats, { type: "follow-up", id }, ctx(claimed, unlocked));
+      stats = out.stats;
+      claimed = [...claimed, ...out.claimed];
+      unlocked = [...unlocked, ...out.unlocked.map((a) => a.id)];
+    }
+    expect(claimed.filter((k) => k.startsWith("follow-up:"))).toHaveLength(5);
+    expect(unlocked).toContain("persistent");
+  });
+
   it("records the active day once", () => {
     const a = applyEvent(EMPTY_STATS, { type: "poke" }, ctx());
     const b = applyEvent(a.stats, { type: "poke" }, ctx());

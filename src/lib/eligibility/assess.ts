@@ -1,3 +1,5 @@
+import { type Occupation, salaryRule } from "../soc";
+import { type OccupationMatch, matchOccupation } from "../soc/match";
 import type { Job, Salary } from "../sponsorTypes";
 import { THRESHOLDS } from "./thresholds";
 
@@ -5,6 +7,8 @@ export type Verdict = "likely" | "check" | "unlikely" | "unknown";
 export interface Assessment {
   verdict: Verdict;
   reasons: string[];
+  occupation?: Pick<Occupation, "code" | "title" | "status"> & Pick<OccupationMatch, "confidence">;
+  required?: number; // Lowest sponsorable salary for this user and role, GBP a year
 }
 
 const POSITIVE = /\b(visa sponsorship (is )?(available|offered|provided)|we (can |will |do )?sponsor|sponsorship (is )?(available|offered|provided)|skilled worker visa|relocation (support|package)|will sponsor)\b/i;
@@ -24,10 +28,16 @@ export function annualGbp(s?: Salary): number | null {
 const fmt = (n: number) => `£${n.toLocaleString("en-GB")}`;
 
 /**
- * A rough guide to whether a role can be sponsored. Not immigration advice:
- * the real test depends on the occupation code and going rate.
+ * A rough guide to whether a role can be sponsored. Not immigration advice. The job title
+ * is matched to a SOC 2020 occupation code to find its going rate; when that isn't clear,
+ * only the general minimums are checked. `newEntrant` and `existingWorker` come from the
+ * user's profile; without them, only entry-level titles get the new-entrant rate.
  */
-export function assess(job: Pick<Job, "title" | "salary" | "snippet" | "uk">, rating?: string): Assessment {
+export function assess(
+  job: Pick<Job, "title" | "salary" | "snippet" | "uk">,
+  rating?: string,
+  opts: { newEntrant?: boolean; existingWorker?: boolean } = {}
+): Assessment {
   const reasons: string[] = [];
   let score = 0; // >0 leans likely, <0 leans unlikely
   let known = false;
@@ -43,30 +53,52 @@ export function assess(job: Pick<Job, "title" | "salary" | "snippet" | "uk">, ra
     known = true;
   }
 
+  const match = matchOccupation(job.title);
+  const occ = match?.occupation;
+  const guess = match?.confidence === "medium" ? " (a best guess from the job title)" : "";
+  const occupation = occ && { code: occ.code, title: occ.title, status: occ.status, confidence: match.confidence };
+  const general = occ ? salaryRule(occ, { existingWorker: opts.existingWorker }) : null;
+  const entryRule = occ ? salaryRule(occ, { existingWorker: opts.existingWorker, newEntrant: true }) : null;
   const pay = annualGbp(job.salary);
-  const entry = ENTRY_LEVEL.test(job.title);
+
+  if (general && !general.eligible) {
+    reasons.push(`${general.explanation}${guess}`);
+    score -= 3;
+    known = true;
+    return finish(undefined);
+  }
+
+  const generalMin = general?.minimum ?? THRESHOLDS.general;
+  const entryMin = entryRule?.minimum ?? THRESHOLDS.newEntrant;
+  const entry = opts.newEntrant || ENTRY_LEVEL.test(job.title);
+  const required = opts.newEntrant ? entryMin : generalMin;
+  const role = occ ? ` for ${occ.title} (SOC ${occ.code})${guess}` : "";
+
   if (pay !== null) {
     known = true;
-    const min = entry ? THRESHOLDS.newEntrant : THRESHOLDS.general;
-    if (pay >= THRESHOLDS.general) {
-      reasons.push(`Salary up to ${fmt(pay)} meets the general minimum (${fmt(THRESHOLDS.general)}).`);
+    if (pay >= required) {
+      reasons.push(`Salary up to ${fmt(pay)} meets the ${fmt(required)} needed${role}${opts.newEntrant ? " as a new entrant" : ""}.`);
       score += 1;
-    } else if (pay >= min) {
-      reasons.push(`Salary up to ${fmt(pay)} meets the new-entrant minimum (${fmt(min)}), if you qualify as a new entrant.`);
+    } else if (entry && pay >= entryMin) {
+      reasons.push(`Salary up to ${fmt(pay)} meets the ${fmt(entryMin)} new-entrant rate${role}, if you qualify as a new entrant.`);
     } else {
-      reasons.push(`Salary up to ${fmt(pay)} is below the minimum (${fmt(min)}).`);
+      reasons.push(`Salary up to ${fmt(pay)} is below the ${fmt(entry ? entryMin : required)} needed${role}.`);
       score -= 2;
     }
   } else {
-    reasons.push("No salary shown, so the minimum can't be checked.");
+    reasons.push(`No salary shown. ${occ ? `This looks like ${occ.title} (SOC ${occ.code})${guess}, which needs at least ${fmt(required)}.` : "The minimum can't be checked."}`);
   }
+  if (occ?.status === "health-education" && occ.payScale) reasons.push(`It must also meet the national pay scale: ${occ.payScale}.`);
+  if (occ?.status === "shortage") reasons.push("This occupation is on the Temporary Shortage List, which ends on 31 December 2026.");
+  return finish(required);
 
-  if (rating?.startsWith("B")) {
-    reasons.push("This sponsor is B-rated (on an action plan) and may not be able to issue new certificates.");
-    score -= 2;
+  function finish(required: number | undefined): Assessment {
+    if (rating?.startsWith("B")) {
+      reasons.push("This sponsor is B-rated (on an action plan) and may not be able to issue new certificates.");
+      score -= 2;
+    }
+    if (!job.uk) reasons.push("The role may not be based in the UK.");
+    const verdict: Verdict = !known ? "unknown" : score >= 1 ? "likely" : score <= -1 ? "unlikely" : "check";
+    return { verdict, reasons, ...(occupation && { occupation }), ...(required !== undefined && { required }) };
   }
-  if (!job.uk) reasons.push("The role may not be based in the UK.");
-
-  const verdict: Verdict = !known ? "unknown" : score >= 1 ? "likely" : score <= -1 ? "unlikely" : "check";
-  return { verdict, reasons };
 }

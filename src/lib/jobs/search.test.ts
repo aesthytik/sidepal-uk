@@ -34,7 +34,8 @@ describe("filterJobs", () => {
     expect(filterJobs(jobs, { role: "health" })[0].title).toBe("Registered Nurse");
   });
   it("keeps only likely sponsorable roles", () => {
-    expect(filterJobs(jobs, { sponsored: "likely" }).map((j) => j.title)).toEqual(["Software Engineer", "Chef"]);
+    // Chefs can only be sponsored for people already on a Skilled Worker visa, whatever the ad says
+    expect(filterJobs(jobs, { sponsored: "likely" }).map((j) => j.title)).toEqual(["Software Engineer"]);
   });
 });
 

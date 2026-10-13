@@ -43,7 +43,12 @@ export default function VisaBasicsGuidePage() {
           <h3>Skilled Worker</h3>
           <ul>
             <li>The most common route. You need a job offer from a licensed sponsor.</li>
-            <li>The role must be an eligible occupation and meet a minimum salary (the general threshold or the occupation&apos;s going rate, whichever is higher).</li>
+            <li>The role must be an eligible occupation and meet a minimum salary (the general threshold or the occupation&apos;s going rate, whichever is higher).{" "}
+              <Link href="/visa-salary-checker" className="font-medium text-primary hover:underline">
+                Check the going rate for your job
+              </Link>
+              .
+            </li>
             <li>You need to prove your English, and the route can lead to settlement.</li>
             <li>
               <Gov href="https://www.gov.uk/skilled-worker-visa">Current Skilled Worker rules on GOV.UK</Gov>

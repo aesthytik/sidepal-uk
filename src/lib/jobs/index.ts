@@ -1,6 +1,8 @@
 import { assess } from "../eligibility/assess";
 import { placeOf } from "../geo/geocode";
 import type { Place } from "../geo/places";
+import { rankJobs } from "../match/score";
+import type { Profile } from "../profile/types";
 import { roleFamily } from "../sectors/taxonomy";
 import type { Salary, SearchQuery } from "../sponsorTypes";
 import { fetchAll, supabaseRead } from "../supabase/client";
@@ -121,9 +123,14 @@ function yearlyPay(job: IndexedJob): number {
   return s && amount && rate ? amount * PER_YEAR[s.period] * rate : -1;
 }
 
-/** Jobs arrive newest first, so only salary needs sorting (stable, so ties stay newest first). */
-export function sortJobs(jobs: IndexedJob[], query: SearchQuery): IndexedJob[] {
-  return query.sort === "salary" ? [...jobs].sort((a, b) => yearlyPay(b) - yearlyPay(a)) : jobs;
+/**
+ * Jobs arrive newest first, so only salary and match need sorting (stable, so ties stay newest first).
+ * Sorting by match needs the user's profile; without one, jobs stay newest first.
+ */
+export function sortJobs(jobs: IndexedJob[], query: SearchQuery, profile?: Profile): IndexedJob[] {
+  if (query.sort === "salary") return [...jobs].sort((a, b) => yearlyPay(b) - yearlyPay(a));
+  if (query.sort === "match" && profile) return rankJobs(jobs, profile);
+  return jobs;
 }
 
 /** How many matching jobs sit at each place, for the map. */
@@ -151,9 +158,9 @@ export function paginate(items: IndexedJob[], query: SearchQuery): JobPage {
   return { items: items.slice((page - 1) * limit, page * limit), total: items.length, page, pageCount };
 }
 
-export async function searchJobs(query: SearchQuery): Promise<JobPage> {
+export async function searchJobs(query: SearchQuery, profile?: Profile): Promise<JobPage> {
   const index = await load();
-  return paginate(sortJobs(filterJobs(index.jobs, query), query), query);
+  return paginate(sortJobs(filterJobs(index.jobs, query), query, profile), query);
 }
 
 /** Matching jobs counted by place. Ignores `place` itself so the other pins stay visible. */

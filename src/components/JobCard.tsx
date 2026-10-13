@@ -2,9 +2,10 @@ import Link from "next/link";
 import type { IndexedJob } from "@/lib/jobs/indexer";
 import { postedAgo } from "@/lib/postedAgo";
 import { Badge } from "./ui/badge";
+import { JobActions } from "./JobActions";
+import { JobMatch } from "./JobMatch";
 import { JobVerdict } from "./JobVerdict";
-import { ExternalLinkIcon, MapPinIcon } from "./ui/icons";
-import { TrackedLink } from "./game/TrackedLink";
+import { MapPinIcon } from "./ui/icons";
 import { sponsorPath } from "@/lib/seo";
 
 export function JobCard({ job }: { job: IndexedJob }) {
@@ -24,15 +25,7 @@ export function JobCard({ job }: { job: IndexedJob }) {
             </Link>
           </p>
         </div>
-        <TrackedLink
-          event="apply-click"
-          href={job.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          Apply <ExternalLinkIcon />
-        </TrackedLink>
+        <JobActions job={job} />
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
@@ -43,6 +36,9 @@ export function JobCard({ job }: { job: IndexedJob }) {
         {job.department && <span>{job.department}</span>}
         {posted && <span>Posted {posted}</span>}
         <Badge tone={job.rating.startsWith("A") ? "success" : "warning"}>Verified sponsor ✓ · {job.rating || "?"}-rated</Badge>
+      </div>
+      <div className="mt-2 empty:hidden">
+        <JobMatch job={job} />
       </div>
 
       <div className="-mx-3 mt-2 border-t border-border pt-2">
