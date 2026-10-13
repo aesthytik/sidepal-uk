@@ -20,6 +20,11 @@ describe("assess", () => {
     const r = assess({ title: "Graduate Engineer", uk: true, salary: { max: 35000, currency: "GBP", period: "year" } });
     expect(r.verdict).toBe("check");
   });
+  it("uses the new-entrant rate for any title when the user is a new entrant", () => {
+    const job = { ...base, salary: { max: 35000, currency: "GBP", period: "year" as const } };
+    expect(assess(job).verdict).toBe("unlikely");
+    expect(assess(job, undefined, { newEntrant: true }).verdict).toBe("check");
+  });
   it("reads sponsorship wording", () => {
     expect(assess({ ...base, snippet: "Visa sponsorship is available for this role." }).verdict).toBe("likely");
     expect(assess({ ...base, snippet: "Candidates must have the right to work in the UK." }).verdict).toBe("unlikely");

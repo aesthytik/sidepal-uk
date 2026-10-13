@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/jobs", label: "Jobs" },
   { href: "/sponsors", label: "Find sponsors" },
   { href: "/saved", label: "My shortlist" },
+  { href: "/profile", label: "My profile" },
   { href: "/guide/visa-basics", label: "Visa guide" },
 ];
 

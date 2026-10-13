@@ -16,6 +16,8 @@ export type GameEvent =
   | { type: "careers-click"; url: string }
   | { type: "export" }
   | { type: "game"; score: number }
+  | { type: "profile" }
+  | { type: "match-open"; score: number }
   | { type: "konami" }
   | { type: "poke" };
 
@@ -38,6 +40,8 @@ export interface GameStats {
   games: number;
   konami: boolean;
   pokes: number;
+  profile: boolean; // Filled in a complete profile
+  bestMatch: number; // Highest match score of a job opened
   days: string[]; // Distinct active days (YYYY-MM-DD), newest last, capped
 }
 
@@ -60,6 +64,8 @@ export const EMPTY_STATS: GameStats = {
   games: 0,
   konami: false,
   pokes: 0,
+  profile: false,
+  bestMatch: 0,
   days: [],
 };
 
@@ -88,6 +94,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: "phoenix", emoji: "🐦‍🔥", title: "Phoenix", description: "Brought a rejected sponsor back from the graveyard.", xp: 30, unlocked: (s) => s.respawns >= 1 },
   { id: "scribe", emoji: "📜", title: "Scribe", description: "Wrote 5 notes.", xp: 25, unlocked: (s) => s.notes >= 5 },
   { id: "spreadsheet-wizard", emoji: "🧙", title: "Spreadsheet Wizard", description: "Exported your shortlist.", xp: 20, unlocked: (s) => s.exports >= 1 },
+  { id: "know-thyself", emoji: "🪞", title: "Know Thyself", description: "Filled in your profile so Horus can match you.", xp: 40, unlocked: (s) => s.profile },
+  { id: "perfect-match", emoji: "💘", title: "Perfect Match", description: "Opened a job that's a 90%+ match for you.", xp: 60, unlocked: (s) => s.bestMatch >= 90 },
   { id: "streak-3", emoji: "🔥", title: "On Fire", description: "Came back 3 days in a row.", xp: 50, unlocked: (s) => streak(s.days) >= 3 },
   { id: "stamp-champ", emoji: "🏅", title: "Stamp Champ", description: "Scored 1,000+ in Stamp Rush.", xp: 50, unlocked: (s) => s.bestScore >= 1000 },
   { id: "eye-poker", emoji: "👉", title: "Eye Poker", description: "Poked Horus in the eye 10 times. He forgives you.", xp: 10, unlocked: (s) => s.pokes >= 10 },
@@ -188,6 +196,13 @@ export function applyEvent(
       s.games++;
       s.bestScore = Math.max(s.bestScore, event.score);
       xp += Math.min(150, Math.floor(event.score / 10));
+      break;
+    case "profile":
+      s.profile = true;
+      once("profile", 50);
+      break;
+    case "match-open":
+      s.bestMatch = Math.max(s.bestMatch, event.score);
       break;
     case "konami":
       s.konami = true;

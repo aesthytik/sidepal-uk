@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { type Assessment, type Verdict, assess } from "@/lib/eligibility/assess";
 import { SOURCE_URL } from "@/lib/eligibility/thresholds";
+import { isNewEntrant } from "@/lib/profile/types";
 import type { Job } from "@/lib/sponsorTypes";
+import { useProfile } from "@/store/useProfile";
 import { Badge } from "./ui/badge";
 
 const LABEL: Record<Verdict, { text: string; tone: "success" | "warning" | "neutral" | "primary" }> = {
@@ -20,7 +22,8 @@ interface AiCheck {
 
 /** A rule-based sponsorship verdict for one job, with the reasons and an optional AI second opinion. */
 export function JobVerdict({ job, rating }: { job: Job; rating?: string }) {
-  const result: Assessment = assess(job, rating);
+  const newEntrant = useProfile((s) => (s.profile ? isNewEntrant(s.profile) : false));
+  const result: Assessment = assess(job, rating, { newEntrant });
   const { text, tone } = LABEL[result.verdict];
   const [ai, setAi] = useState<AiCheck | null>(null);
   const [state, setState] = useState<"idle" | "loading" | "error">("idle");

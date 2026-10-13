@@ -9,6 +9,9 @@ your applications. Data comes from the GOV.UK
 - Search all ~127k sponsors by name, location, visa route and rating (shareable URLs)
 - Website, careers page and **live open roles** for each sponsor, found on demand. Jobs are read
   from Greenhouse, Lever, Ashby and Workable public job board APIs, with UK roles first
+- **My profile**: upload a CV (PDF, .docx or text, read in the browser) or pick skills, roles, places, salary floor and
+  visa situation. Every job gets a match score with reasons, a "Best match for me" sort, and a sponsorship check that
+  uses the new-entrant salary rate when it applies. Stored in the browser; AI reading of the CV is opt-in
 - Shortlist tracker (Interested → Applied → Interviewing → Offer / Rejected), notes and CSV export,
   stored in the browser
 - Daily refresh of the register via `/api/update-sponsors` (Vercel cron, see `vercel.json`)
@@ -40,6 +43,9 @@ To run it locally: `npx ts-node-script --transpile-only --compiler-options '{"mo
 | `src/lib/useSponsorSearch.ts` | Search state, kept in the URL; load-more paging                      |
 | `src/lib/useEnrichment.ts`    | Batches `POST /api/enrich` for sponsors on screen                     |
 | `src/store/useShortlist.ts`   | Saved sponsors and their application status (localStorage)          |
+| `src/lib/profile/`     | `extractProfile(cvText)`, the skills lexicon, `sanitizeProfile`, `readCv(file)` (browser only) |
+| `src/lib/match/`       | `scoreJob(job, profile)` → 0–100 with reasons; `rankJobs` for the "match" sort |
+| `src/store/useProfile.ts`     | The user's profile (localStorage); CV text only kept if they opt in   |
 
 ## Environment variables
 

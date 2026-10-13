@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Horus } from "@/components/game/Horus";
 import { ListIcon, MapIcon, SlidersIcon } from "@/components/ui/icons";
 import { Sheet } from "@/components/ui/sheet";
+import { hasMatchable } from "@/lib/profile/types";
 import { useJobSearch } from "@/lib/useSponsorSearch";
+import { useProfile, useProfileHydrated } from "@/store/useProfile";
 import { cn } from "@/lib/utils";
 import { SortSelect } from "./SortSelect";
 
@@ -24,6 +26,8 @@ export function JobSearch() {
   const search = useJobSearch();
   const { filters, setFilters, items, total, status, info } = search;
   const [sheetOpen, setSheetOpen] = useState(false);
+  const canMatch = useProfile((s) => hasMatchable(s.profile));
+  const profileLoaded = useProfileHydrated();
 
   const filterCount = [filters.location, filters.visa, filters.rating, filters.role, filters.sector, filters.sponsored, filters.place].filter(
     Boolean
@@ -142,6 +146,19 @@ export function JobSearch() {
 
         <section aria-label="Results" className="min-w-0 space-y-4">
           <ActiveFilters filters={filters} onChange={setFilters} />
+          {profileLoaded && !canMatch && (
+            <Link
+              href="/profile"
+              className="card flex items-center gap-3 p-3 text-sm transition-colors hover:border-foreground/30"
+            >
+              <Horus size={36} mood="curious" interactive={false} />
+              <span className="min-w-0 flex-1">
+                <span className="font-medium">Tell Horus about you and it&apos;ll rank these for you.</span>{" "}
+                <span className="text-muted-foreground">Upload your CV or pick your skills. It stays in your browser.</span>
+              </span>
+              <span className="shrink-0 font-medium text-primary">Set up →</span>
+            </Link>
+          )}
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm text-muted-foreground" aria-live="polite">
               {mapView
@@ -149,10 +166,12 @@ export function JobSearch() {
                 : loading
                   ? "Searching…"
                   : status !== "error" &&
-                    `${total.toLocaleString()} job${total === 1 ? "" : "s"}, ${filters.sort === "salary" ? "highest salary" : "newest"} first`}
+                    `${total.toLocaleString()} job${total === 1 ? "" : "s"}, ${filters.sort === "salary" ? "highest salary" : filters.sort === "match" && canMatch ? "best match" : "newest"} first`}
             </p>
             <div className="flex items-center gap-2">
-              {!mapView && <SortSelect value={filters.sort} onChange={(sort) => setFilters({ sort }, { replace: true })} />}
+              {!mapView && (
+                <SortSelect value={filters.sort} onChange={(sort) => setFilters({ sort }, { replace: true })} />
+              )}
               <div role="group" aria-label="View" className="inline-flex rounded-md border bg-card p-0.5">
                 {(
                   [

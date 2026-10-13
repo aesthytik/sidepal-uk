@@ -25,7 +25,7 @@ export interface SearchQuery {
   sponsored?: "likely"; // Jobs only: roles that look sponsorable
   role?: RoleId; // Matches sponsors in the role family's likely sectors
   place?: string; // Jobs only: a map place id from lib/geo, or "remote"
-  sort?: "salary"; // Jobs only: highest pay first (default is newest first)
+  sort?: "salary" | "match"; // Jobs only: highest pay or best fit for the user's profile first (default is newest first)
   page?: number;
   limit?: number;
 }

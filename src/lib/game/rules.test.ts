@@ -83,6 +83,21 @@ describe("applyEvent", () => {
     expect(out.stats.bestScore).toBe(5000);
   });
 
+  it("pays for a complete profile once and unlocks Know Thyself", () => {
+    const first = applyEvent(EMPTY_STATS, { type: "profile" }, ctx());
+    expect(first.xp).toBe(50);
+    expect(first.unlocked.map((a) => a.id)).toContain("know-thyself");
+    expect(applyEvent(first.stats, { type: "profile" }, ctx(first.claimed, ["know-thyself"])).xp).toBe(0);
+  });
+
+  it("unlocks Perfect Match only for a 90+ match", () => {
+    const ok = applyEvent(EMPTY_STATS, { type: "match-open", score: 75 }, ctx());
+    expect(ok.unlocked.map((a) => a.id)).not.toContain("perfect-match");
+    const perfect = applyEvent(ok.stats, { type: "match-open", score: 93 }, ctx());
+    expect(perfect.stats.bestMatch).toBe(93);
+    expect(perfect.unlocked.map((a) => a.id)).toContain("perfect-match");
+  });
+
   it("records the active day once", () => {
     const a = applyEvent(EMPTY_STATS, { type: "poke" }, ctx());
     const b = applyEvent(a.stats, { type: "poke" }, ctx());

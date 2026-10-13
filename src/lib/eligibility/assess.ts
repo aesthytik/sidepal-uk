@@ -25,9 +25,14 @@ const fmt = (n: number) => `£${n.toLocaleString("en-GB")}`;
 
 /**
  * A rough guide to whether a role can be sponsored. Not immigration advice:
- * the real test depends on the occupation code and going rate.
+ * the real test depends on the occupation code and going rate. `newEntrant`
+ * comes from the user's profile; without it, only entry-level titles get the lower rate.
  */
-export function assess(job: Pick<Job, "title" | "salary" | "snippet" | "uk">, rating?: string): Assessment {
+export function assess(
+  job: Pick<Job, "title" | "salary" | "snippet" | "uk">,
+  rating?: string,
+  opts: { newEntrant?: boolean } = {}
+): Assessment {
   const reasons: string[] = [];
   let score = 0; // >0 leans likely, <0 leans unlikely
   let known = false;
@@ -44,7 +49,7 @@ export function assess(job: Pick<Job, "title" | "salary" | "snippet" | "uk">, ra
   }
 
   const pay = annualGbp(job.salary);
-  const entry = ENTRY_LEVEL.test(job.title);
+  const entry = opts.newEntrant || ENTRY_LEVEL.test(job.title);
   if (pay !== null) {
     known = true;
     const min = entry ? THRESHOLDS.newEntrant : THRESHOLDS.general;
@@ -52,7 +57,7 @@ export function assess(job: Pick<Job, "title" | "salary" | "snippet" | "uk">, ra
       reasons.push(`Salary up to ${fmt(pay)} meets the general minimum (${fmt(THRESHOLDS.general)}).`);
       score += 1;
     } else if (pay >= min) {
-      reasons.push(`Salary up to ${fmt(pay)} meets the new-entrant minimum (${fmt(min)}), if you qualify as a new entrant.`);
+      reasons.push(`Salary up to ${fmt(pay)} meets the new-entrant minimum (${fmt(min)}), ${opts.newEntrant ? "which your profile says applies to you" : "if you qualify as a new entrant"}.`);
     } else {
       reasons.push(`Salary up to ${fmt(pay)} is below the minimum (${fmt(min)}).`);
       score -= 2;
