@@ -394,7 +394,10 @@ export function ProfileEditor() {
           </div>
           <p className="text-xs text-muted-foreground">
             Jobs are checked against the {isNewEntrant(profile) ? "new-entrant" : "general"} Skilled Worker minimum of {fmt(floor)}
-            {isNewEntrant(profile) ? "" : ` (new entrants: ${fmt(THRESHOLDS.newEntrant)})`}. A rough guide, not immigration advice.
+            {isNewEntrant(profile) ? "" : ` (new entrants: ${fmt(THRESHOLDS.newEntrant)})`}, or the job&apos;s going rate if higher.{" "}
+            <Link href="/visa-salary-checker" className="font-medium text-primary hover:underline">
+              Check a job&apos;s going rate →
+            </Link>
           </p>
         </fieldset>
       </section>
