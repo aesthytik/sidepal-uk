@@ -16,6 +16,9 @@ export const sponsorPath = (id: string) => `/sponsors/${id}`;
 export const placePath = (place: string) => `/visa-sponsors/${slug(place)}`;
 export const routePath = (route: string) => `/visa-routes/${slug(route)}`;
 export const rolePath = (roleId: string) => `/visa-sponsorship-jobs/${roleId}`;
+export const SALARY_CHECKER_PATH = "/visa-salary-checker";
+/** "/visa-salary-checker/2134-programmers-and-software-development-professionals" */
+export const occupationPath = (occ: { code: string; title: string }) => `${SALARY_CHECKER_PATH}/${occ.code}-${slug(occ.title)}`;
 
 export function routeFromSlug(s: string): string | undefined {
   return VISA_CATEGORIES.find((v) => slug(v) === s);

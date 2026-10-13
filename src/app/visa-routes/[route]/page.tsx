@@ -5,11 +5,14 @@ import { JsonLd } from "@/components/JsonLd";
 import { Answer, Breadcrumbs, FaqList, SponsorList } from "@/components/seo";
 import { countSponsors, directoryInfo, listPlaces, searchSponsors } from "@/lib/directory";
 import { VISA_CATEGORIES } from "@/lib/sponsorTypes";
-import { MIN_PLACE_SPONSORS, breadcrumbs, faq, formatDate, itemList, n, routeFromSlug, routePath, slug, sponsorPath } from "@/lib/seo";
+import { MIN_PLACE_SPONSORS, breadcrumbs, faq, formatDate, itemList, n, routeFromSlug, routePath, sponsorPath } from "@/lib/seo";
 
 export const revalidate = 86400;
+export const dynamicParams = true;
+// Rendered on first request and cached, like place pages: building all routes at once
+// ran enough sponsor counts in parallel to hit the database's statement timeout
 export function generateStaticParams() {
-  return VISA_CATEGORIES.map((v) => ({ route: slug(v) }));
+  return [];
 }
 
 type Params = { params: Promise<{ route: string }> };

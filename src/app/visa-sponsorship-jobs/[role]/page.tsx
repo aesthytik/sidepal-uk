@@ -7,11 +7,15 @@ import { Answer, Breadcrumbs, FaqList, SponsorList } from "@/components/seo";
 import { countSponsors, searchSponsors } from "@/lib/directory";
 import { searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES, sectorLabel } from "@/lib/sectors/taxonomy";
-import { ROLE_IDS, breadcrumbs, faq, n, roleFromSlug, rolePath } from "@/lib/seo";
+import { breadcrumbs, faq, n, occupationPath, roleFromSlug, rolePath } from "@/lib/seo";
+import { salaryRule, STATUS_LABELS } from "@/lib/soc";
+import { occupationsForRole } from "@/lib/soc/content";
 
 export const revalidate = 3600;
+export const dynamicParams = true;
+// Rendered on first request and cached, so the build doesn't run every role's sponsor queries at once
 export function generateStaticParams() {
-  return ROLE_IDS.map((role) => ({ role }));
+  return [];
 }
 
 type Params = { params: Promise<{ role: string }> };
@@ -88,6 +92,33 @@ export default async function RolePage({ params }: Params) {
         <p className="mt-4 text-sm">
           <Link href={`/jobs?role=${role.id}`} className="font-medium text-primary hover:underline">
             Filter all {label} jobs →
+          </Link>
+        </p>
+      </section>
+
+      <section className="mt-12" aria-labelledby="salary">
+        <h2 id="salary" className="font-display text-2xl font-semibold">
+          Salary needed for a Skilled Worker visa
+        </h2>
+        <ul className="mt-4 divide-y divide-border border-y border-border">
+          {occupationsForRole(role.id).map((o) => {
+            const open = o.status !== "ineligible" && o.status !== "existing-only";
+            const min = open ? salaryRule(o).minimum : undefined;
+            return (
+              <li key={o.code}>
+                <Link href={occupationPath(o)} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 hover:bg-muted/40 sm:px-2">
+                  <span>
+                    <span className="tabular-nums text-muted-foreground">{o.code}</span> <span className="font-medium">{o.title}</span>
+                  </span>
+                  <span className="text-sm text-muted-foreground">{min ? `From £${min.toLocaleString("en-GB")}` : STATUS_LABELS[o.status]}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="mt-4 text-sm">
+          <Link href="/visa-salary-checker" className="font-medium text-primary hover:underline">
+            Check the going rate for any job →
           </Link>
         </p>
       </section>
