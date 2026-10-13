@@ -7,13 +7,15 @@ import { Answer, Breadcrumbs, FaqList, SponsorList } from "@/components/seo";
 import { countSponsors, searchSponsors } from "@/lib/directory";
 import { searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES, sectorLabel } from "@/lib/sectors/taxonomy";
-import { ROLE_IDS, breadcrumbs, faq, n, occupationPath, roleFromSlug, rolePath } from "@/lib/seo";
+import { breadcrumbs, faq, n, occupationPath, roleFromSlug, rolePath } from "@/lib/seo";
 import { salaryRule, STATUS_LABELS } from "@/lib/soc";
 import { occupationsForRole } from "@/lib/soc/content";
 
 export const revalidate = 3600;
+export const dynamicParams = true;
+// Rendered on first request and cached, so the build doesn't run every role's sponsor queries at once
 export function generateStaticParams() {
-  return ROLE_IDS.map((role) => ({ role }));
+  return [];
 }
 
 type Params = { params: Promise<{ role: string }> };
