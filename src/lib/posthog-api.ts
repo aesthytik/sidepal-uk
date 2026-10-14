@@ -3,8 +3,9 @@
 const HOST = "https://us.posthog.com";
 
 function config() {
-  const key = process.env.POSTHOG_PERSONAL_API_KEY;
-  const project = process.env.POSTHOG_PROJECT_ID;
+  // Trimmed because pasted dashboard values often pick up a stray space or newline
+  const key = process.env.POSTHOG_PERSONAL_API_KEY?.trim();
+  const project = process.env.POSTHOG_PROJECT_ID?.trim();
   if (!key || !project) throw new Error("Set POSTHOG_PERSONAL_API_KEY and POSTHOG_PROJECT_ID to load analytics");
   return { key, project };
 }
