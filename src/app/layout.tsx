@@ -7,6 +7,7 @@ import { ShortlistHydrator } from "@/components/ShortlistHydrator";
 import { GameLayer } from "@/components/game/GameLayer";
 import { SecretEye } from "@/components/game/SecretEye";
 import { Analytics } from "@vercel/analytics/next";
+import { CookieBanner, CookieSettingsLink } from "@/components/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 const fraunces = Fraunces({ subsets: ["latin"], display: "swap", variable: "--font-fraunces", axes: ["opsz", "SOFT"] });
@@ -117,12 +118,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 GOV.UK sponsor register
               </a>
               <p>Not affiliated with the Home Office.</p>
+              <CookieSettingsLink />
               <a className="hover:text-foreground" href={SUPPORT_URL} target="_blank" rel="noopener noreferrer">
                 Support Horus
               </a>
             </div>
           </div>
         </footer>
+        <CookieBanner />
         <Analytics />
       </body>
     </html>

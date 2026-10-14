@@ -4,7 +4,7 @@ import type { MetadataRoute } from "next";
 const AI_BOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User", "Claude-SearchBot", "PerplexityBot", "Google-Extended", "Applebot-Extended", "CCBot"];
 
 export default function robots(): MetadataRoute.Robots {
-  const disallow = ["/api/", "/saved"];
+  const disallow = ["/api/", "/saved", "/admin"];
   return {
     rules: [
       { userAgent: "*", allow: "/", disallow },
