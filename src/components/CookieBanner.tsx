@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getConsent, OPEN_CONSENT_EVENT, setConsent, type Consent } from "@/lib/analytics";
 
 /** Asks once for analytics consent; PostHog doesn't run until the visitor accepts. */
 export function CookieBanner() {
   const [open, setOpen] = useState(false);
+  // Admin pages are only for us, so the banner would just get in the way there
+  const isAdmin = usePathname().startsWith("/admin");
 
   useEffect(() => {
     if (getConsent() === null) setOpen(true);
@@ -15,7 +18,7 @@ export function CookieBanner() {
     return () => window.removeEventListener(OPEN_CONSENT_EVENT, reopen);
   }, []);
 
-  if (!open) return null;
+  if (!open || isAdmin) return null;
 
   const choose = (consent: Consent) => {
     setConsent(consent);
