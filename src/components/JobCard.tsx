@@ -12,16 +12,16 @@ import { jobPath, sponsorPath } from "@/lib/seo";
 export function JobCard({ job }: { job: IndexedJob }) {
   const posted = postedAgo(job.postedAt);
   return (
-    <article className="card p-4 sm:p-5">
+    <article className="card interactive-card border-t-[3px] border-t-primary p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="font-display text-lg font-semibold leading-snug">
+          <h2 className="font-display text-xl font-semibold leading-snug">
             <Link href={jobPath(job)} className="hover:underline">
               {job.title}
             </Link>
           </h2>
           <p className="mt-1 text-sm">
-            <Link href={sponsorPath(job.sponsorId)} className="font-medium hover:underline">
+            <Link href={sponsorPath(job.sponsorId)} className="font-medium text-primary hover:underline">
               {job.sponsor}
             </Link>
           </p>
@@ -43,7 +43,7 @@ export function JobCard({ job }: { job: IndexedJob }) {
         <JobTailorButton job={job} className="py-0.5 text-xs font-medium text-primary hover:underline" />
       </div>
 
-      <div className="-mx-3 mt-2 border-t border-border pt-2">
+      <div className="mt-4 rounded-md border border-border bg-muted/40 pt-2">
         <JobVerdict job={job} rating={job.rating} />
       </div>
     </article>

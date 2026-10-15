@@ -95,104 +95,110 @@ export default async function Home() {
           faq(FAQ),
         ]} />
 
-      <section className="reveal container max-w-6xl px-4 pb-16 pt-12 sm:pt-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
-          <div className="max-w-3xl">
-            <p className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-              <ShieldCheckIcon className="text-sage" />
-              Official Home Office data{date && ` · updated ${date}`}
-            </p>
-            <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] sm:text-7xl">
-              Stop searching blind.{" "}
-              <span className="font-normal italic text-muted-foreground">Find UK jobs that can sponsor your visa.</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Search all {countLabel} licensed sponsors, see who&apos;s hiring, and keep track of where you&apos;ve applied.
-            </p>
-
-            <form action="/sponsors" className="mt-10 flex max-w-xl items-center gap-2 rounded-md border border-input bg-card p-1.5 focus-within:border-foreground/40">
-              <label className="relative flex-1">
-                <span className="sr-only">Company name</span>
-                <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" width={18} height={18} />
-                <input
-                  name="q"
-                  type="search"
-                  placeholder="Company name, e.g. Deliveroo"
-                  className="h-10 w-full bg-transparent pl-10 pr-3 text-base outline-none"
-                />
-              </label>
-              <Button type="submit">Search</Button>
-            </form>
-
-            <AskAi className="mt-3 max-w-xl text-left" />
-
-            <dl className="mt-8 grid max-w-xl gap-3 text-sm">
-              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-                <dt className="w-14 text-muted-foreground">Places</dt>
-                {POPULAR_LOCATIONS.slice(0, 6).map((place) => (
-                  <dd key={place}>
-                    <Link
-                      href={placePath(place)}
-                      className="underline decoration-border underline-offset-4 hover:decoration-foreground"
-                    >
-                      {place}
-                    </Link>
-                  </dd>
-                ))}
-              </div>
-              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-                <dt className="w-14 text-muted-foreground">Roles</dt>
-                {ROLE_FAMILIES.slice(0, 6).map(({ id, label }) => (
-                  <dd key={id}>
-                    <Link
-                      href={rolePath(id)}
-                      className="underline decoration-border underline-offset-4 hover:decoration-foreground"
-                    >
-                      {label}
-                    </Link>
-                  </dd>
-                ))}
-              </div>
-            </dl>
-          </div>
-          <div className="hidden justify-center lg:flex">
-            <Horus size={200} />
-          </div>
-        </div>
-
-        <div className="mt-16 grid border-y border-border text-left sm:grid-cols-3 sm:divide-x sm:divide-border">
-          {[
-            {
-              href: "/jobs",
-              eyebrow: "Ready to apply",
-              title: "Latest sponsored jobs",
-              body: jobCount > 0 ? `${jobCount.toLocaleString("en-GB")} live roles, newest first.` : "Live roles from licensed sponsors.",
-              cta: "Browse jobs",
-            },
-            { href: "/sponsors", eyebrow: "Looking for a sponsor", title: "Browse licensed employers", body: "Filter by town, visa route and rating.", cta: "Find sponsors" },
-            { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Save jobs and sponsors, and get reminded when to follow up.", cta: "Open tracker" },
-          ].map((c, i) => (
-            <Link key={c.href} href={c.href} className="group border-border py-8 sm:px-8 sm:first:pl-0 sm:last:pr-0 max-sm:border-b max-sm:last:border-b-0">
-              <p className="eyebrow">
-                <span className="tabular-nums">0{i + 1}</span> · {c.eyebrow}
+      <section className="hero-stage border-b border-border">
+        <div className="reveal container max-w-6xl px-4 pb-12 pt-10 sm:pb-16 sm:pt-16">
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_17rem]">
+            <div className="max-w-3xl">
+              <p className="inline-flex items-center gap-2 rounded-full border border-sage/25 bg-mint px-3 py-2 text-xs font-medium text-mint-foreground">
+                <ShieldCheckIcon className="text-sage" />
+                Official Home Office data{date && ` · updated ${date}`}
               </p>
-              <h2 className="mt-3 font-display text-2xl font-semibold">{c.title}</h2>
-              <p className="mt-2 text-muted-foreground">{c.body}</p>
-              <p className="mt-5 text-sm font-medium text-primary">
-                <span className="underline decoration-primary/30 underline-offset-4 group-hover:decoration-primary">{c.cta}</span> →
+              <h1 className="mt-6 font-display text-[2.75rem] font-bold leading-[1.04] tracking-[-0.045em] sm:text-6xl xl:text-7xl">
+                Big plans.<br />
+                <span className="text-primary">Clear next steps.</span>
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+                Find UK employers that can sponsor your work visa. Search {countLabel} licensed sponsors, see who&apos;s hiring, and build your next chapter, one application at a time.
               </p>
-            </Link>
-          ))}
+
+              <form action="/sponsors" className="mt-8 flex max-w-xl items-center gap-2 rounded-full border border-input bg-card p-2 shadow-card focus-within:border-primary">
+                <label className="relative min-w-0 flex-1">
+                  <span className="sr-only">Company name</span>
+                  <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" width={18} height={18} />
+                  <input
+                    name="q"
+                    type="search"
+                    placeholder="Company name, e.g. Deliveroo"
+                    className="h-10 w-full bg-transparent pl-10 pr-3 text-base outline-none"
+                  />
+                </label>
+                <Button type="submit">Search</Button>
+              </form>
+
+              <AskAi className="mt-3 max-w-xl text-left" />
+
+              <dl className="mt-8 grid max-w-xl gap-3 text-sm">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
+                  <dt className="w-14 text-muted-foreground">Places</dt>
+                  {POPULAR_LOCATIONS.slice(0, 6).map((place) => (
+                    <dd key={place}>
+                      <Link
+                        href={placePath(place)}
+                        className="underline decoration-border underline-offset-4 hover:decoration-foreground"
+                      >
+                        {place}
+                      </Link>
+                    </dd>
+                  ))}
+                </div>
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
+                  <dt className="w-14 text-muted-foreground">Roles</dt>
+                  {ROLE_FAMILIES.slice(0, 6).map(({ id, label }) => (
+                    <dd key={id}>
+                      <Link
+                        href={rolePath(id)}
+                        className="underline decoration-border underline-offset-4 hover:decoration-foreground"
+                      >
+                        {label}
+                      </Link>
+                    </dd>
+                  ))}
+                </div>
+              </dl>
+            </div>
+            <div className="relative hidden py-10 lg:block">
+              <div className="hero-mascot flex aspect-square items-center justify-center">
+                <Horus size={170} />
+              </div>
+              <span className="hero-sticker absolute -left-5 top-1 rounded-full bg-apricot px-4 py-2 text-sm font-bold text-apricot-foreground -rotate-6">Big moves start small.</span>
+              <span className="hero-sticker absolute -right-2 bottom-1 rounded-full bg-mint px-4 py-2 text-sm font-semibold text-mint-foreground rotate-3"><span aria-hidden="true">✦</span> Your next chapter</span>
+            </div>
+          </div>
+
+          <div className="mt-12 grid gap-4 text-left sm:grid-cols-3">
+            {[
+              {
+                href: "/jobs",
+                eyebrow: "Ready to apply",
+                title: "Explore open roles",
+                body: jobCount > 0 ? `${jobCount.toLocaleString("en-GB")} live roles, newest first.` : "Live roles from licensed sponsors.",
+                cta: "Browse jobs",
+              },
+              { href: "/sponsors", eyebrow: "Looking for a sponsor", title: "Browse licensed employers", body: "Filter by town, visa route and rating.", cta: "Find sponsors" },
+              { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Save jobs and sponsors, and get reminded when to follow up.", cta: "Open tracker" },
+            ].map((c, i) => (
+              <Link key={c.href} href={c.href} className="card interactive-card group p-6">
+                <p className="eyebrow">
+                  <span className="tabular-nums">0{i + 1}</span> · {c.eyebrow}
+                </p>
+                <h2 className="mt-3 font-display text-2xl font-semibold">{c.title}</h2>
+                <p className="mt-2 text-muted-foreground">{c.body}</p>
+                <p className="mt-5 text-sm font-medium text-primary">
+                  <span className="underline decoration-primary/30 underline-offset-4 group-hover:decoration-primary">{c.cta}</span> →
+                </p>
+              </Link>
+            ))}
+          </div>
+          <DailyQuest className="mt-10" />
         </div>
-        <DailyQuest className="mt-10" />
       </section>
 
-      <section className="container max-w-6xl px-4 pb-6" aria-labelledby="salary-check">
+      <section className="container max-w-6xl px-4 pb-6 pt-12" aria-labelledby="salary-check">
         <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>
             <p className="eyebrow">New · Visa salary checker</p>
             <h2 id="salary-check" className="mt-3 font-display text-3xl font-semibold sm:text-4xl">
-              Is the salary high enough <span className="italic">to sponsor you?</span>
+              Is the salary high enough <span className="text-primary">to sponsor you?</span>
             </h2>
             <p className="mt-3 text-muted-foreground">
               Each job has its own going rate, not just the {fmt(THRESHOLDS.general)} minimum. A software developer needs {fmt(goingRate("2134"))},
@@ -236,7 +242,7 @@ export default async function Home() {
           <div>
             <p className="eyebrow">New · Tailor my application</p>
             <h2 id="tailor" className="mt-3 font-display text-3xl font-semibold sm:text-4xl">
-              Fit your CV to the job <span className="italic">in seconds.</span>
+              Fit your CV to the job <span className="text-primary">in seconds.</span>
             </h2>
             <p className="mt-3 text-muted-foreground">
               Pick any job and Horus reads the full ad, shows which of its keywords your CV already covers, and drafts CV bullets and a cover
@@ -324,7 +330,7 @@ export default async function Home() {
           <div>
             <p className="eyebrow">A short break</p>
             <h2 id="stamp-rush" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-              Bored of forms? Play <span className="italic">Stamp Rush</span>.
+              Bored of forms? Play <span className="text-primary">Stamp Rush</span>.
             </h2>
             <p className="mt-2 max-w-xl text-muted-foreground">
               Every stamp is a real A-rated sponsor. Catch a gold one and it might just be your next employer.
@@ -336,12 +342,12 @@ export default async function Home() {
 
       <section className="container max-w-4xl px-4 py-24">
         <h2 className="font-display text-4xl font-semibold sm:text-5xl">
-          From register to <span className="font-normal italic text-muted-foreground">application in three steps.</span>
+          From register to <span className="text-primary">application in three steps.</span>
         </h2>
         <ol className="mt-14 divide-y divide-border">
           {STEPS.map(({ icon: Icon, title, body }, i) => (
             <li key={title} className="grid gap-4 py-8 sm:grid-cols-[6rem_1fr]">
-              <span className="font-display text-5xl font-normal italic text-muted-foreground/60">{i + 1}.</span>
+              <span className="font-display text-5xl font-bold text-primary">{i + 1}.</span>
               <div>
                 <h3 className="flex items-center gap-2 font-display text-2xl font-semibold">
                   <Icon width={20} height={20} className="text-primary" /> {title}
@@ -379,7 +385,7 @@ export default async function Home() {
       </section>
 
       <section className="container px-4 py-20">
-        <div className="rounded-lg bg-primary px-6 py-16 text-center text-primary-foreground">
+        <div className="rounded-[2rem] bg-primary px-6 py-16 shadow-card text-center text-primary-foreground">
           <h2 className="font-display text-4xl font-semibold sm:text-5xl">
             Ready to find your sponsor?
           </h2>

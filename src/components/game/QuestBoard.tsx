@@ -10,10 +10,10 @@ import { useCalm } from "@/store/useGame";
 
 const COLUMNS: Record<Status, { emoji: string; title: string; empty: string; tone: string }> = {
   interested: { emoji: "🗺️", title: "Quest log", empty: "Drag what you like here", tone: "border-t-sage" },
-  applied: { emoji: "📨", title: "Sent into the void", empty: "Applied? Drop it here. +50 XP", tone: "border-t-primary" },
-  interviewing: { emoji: "⚔️", title: "Boss fight", empty: "Interviews go here. +150 XP", tone: "border-t-clay" },
+  applied: { emoji: "📨", title: "Applications sent", empty: "Applied? Drop it here. +50 XP", tone: "border-t-primary" },
+  interviewing: { emoji: "💬", title: "Interview time", empty: "Interviews go here. +150 XP", tone: "border-t-clay" },
   offer: { emoji: "🏆", title: "Victory!", empty: "The dream column. +500 XP", tone: "border-t-gold" },
-  rejected: { emoji: "🪦", title: "Graveyard", empty: "No shame. Drag back out to respawn", tone: "border-t-muted-foreground" },
+  rejected: { emoji: "🌱", title: "Next chapter", empty: "Take a breath. There are more paths ahead.", tone: "border-t-muted-foreground" },
 };
 
 /** One sponsor or job on the board. */
@@ -43,9 +43,9 @@ function QuestCard({ card, onMove }: { card: BoardCard; onMove: (id: string, sta
       }}
       onDragEnd={() => setDragging(false)}
       className={cn(
-        "card cursor-grab p-3 text-sm transition-colors hover:border-foreground/30 active:cursor-grabbing",
-        dragging && "opacity-50",
-        item.status === "rejected" && "opacity-70 grayscale"
+        "card interactive-card cursor-grab p-3 text-sm transition-colors hover:border-foreground/30 active:cursor-grabbing",
+        dragging && "ring-2 ring-primary",
+        item.status === "rejected" && "bg-muted/40"
       )}
     >
       {card.external ? (
@@ -106,13 +106,13 @@ export function QuestBoard({ cards, onMove }: { cards: BoardCard[]; onMove: (id:
                 onMove(id, status);
                 if (status === "offer") confetti({ x: e.clientX, y: e.clientY, calm, count: 80 });
               }}
-              className={cn("flex min-h-[18rem] flex-col rounded-lg border border-t-2 border-border bg-muted/40 p-2 transition-colors", col.tone, over === status && "quest-drop")}
+              className={cn("flex min-h-[18rem] flex-col rounded-lg border border-t-4 border-border bg-accent/30 p-2 transition-colors", col.tone, over === status && "quest-drop")}
             >
               <header className="flex items-center justify-between px-1.5 pb-2 pt-1">
                 <h2 className="text-sm font-semibold">
                   <span aria-hidden="true">{col.emoji}</span> {col.title}
                 </h2>
-                <span className="rounded bg-card px-1.5 text-xs font-medium leading-5 tabular-nums">{column.length}</span>
+                <span className="rounded-full bg-card px-2 text-xs font-medium leading-5 tabular-nums">{column.length}</span>
               </header>
               {column.length === 0 ? (
                 <p className="m-1 flex flex-1 items-center justify-center rounded-md border border-dashed border-border p-3 text-center text-xs text-muted-foreground">

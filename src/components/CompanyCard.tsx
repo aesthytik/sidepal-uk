@@ -150,17 +150,17 @@ export function CompanyCard({
   return (
     <article
       onAnimationEnd={() => setReveal(false)}
-      className={cn("card p-4 sm:p-5", `loot-${rarity}`, reveal && "loot-reveal")}
+      className={cn("card interactive-card p-4 sm:p-5", `loot-${rarity}`, reveal && "loot-reveal")}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           {rarity !== "common" && (
-            <p className={cn("mb-1 text-[11px] font-semibold uppercase tracking-[0.14em]", RARITY_STYLE[rarity])} title={RARITY_HINT}>
+            <p className={cn("mb-2 inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-semibold", RARITY_STYLE[rarity])} title={RARITY_HINT}>
               {rarity === "legendary" ? "★ " : ""}
               {RARITY_LABEL[rarity]} find
             </p>
           )}
-          <h2 className="font-display text-lg font-semibold leading-snug">
+          <h2 className="font-display text-xl font-semibold leading-snug">
             <Link href={sponsorPath(sponsor.id)} prefetch={false} className="hover:underline">{sponsor.name}</Link>
           </h2>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">

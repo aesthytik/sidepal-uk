@@ -42,11 +42,14 @@ const config: Config = {
           DEFAULT: "hsl(var(--card) / <alpha-value>)",
           foreground: "hsl(var(--card-foreground) / <alpha-value>)",
         },
-        // Supporting tones (docs/branding.md); theme-aware so text stays AA
+        // Semantic supporting tones; see docs/brand.md
+        mint: { DEFAULT: "hsl(var(--mint) / <alpha-value>)", foreground: "hsl(var(--mint-foreground) / <alpha-value>)" },
+        apricot: { DEFAULT: "hsl(var(--apricot) / <alpha-value>)", foreground: "hsl(var(--apricot-foreground) / <alpha-value>)" },
         gold: "hsl(var(--gold) / <alpha-value>)",
         clay: "hsl(var(--clay) / <alpha-value>)",
         sage: "hsl(var(--sage) / <alpha-value>)",
       },
+      boxShadow: { card: "var(--shadow-card)", float: "var(--shadow-float)", button: "0 3px 0 hsl(var(--foreground) / 0.2)" },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -54,14 +57,14 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          "var(--font-inter)",
+          "var(--font-body)",
           "ui-sans-serif",
           "system-ui",
           "-apple-system",
           "Segoe UI",
           "sans-serif",
         ],
-        display: ["var(--font-fraunces)", "Georgia", "serif"],
+        display: ["var(--font-display)", "ui-sans-serif", "system-ui", "sans-serif"],
         pixel: ["var(--font-pixel)", "monospace"],
       },
       keyframes: {

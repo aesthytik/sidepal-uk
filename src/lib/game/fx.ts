@@ -3,8 +3,8 @@
  * caller says the user wants calm, or when there is no browser.
  */
 
-// Brand tones: green, sage, gold, clay, ink, paper
-const COLORS = ["#1F5C4A", "#7FB59C", "#B08D3C", "#B5654A", "#1A1A17", "#E2DDD2"];
+// Brand confetti: violet, mint, apricot, lilac and ink.
+const COLORS = ["#5934CF", "#C3AAFF", "#C6F4DC", "#FFD6B0", "#242039", "#DCD5EC"];
 
 interface Piece {
   x: number;
@@ -67,11 +67,11 @@ function tick() {
     } else if (p.shape === "eye") {
       ctx.beginPath();
       ctx.ellipse(0, 0, p.size, p.size / 2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#F6F3EC";
+      ctx.fillStyle = "#F8F7FF";
       ctx.fill();
       ctx.beginPath();
       ctx.arc(0, 0, p.size / 3, 0, Math.PI * 2);
-      ctx.fillStyle = "#1F5C4A";
+      ctx.fillStyle = "#5934CF";
       ctx.fill();
     } else {
       ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);

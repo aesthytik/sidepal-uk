@@ -25,32 +25,35 @@ interface Theme {
   ink: string;
   muted: string;
   tape: string;
+  tapeInk: string;
   stamp: Record<Rarity, { fill: string; ink: string }>;
 }
 const LIGHT: Theme = {
-  bg: "#F6F3EC",
-  rule: "#E9E4D9",
-  ink: "#1A1A17",
-  muted: "#6B675E",
-  tape: "#B5654A",
+  bg: "#F8F7FF",
+  rule: "#E5DEF4",
+  ink: "#242039",
+  muted: "#625B75",
+  tape: "#9B3B31",
+  tapeInk: "#FFFFFF",
   stamp: {
-    legendary: { fill: "#B08D3C", ink: "#FBF9F4" },
-    epic: { fill: "#1F5C4A", ink: "#FBF9F4" },
-    rare: { fill: "#DCE8E1", ink: "#1F5C4A" },
-    common: { fill: "#FBF9F4", ink: "#1A1A17" },
+    legendary: { fill: "#805012", ink: "#FFFFFF" },
+    epic: { fill: "#5934CF", ink: "#FFFFFF" },
+    rare: { fill: "#C6F4DC", ink: "#5934CF" },
+    common: { fill: "#FFFFFF", ink: "#242039" },
   },
 };
 const DARK: Theme = {
-  bg: "#1E1D1A",
-  rule: "#272622",
-  ink: "#ECE7DD",
-  muted: "#A39E92",
-  tape: "#C9785C",
+  bg: "#201B30",
+  rule: "#2C253D",
+  ink: "#F4F0FF",
+  muted: "#BEB4D2",
+  tape: "#FFB4A5",
+  tapeInk: "#361913",
   stamp: {
-    legendary: { fill: "#D4B36A", ink: "#161513" },
-    epic: { fill: "#7FB59C", ink: "#161513" },
-    rare: { fill: "#22302A", ink: "#A8D3BF" },
-    common: { fill: "#2A2925", ink: "#ECE7DD" },
+    legendary: { fill: "#F5CD86", ink: "#141120" },
+    epic: { fill: "#C3AAFF", ink: "#141120" },
+    rare: { fill: "#244C40", ink: "#B5F1D2" },
+    common: { fill: "#35264F", ink: "#F4F0FF" },
   },
 };
 const theme = (): Theme =>
@@ -161,14 +164,14 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   const bob = Math.sin(t * 8) * 2;
   ctx.save();
   ctx.translate(x, y + bob);
-  ctx.fillStyle = "#1F5C4A";
-  roundRect(ctx, -s / 2, -s / 2, s, s, 12);
+  ctx.fillStyle = "#5934CF";
+  roundRect(ctx, -s / 2, -s / 2, s, s, 18);
   ctx.fill();
-  ctx.fillStyle = "#F6F3EC";
+  ctx.fillStyle = "#F8F7FF";
   ctx.beginPath();
   if (ouch) {
     // X_X
-    ctx.strokeStyle = "#F6F3EC";
+    ctx.strokeStyle = "#F8F7FF";
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
     for (const dx of [-10, 10]) {
@@ -181,20 +184,20 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   } else {
     ctx.ellipse(0, -4, 20, 11, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#3E7E68";
+    ctx.fillStyle = "#C6F4DC";
     ctx.beginPath();
     ctx.arc(look * 7, -6, 7.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#1A1A17";
+    ctx.fillStyle = "#242039";
     ctx.beginPath();
     ctx.arc(look * 7, -6, 3.2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#F6F3EC";
+    ctx.fillStyle = "#F8F7FF";
     ctx.beginPath();
     ctx.arc(look * 7 + 2.5, -8.5, 1.4, 0, Math.PI * 2);
     ctx.fill();
   }
-  ctx.strokeStyle = "#F6F3EC";
+  ctx.strokeStyle = "#F8F7FF";
   ctx.lineWidth = 3.5;
   ctx.lineCap = "round";
   ctx.beginPath();
@@ -213,7 +216,7 @@ function drawItem(ctx: CanvasRenderingContext2D, it: Item, t: Theme) {
     ctx.fillStyle = t.tape;
     roundRect(ctx, -it.w / 2, -it.h / 2, it.w, it.h, 4);
     ctx.fill();
-    ctx.fillStyle = "#FBF9F4";
+    ctx.fillStyle = t.tapeInk;
     ctx.font = "bold 11px ui-sans-serif, system-ui";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -538,7 +541,7 @@ export default function StampRush() {
   }
 
   return (
-    <div ref={wrap} className="relative overflow-hidden rounded-lg border border-border bg-card">
+    <div ref={wrap} className="game-surface relative overflow-hidden rounded-lg bg-card">
       <canvas
         ref={canvas}
         tabIndex={0}
@@ -554,7 +557,7 @@ export default function StampRush() {
           {phase === "idle" ? (
             <>
               <p className="font-display text-4xl font-semibold sm:text-5xl">
-                Stamp <span className="italic text-primary">Rush</span>
+                Stamp <span className="text-primary">Rush</span>
               </p>
               <p className="max-w-sm text-sm text-muted-foreground">
                 Catch visa stamps from <strong>real sponsors</strong>. Dodge the red tape. Gold stamps are legendary.

@@ -76,12 +76,12 @@ export function HUD() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={`Level ${level.index + 1}, ${level.title}, ${xp} XP. Game settings`}
-        className="group relative flex h-8 items-center gap-2 rounded-md border border-border bg-card px-2 hover:border-foreground/30"
+        className="group relative flex h-11 items-center gap-2 rounded-full border border-primary/30 bg-accent px-3 hover:border-primary"
       >
-        <span className="text-xs font-semibold tabular-nums text-muted-foreground">Lv {level.index + 1}</span>
+        <span className="rounded-full bg-primary px-2 py-1 text-xs font-bold tabular-nums text-primary-foreground">Lv {level.index + 1}</span>
         <span className="flex w-20 flex-col gap-1 text-left">
           <span className="truncate text-[11px] font-medium leading-none">{level.title}</span>
-          <span className="h-1 overflow-hidden rounded-sm bg-muted">
+          <span className="h-1.5 overflow-hidden rounded-full bg-primary/15">
             <span className="xp-bar block h-full" style={{ width: `${Math.max(4, level.progress * 100)}%` }} />
           </span>
         </span>
@@ -91,7 +91,7 @@ export function HUD() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-10 z-40 w-72 rounded-lg border border-border bg-card p-2 shadow-lg animate-in fade-in">
+        <div className="fixed right-4 top-20 z-40 w-72 sm:absolute sm:right-0 sm:top-14 rounded-lg border border-border bg-card p-2 shadow-float animate-in fade-in">
           <div className="flex items-center gap-3 px-2 pb-3">
             <Horus size={44} />
             <div className="min-w-0">

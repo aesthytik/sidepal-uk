@@ -2,53 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * Horus brand: calm editorial. Warm paper, ink, one deep green accent.
- * Every text/background pair here meets WCAG AA in both themes (see docs/branding.md).
- */
+/* Horus: your next chapter. Semantic colour pairs live in docs/brand.md. */
 @layer base {
   :root {
-    --background: 42 36% 95%; /* paper #F6F3EC */
-    --foreground: 60 6% 10%; /* ink #1A1A17 */
-    --card: 43 47% 97%;
-    --card-foreground: 60 6% 10%;
-    --primary: 162 50% 24%; /* deep green #1F5C4A */
-    --primary-foreground: 0 0% 100%;
-    --muted: 43 28% 90%;
-    --muted-foreground: 42 6% 39%;
-    --accent: 147 22% 92%;
-    --accent-foreground: 162 50% 24%;
-    --destructive: 15 49% 41%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 41 22% 85%;
-    --input: 41 19% 80%;
-    --ring: 162 50% 24%;
-    --gold: 42 60% 34%;
-    --clay: 15 49% 41%;
-    --sage: 151 28% 34%;
-    --radius: 0.5rem;
+    --background: 247.5 100.0% 98.4%; /* #F8F7FF */
+    --foreground: 249.6 28.1% 17.5%; /* #242039 */
+    --card: 0.0 0.0% 100.0%; /* #FFFFFF */
+    --card-foreground: 249.6 28.1% 17.5%; /* #242039 */
+    --primary: 254.3 61.8% 50.8%; /* #5934CF */
+    --primary-foreground: 0.0 0.0% 100.0%; /* #FFFFFF */
+    --muted: 253.8 48.1% 94.7%; /* #EEEBF8 */
+    --muted-foreground: 256.2 12.5% 40.8%; /* #625B75 */
+    --accent: 256.8 100.0% 95.1%; /* #EDE6FF */
+    --accent-foreground: 258.8 62.1% 38.2%; /* #4B259E */
+    --destructive: 5.7 52.0% 40.0%; /* #9B3B31 */
+    --destructive-foreground: 0.0 0.0% 100.0%; /* #FFFFFF */
+    --border: 258.3 37.7% 88.0%; /* #DCD5EC */
+    --input: 262.0 13.5% 56.5%; /* #8C819F */
+    --ring: 254.3 61.8% 50.8%; /* #5934CF */
+    --gold: 33.8 75.3% 28.6%; /* #805012 */
+    --clay: 5.7 52.0% 40.0%; /* #9B3B31 */
+    --sage: 157.6 49.6% 26.5%; /* #22654C */
+    --mint: 148.7 67.6% 86.7%; /* #C6F4DC */
+    --mint-foreground: 158.1 51.0% 20.0%; /* #194D3A */
+    --apricot: 28.9 100.0% 84.5%; /* #FFD6B0 */
+    --apricot-foreground: 26.8 60.3% 24.7%; /* #653B19 */
+    --map-water: 253.8 79.6% 90.4%; /* #DCD3FA */
+    --map-land: 252.0 100.0% 98.0%; /* #F7F5FF */
+    --map-park: 150.0 36.1% 85.9%; /* #CEE8DB */
+    --map-road: 0.0 0.0% 100.0%; /* #FFFFFF */
+    --map-road-casing: 265.0 31.6% 77.6%; /* #C3B4D8 */
+    --radius: 1.25rem;
+    --shadow-card: 0 3px 0 hsl(var(--border) / 0.65);
+    --shadow-float: 0 12px 36px -12px hsl(var(--foreground) / 0.22);
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --background: 40 7% 8%; /* warm charcoal #161513 */
-      --foreground: 40 28% 90%;
-      --card: 45 7% 11%;
-      --card-foreground: 40 28% 90%;
-      --primary: 152 27% 60%; /* sage #7FB59C */
-      --primary-foreground: 40 7% 8%;
-      --muted: 40 9% 13%;
-      --muted-foreground: 42 8% 61%;
-      --accent: 154 17% 16%;
-      --accent-foreground: 152 33% 74%;
-      --destructive: 16 58% 64%;
-      --destructive-foreground: 40 7% 8%;
-      --border: 40 7% 17%;
-      --input: 43 6% 21%;
-      --ring: 152 27% 60%;
-      --gold: 41 55% 62%;
-      --clay: 16 58% 64%;
-      --sage: 151 29% 66%;
+      --background: 252.0 30.6% 9.6%; /* #141120 */
+      --foreground: 256.0 100.0% 97.1%; /* #F4F0FF */
+      --card: 254.3 28.0% 14.7%; /* #201B30 */
+      --card-foreground: 256.0 100.0% 97.1%; /* #F4F0FF */
+      --primary: 257.6 100.0% 83.3%; /* #C3AAFF */
+      --primary-foreground: 263.6 46.5% 13.9%; /* #201334 */
+      --muted: 257.5 24.5% 19.2%; /* #2C253D */
+      --muted-foreground: 260.0 25.0% 76.5%; /* #BEB4D2 */
+      --accent: 262.0 35.0% 22.9%; /* #35264F */
+      --accent-foreground: 260.0 100.0% 89.4%; /* #DBC9FF */
+      --destructive: 10.0 100.0% 82.4%; /* #FFB4A5 */
+      --destructive-foreground: 10.3 47.9% 14.3%; /* #361913 */
+      --border: 259.3 17.9% 30.6%; /* #49405C */
+      --input: 273.1 11.4% 50.0%; /* #81718E */
+      --ring: 257.6 100.0% 83.3%; /* #C3AAFF */
+      --gold: 38.4 84.7% 74.3%; /* #F5CD86 */
+      --clay: 10.0 100.0% 82.4%; /* #FFB4A5 */
+      --sage: 150.0 54.3% 72.5%; /* #93DFB9 */
+      --mint: 162.0 35.7% 22.0%; /* #244C40 */
+      --mint-foreground: 149.0 68.2% 82.7%; /* #B5F1D2 */
+      --apricot: 25.7 43.4% 22.2%; /* #513520 */
+      --apricot-foreground: 28.7 100.0% 86.5%; /* #FFDBBA */
+      --map-water: 262.9 32.7% 20.4%; /* #302345 */
+      --map-land: 249.5 24.7% 15.1%; /* #201D30 */
+      --map-park: 162.6 29.0% 21.0%; /* #26453C */
+      --map-road: 268.9 13.7% 38.6%; /* #625570 */
+      --map-road-casing: 257.1 29.2% 9.4%; /* #15111F */
     }
   }
 
@@ -65,6 +82,7 @@
   h2,
   h3 {
     text-wrap: balance;
+    letter-spacing: -0.025em;
   }
 
   :focus-visible {
@@ -79,12 +97,13 @@
 @layer components {
   .card {
     @apply rounded-lg border border-border bg-card text-card-foreground;
+    box-shadow: var(--shadow-card);
   }
   .section-band {
-    @apply border-y border-border bg-muted/50;
+    @apply border-y border-border bg-accent/50;
   }
   .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground;
+    @apply text-xs font-semibold uppercase tracking-[0.12em] text-primary;
   }
 }
 
@@ -108,7 +127,7 @@
   to { opacity: 1; transform: none; }
 }
 
-/* ───────────────────────── Game layer (quiet) ───────────────────────── */
+/* ───────────────────────── Game layer: small wins, big encouragement ───────────────────────── */
 
 .animate-horus-dizzy {
   transform-box: fill-box;
@@ -116,7 +135,8 @@
 }
 
 .xp-bar {
-  background: hsl(var(--primary));
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--sage)));
+  border-radius: 999px;
   transition: width 0.5s ease-out;
 }
 
@@ -158,11 +178,13 @@
   to { opacity: 1; transform: none; }
 }
 
-/* Sponsor rarity: a quiet frame, never a light show */
-.loot-epic { border-color: hsl(var(--primary) / 0.45); }
+/* Sponsor rarity: tactile frames, with the label carrying the meaning. */
+.loot-rare { border-top: 3px solid hsl(var(--sage)); }
+.loot-epic { border-top: 3px solid hsl(var(--primary)); }
 .loot-legendary {
   border-color: hsl(var(--gold) / 0.7);
-  box-shadow: inset 0 0 0 1px hsl(var(--gold) / 0.35);
+  border-top: 3px solid hsl(var(--gold));
+  box-shadow: 0 3px 0 hsl(var(--gold) / 0.2);
 }
 .loot-reveal {
   animation: loot-reveal 0.6s ease-out;
@@ -179,7 +201,7 @@
   background: hsl(var(--accent));
 }
 
-/* Arcade mode (Konami code), still the hidden egg, drawn in ink and paper */
+/* Arcade mode (Konami code): an opt-in pixel skin. */
 html.arcade body {
   font-family: var(--font-pixel), monospace;
   letter-spacing: 0.02em;
@@ -244,13 +266,16 @@ html.calm .loot-reveal {
   gap: 2px;
 }
 .job-map-tip .maplibregl-popup-content {
-  padding: 8px 12px;
+  padding: 12px 16px;
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
   background: hsl(var(--card));
   color: hsl(var(--card-foreground));
-  font: 13px/1.35 inherit;
-  box-shadow: 0 6px 20px -8px hsl(var(--foreground) / 0.35);
+  font-family: var(--font-body), sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 4px 0 hsl(var(--primary) / 0.2), var(--shadow-float);
+  border-bottom: 3px solid hsl(var(--primary));
   animation: drop-in 0.18s ease-out both;
 }
 .job-map-tip .maplibregl-popup-content span { color: hsl(var(--muted-foreground)); font-size: 12px; }
@@ -272,4 +297,53 @@ html.calm .loot-reveal {
 html.calm .job-map-tip .maplibregl-popup-content { animation: none; }
 @media (prefers-reduced-motion: reduce) {
   .job-map-tip .maplibregl-popup-content { animation: none; }
+}
+
+/* Distinctive surfaces, built from CSS so they stay crisp at every size. */
+.hero-stage {
+  background: radial-gradient(ellipse at 85% 15%, hsl(var(--mint) / 0.65), transparent 45%),
+    radial-gradient(ellipse at 10% 90%, hsl(var(--accent)), transparent 50%);
+}
+.hero-mascot {
+  background: hsl(var(--accent));
+  border: 1px solid hsl(var(--primary) / 0.25);
+  border-radius: 45% 55% 58% 42% / 48% 40% 60% 52%;
+  box-shadow: 12px 12px 0 hsl(var(--mint));
+}
+.hero-sticker {
+  border: 1px solid hsl(var(--input));
+  box-shadow: 3px 4px 0 hsl(var(--border));
+}
+.interactive-card {
+  transition: border-color 180ms ease-out, box-shadow 180ms ease-out, transform 180ms ease-out;
+}
+.interactive-card:hover, .interactive-card:focus-within {
+  border-color: hsl(var(--primary) / 0.65);
+  box-shadow: 0 5px 0 hsl(var(--primary) / 0.14);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.calm) .interactive-card:hover { transform: translateY(-2px); }
+  html:not(.calm) .brand-button:active { transform: translateY(2px); box-shadow: none; }
+}
+.quest-panel { border: 1px solid hsl(var(--primary) / 0.5); }
+.quest-header { background: linear-gradient(110deg, hsl(var(--accent)), hsl(var(--mint) / 0.65)); }
+.quest-pick { border: 1px solid hsl(var(--border)); border-radius: 1rem; }
+.trophy-tile { box-shadow: 0 3px 0 hsl(var(--gold) / 0.18); }
+.game-surface { border: 2px solid hsl(var(--primary) / 0.4); box-shadow: 0 6px 0 hsl(var(--accent)); }
+.maplibregl-ctrl-group { border-radius: 14px !important; overflow: hidden; box-shadow: var(--shadow-card) !important; }
+.maplibregl-ctrl-group button { width: 36px; height: 36px; }
+.maplibregl-ctrl button:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -3px; }
+.maplibregl-ctrl-attrib a { text-decoration: underline; }
+/* All decorative CSS motion obeys both the OS preference and the in-app toggle. */
+html.calm *, html.calm *::before, html.calm *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

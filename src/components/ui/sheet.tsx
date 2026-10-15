@@ -33,7 +33,7 @@ export function Sheet({
   return (
     <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label={title}>
       <div className="absolute inset-0 bg-foreground/30 animate-in fade-in" onClick={onClose} />
-      <div className="absolute inset-x-0 bottom-0 flex max-h-[85vh] flex-col rounded-t-lg border-t border-border bg-card shadow-lg animate-in slide-in-from-bottom">
+      <div className="absolute inset-x-0 bottom-0 flex max-h-[85vh] flex-col rounded-t-lg border-t border-border bg-card shadow-float animate-in slide-in-from-bottom">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h2 className="font-display text-lg font-semibold">{title}</h2>
           <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-2 hover:bg-muted">

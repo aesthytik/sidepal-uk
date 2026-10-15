@@ -20,7 +20,7 @@ export function TrophyRoom() {
   return (
     <section id="trophies" aria-labelledby="trophies-title" className="mt-14 scroll-mt-24">
       <div className="card overflow-hidden">
-        <div className="flex flex-wrap items-center gap-5 border-b border-border bg-muted/50 p-6">
+        <div className="flex flex-wrap items-center gap-5 border-b border-border quest-header p-6">
           <Horus size={64} />
           <div className="min-w-0 flex-1">
             <p className="eyebrow">
@@ -28,7 +28,7 @@ export function TrophyRoom() {
             </p>
             <p className="font-display text-3xl font-semibold">{level.title}</p>
             <p className="text-sm text-muted-foreground">{level.blurb}</p>
-            <div className="mt-3 h-1.5 max-w-md overflow-hidden rounded-sm bg-border">
+            <div className="mt-3 h-3 max-w-md overflow-hidden rounded-full bg-border">
               <div className="xp-bar h-full" style={{ width: `${Math.max(3, level.progress * 100)}%` }} />
             </div>
             <p className="mt-1.5 text-xs text-muted-foreground">
@@ -64,11 +64,11 @@ export function TrophyRoom() {
                 <li
                   key={a.id}
                   className={cn(
-                    "rounded-md border p-3",
-                    has ? "border-gold/40 bg-gold/5" : "border-dashed border-border opacity-60"
+                    "rounded-lg border p-4",
+                    has ? "trophy-tile border-gold/50 bg-apricot/40" : "border-dashed border-input bg-muted/40"
                   )}
                 >
-                  <p className={cn("text-2xl", !has && "grayscale")} aria-hidden="true">
+                  <p className={cn("text-3xl", !has && "grayscale")} aria-hidden="true">
                     {has ? a.emoji : "🔒"}
                   </p>
                   <p className="mt-1 text-sm font-semibold">{has ? a.title : "???"}</p>

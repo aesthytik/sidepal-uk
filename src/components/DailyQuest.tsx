@@ -90,8 +90,8 @@ export function DailyQuest({ className }: { className?: string }) {
   if (!ready || !hasMatchable(profile)) return null;
 
   return (
-    <section ref={cardRef} aria-labelledby="daily-quest" className={cn("card overflow-hidden", doneToday && "border-sage/40", className)}>
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5">
+    <section ref={cardRef} aria-labelledby="daily-quest" className={cn("card quest-panel overflow-hidden", doneToday && "border-sage/40", className)}>
+      <header className="flex flex-wrap items-center justify-between quest-header gap-3 border-b border-border px-4 py-5 sm:px-6">
         <div className="flex items-center gap-3">
           <Horus size={40} mood={doneToday ? "party" : "curious"} interactive={false} />
           <div>
@@ -105,8 +105,8 @@ export function DailyQuest({ className }: { className?: string }) {
             </p>
           </div>
         </div>
-        <p className={cn("rounded-md px-2.5 py-1 text-sm font-medium tabular-nums", streak > 0 ? "bg-clay/10 text-clay" : "bg-muted text-muted-foreground")}>
-          🔥 {streak}-day streak
+        <p className={cn("rounded-full border border-current/20 px-3 py-2 text-sm font-semibold tabular-nums", streak > 0 ? "bg-apricot text-apricot-foreground" : "bg-muted text-muted-foreground")}>
+          <span aria-hidden="true">🔥</span> {streak}-day streak
         </p>
       </header>
 
@@ -118,7 +118,7 @@ export function DailyQuest({ className }: { className?: string }) {
           </button>
         </p>
       ) : current.length === 0 && state === "loading" ? (
-        <div className="grid gap-px bg-border sm:grid-cols-3" aria-hidden="true">
+        <div className="grid gap-3 bg-muted/40 p-3 sm:grid-cols-3" aria-hidden="true">
           {Array.from({ length: QUEST_SIZE }, (_, i) => (
             <div key={i} className="h-40 animate-pulse bg-card" />
           ))}
@@ -132,14 +132,14 @@ export function DailyQuest({ className }: { className?: string }) {
           .
         </p>
       ) : (
-        <ol className="grid gap-px bg-border sm:grid-cols-3">
+        <ol className="grid gap-3 bg-muted/40 p-3 sm:grid-cols-3">
           {current.map((job, i) => {
             const status = saved[job.url]?.status;
             const applied = APPLIED.has(status ?? "");
             return (
-              <li key={job.url} className={cn("flex flex-col gap-3 bg-card p-4 sm:p-5", applied && "bg-sage/5")}>
+              <li key={job.url} className={cn("quest-pick interactive-card flex flex-col gap-3 bg-card p-4 sm:p-5", applied && "bg-sage/5")}>
                 <div className="min-w-0">
-                  <p className="text-xs font-medium text-muted-foreground">
+                  <p className="text-xs font-semibold text-primary">
                     Pick {i + 1}
                     {applied && <span className="ml-1.5 text-sage">✓ Applied</span>}
                   </p>
