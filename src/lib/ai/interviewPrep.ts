@@ -41,6 +41,8 @@ const validText = (v: unknown, max: number): v is string => typeof v === "string
 const validList = (v: unknown, min: number, max: number, length: number): v is string[] =>
   Array.isArray(v) && v.length >= min && v.length <= max && v.every((s) => validText(s, length));
 const normalise = (s: string) => s.replace(/\s+/g, " ").trim();
+/** Some models write the string "null" where the schema asks for JSON null. */
+const nullish = (v: unknown) => (typeof v === "string" && v.trim().toLowerCase() === "null" ? null : v);
 
 /** Only include the profile fields needed for prep, never location or salary preferences. */
 export function interviewProfile(input: unknown): CandidateSummary {
@@ -99,7 +101,10 @@ Sponsorship wording is supplied separately from the profile's visa setting; do n
   };
 }
 
-/** Validate every nested field. Reject incomplete replies and evidence absent from the supplied CV. */
+/**
+ * Validate every nested field. A question with a malformed field, or evidence absent from the supplied CV,
+ * is dropped rather than repaired; the reply is rejected if what's left lacks a technical and a behavioural question.
+ */
 export function validateInterviewPrepResponse(value: unknown, input: InterviewPrepInput): InterviewPrep | null {
   const body = record(value);
   if (!body || !Array.isArray(body.themes) || body.themes.length < 1 || body.themes.length > 4) return null;
@@ -108,19 +113,20 @@ export function validateInterviewPrepResponse(value: unknown, input: InterviewPr
   const types = new Set<string>();
   for (const rawTheme of body.themes) {
     const theme = record(rawTheme);
-    if (!theme || !validText(theme.theme, 100) || !Array.isArray(theme.questions) || theme.questions.length < 1 || theme.questions.length > 3) return null;
+    if (!theme || !validText(theme.theme, 100) || !Array.isArray(theme.questions) || theme.questions.length < 1 || theme.questions.length > 3) continue;
     const questions: InterviewQuestion[] = [];
     for (const rawQuestion of theme.questions) {
       const q = record(rawQuestion);
-      if (!q || !validText(q.question, 500) || (q.type !== "technical" && q.type !== "behavioural")) return null;
-      if (!validList(q.gaps, 0, 4, 400)) return null;
-      const star = record(q.star);
-      if (!star || !STAR_STEPS.every((step) => star[step] === null || validText(star[step], 600))) return null;
-      const evidence = q.evidence;
-      if (evidence !== null && (!validText(evidence, 500) || !normalise(input.cv).includes(normalise(evidence)))) return null;
+      if (!q || !validText(q.question, 500) || (q.type !== "technical" && q.type !== "behavioural")) continue;
+      if (!validList(q.gaps, 0, 4, 400)) continue;
+      const rawStar = record(q.star);
+      const star = rawStar && Object.fromEntries(STAR_STEPS.map((step) => [step, nullish(rawStar[step])]));
+      if (!star || !STAR_STEPS.every((step) => star[step] === null || validText(star[step], 600))) continue;
+      const evidence = nullish(q.evidence);
+      if (evidence !== null && (!validText(evidence, 500) || !normalise(input.cv).includes(normalise(evidence)))) continue;
       const hasOutline = STAR_STEPS.some((step) => star[step] !== null);
       const hasGap = STAR_STEPS.some((step) => star[step] === null);
-      if ((evidence === null && hasOutline) || (hasGap && q.gaps.length === 0)) return null;
+      if ((evidence === null && hasOutline) || (hasGap && q.gaps.length === 0)) continue;
       questions.push({
         question: q.question.trim(),
         type: q.type,
@@ -130,9 +136,9 @@ export function validateInterviewPrepResponse(value: unknown, input: InterviewPr
       });
       types.add(q.type);
     }
-    themes.push({ theme: theme.theme.trim(), questions });
+    if (questions.length) themes.push({ theme: theme.theme.trim(), questions });
   }
-  if (!types.has("technical") || !types.has("behavioural")) return null;
+  if (!themes.length || !types.has("technical") || !types.has("behavioural")) return null;
   return {
     themes,
     employerQuestions: body.employerQuestions.map((q) => q.trim()),

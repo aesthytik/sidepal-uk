@@ -131,6 +131,12 @@ describe("validateInterviewPrepResponse", () => {
     expect(result).not.toHaveProperty("private");
   });
 
+  it('treats the string "null" as null for evidence and STAR fields', () => {
+    const result = validateInterviewPrepResponse(reply({ evidence: "null", star: { situation: "null", task: "NULL", action: null, result: "null" } }), input);
+    expect(result?.themes[0].questions[0].evidence).toBeNull();
+    expect(result?.themes[0].questions[0].star).toEqual({ situation: null, task: null, action: null, result: null });
+  });
+
   it("allows whitespace differences in a genuine source quote", () => {
     expect(validateInterviewPrepResponse(reply(), { ...input, cv: input.cv.replace("React dashboard", "React\n dashboard") })).not.toBeNull();
   });
@@ -146,6 +152,22 @@ describe("validateInterviewPrepResponse", () => {
 
   it.each([null, [], {}, { themes: [] }, { ...reply(), employerQuestions: [] }, { ...reply(), employerQuestions: ["Just one"] }, { ...reply(), themes: [null] }, { ...reply(), themes: Array(5).fill(reply().themes[0]) }])("rejects incomplete or excessive response structures: %j", (value) => {
     expect(validateInterviewPrepResponse(value, input)).toBeNull();
+  });
+
+  it("drops an unsupported question but keeps the rest of a grounded reply", () => {
+    const value = reply() as { themes: { theme: string; questions: Record<string, unknown>[] }[] };
+    const invented = { ...value.themes[0].questions[0], evidence: "Led a 40-person team and increased revenue by 80%." };
+    value.themes.push({ theme: "Leadership", questions: [invented, { ...value.themes[0].questions[0] }] });
+    const result = validateInterviewPrepResponse(value, input);
+    expect(result?.themes).toHaveLength(2);
+    expect(result?.themes[1].questions).toHaveLength(1);
+    expect(JSON.stringify(result)).not.toContain("40-person");
+  });
+
+  it("drops a theme whose questions are all unusable", () => {
+    const value = reply() as { themes: { theme: string; questions: Record<string, unknown>[] }[] };
+    value.themes.push({ theme: "Broken", questions: [{ ...value.themes[0].questions[0], type: "other" }] });
+    expect(validateInterviewPrepResponse(value, input)?.themes.map((t) => t.theme)).toEqual(["Delivering useful software"]);
   });
 
   it("requires both technical and behavioural questions", () => {

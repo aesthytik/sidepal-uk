@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   if (!aiEnabled()) return NextResponse.json({ error: "AI is not configured" }, { status: 503 });
 
   try {
-    const parsed = lastJsonObject(await complete(SYSTEM, text, 25_000));
+    const parsed = lastJsonObject(await complete(SYSTEM, text, { timeoutMs: 25_000 }));
     if (!parsed) throw new Error("No JSON in reply");
     const places = Array.isArray(parsed.places)
       ? parsed.places.map((p) => (typeof p === "string" ? placeOf(p) : null)).flatMap((p) => (p && p !== "remote" ? [p.id] : []))
