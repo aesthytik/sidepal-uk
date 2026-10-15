@@ -81,7 +81,7 @@ export default async function PlacePage({ params }: Params) {
 
       <header className="mt-6">
         <p className="eyebrow">UK visa sponsors</p>
-        <h1 className="mt-2 font-display text-4xl font-semibold sm:text-5xl">Visa sponsors in {where}</h1>
+        <h1 className="mt-2 font-display text-4xl sm:text-5xl">Visa sponsors in {where}</h1>
         <Answer>{answer}</Answer>
       </header>
 
@@ -92,7 +92,7 @@ export default async function PlacePage({ params }: Params) {
           [n(skilled), "Skilled Worker"],
         ].map(([value, label]) => (
           <div key={label} className="bg-card p-4">
-            <dd className="font-display text-3xl font-semibold tabular-nums">{value}</dd>
+            <dd className="font-display text-3xl tabular-nums">{value}</dd>
             <dt className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">{label}</dt>
           </div>
         ))}
@@ -100,7 +100,7 @@ export default async function PlacePage({ params }: Params) {
 
       {jobs.items.length > 0 && (
         <section className="mt-12" aria-labelledby="jobs">
-          <h2 id="jobs" className="font-display text-2xl font-semibold">
+          <h2 id="jobs" className="font-display text-2xl">
             Latest sponsored jobs in {where}
           </h2>
           <div className="mt-4 space-y-4">
@@ -117,7 +117,7 @@ export default async function PlacePage({ params }: Params) {
       )}
 
       <section className="mt-12" aria-labelledby="sponsors">
-        <h2 id="sponsors" className="font-display text-2xl font-semibold">
+        <h2 id="sponsors" className="font-display text-2xl">
           A-rated Skilled Worker sponsors in {where}
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">The first {top.items.length} in register order. Search for more or filter by role.</p>
@@ -132,7 +132,7 @@ export default async function PlacePage({ params }: Params) {
       </section>
 
       <section className="mt-12" aria-labelledby="roles">
-        <h2 id="roles" className="font-display text-2xl font-semibold">
+        <h2 id="roles" className="font-display text-2xl">
           Sponsors in {where} by role
         </h2>
         <ul className="mt-4 flex flex-wrap gap-2 text-sm">
@@ -164,7 +164,7 @@ export default async function PlacePage({ params }: Params) {
       <FaqList title={`Visa sponsorship in ${where}: common questions`} entries={faqs} />
 
       <section className="mt-12" aria-labelledby="places">
-        <h2 id="places" className="font-display text-2xl font-semibold">
+        <h2 id="places" className="font-display text-2xl">
           Visa sponsors in other places
         </h2>
         <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">

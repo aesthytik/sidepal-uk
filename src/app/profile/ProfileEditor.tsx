@@ -143,7 +143,7 @@ export function ProfileEditor() {
       <header className="mb-6 flex items-start gap-4">
         <Horus size={64} mood={percent === 100 ? "party" : percent >= 50 ? "delighted" : "curious"} className="hidden shrink-0 sm:block" />
         <div className="min-w-0">
-          <h1 className="font-display text-3xl font-semibold sm:text-4xl">My profile</h1>
+          <h1 className="font-display text-3xl sm:text-4xl">My profile</h1>
           <p className="mt-1 text-muted-foreground">
             Tell Horus what you do and it&apos;ll score every job for you and check sponsorship against the right salary rules.
             Everything stays in this browser.
@@ -172,7 +172,7 @@ export function ProfileEditor() {
 
       {/* CV import */}
       <section className="card mb-6 p-5" aria-labelledby="cv-heading">
-        <h2 id="cv-heading" className="font-display text-xl font-semibold">
+        <h2 id="cv-heading" className="font-display text-xl">
           Start from your CV
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -251,7 +251,7 @@ export function ProfileEditor() {
 
       {/* Editor */}
       <section className="card space-y-6 p-5" aria-labelledby="about-heading">
-        <h2 id="about-heading" className="font-display text-xl font-semibold">
+        <h2 id="about-heading" className="font-display text-xl">
           About you
         </h2>
 

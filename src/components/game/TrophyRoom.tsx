@@ -26,7 +26,7 @@ export function TrophyRoom() {
             <p className="eyebrow">
               Level {level.index + 1} of {LEVELS.length}
             </p>
-            <p className="font-display text-3xl font-semibold">{level.title}</p>
+            <p className="font-display text-3xl">{level.title}</p>
             <p className="text-sm text-muted-foreground">{level.blurb}</p>
             <div className="mt-3 h-3 max-w-md overflow-hidden rounded-full bg-border">
               <div className="xp-bar h-full" style={{ width: `${Math.max(3, level.progress * 100)}%` }} />
@@ -44,7 +44,7 @@ export function TrophyRoom() {
             ].map(([emoji, value, label]) => (
               <div key={label as string}>
                 <dt className="sr-only">{label}</dt>
-                <dd className="font-display text-2xl font-semibold">
+                <dd className="font-display text-2xl">
                   <span aria-hidden="true">{emoji}</span> {value}
                 </dd>
                 <dd className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</dd>
@@ -54,7 +54,7 @@ export function TrophyRoom() {
         </div>
 
         <div className="p-6">
-          <h2 id="trophies-title" className="font-display text-2xl font-semibold">
+          <h2 id="trophies-title" className="font-display text-2xl">
             🏆 Trophy room <span className="text-muted-foreground">{got}/{ACHIEVEMENTS.length}</span>
           </h2>
           <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

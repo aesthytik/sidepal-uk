@@ -25,7 +25,7 @@ function Gov({ href, children }: { href: string; children: React.ReactNode }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="card p-6 sm:p-8">
-      <h2 className="font-display text-2xl font-semibold">{title}</h2>
+      <h2 className="font-display text-2xl">{title}</h2>
       <div className="mt-4 space-y-4 text-muted-foreground [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:pl-1 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5">
         {children}
       </div>
@@ -56,7 +56,7 @@ export default function VisaBasicsGuidePage() {
         ]}
       />
       <header>
-        <h1 className="font-display text-3xl font-semibold sm:text-4xl">UK work visa basics</h1>
+        <h1 className="font-display text-3xl sm:text-4xl">UK work visa basics</h1>
         <p className="mt-2 text-muted-foreground">
           A short overview. Rules and salary thresholds change often, so always check the linked GOV.UK pages before
           you apply.

@@ -248,7 +248,7 @@ export default function JobMap({ filters, onChange, children }: Props) {
                 <ArrowLeftIcon />
               </Button>
               <div className="min-w-0 flex-1">
-                <h2 className="truncate font-display text-lg font-semibold">{open?.name ?? PLACE_BY_ID.get(selected)?.name ?? "Jobs"}</h2>
+                <h2 className="truncate font-display text-lg">{open?.name ?? PLACE_BY_ID.get(selected)?.name ?? "Jobs"}</h2>
                 {open && <p className="text-xs text-muted-foreground tabular-nums">{open.count.toLocaleString()} jobs</p>}
               </div>
               <SortSelect value={filters.sort} onChange={(sort) => onChange({ sort })} />
@@ -258,7 +258,7 @@ export default function JobMap({ filters, onChange, children }: Props) {
         ) : (
           <>
             <div className="flex items-center justify-between gap-2 border-b bg-accent/60 px-4 py-4">
-              <h2 className="font-display text-lg font-semibold">Find your next place</h2>
+              <h2 className="font-display text-lg">Find your next place</h2>
               <Segmented
                 label="Order places"
                 value={order}
@@ -427,7 +427,7 @@ function addJobLayers(map: MapLibre) {
     clusterMaxZoom: PLACE_ZOOM - 1,
     clusterProperties: { jobs: ["+", ["get", "count"]] },
   });
-  map.addLayer({ id: "job-shadow", type: "circle", source: "jobs", paint: { "circle-translate": [0, 4], "circle-opacity": 0.2 } });
+  map.addLayer({ id: "job-shadow", type: "circle", source: "jobs", paint: { "circle-translate": [0, 3], "circle-opacity": 0.14, "circle-blur": 0.6 } });
   map.addLayer({ id: "job-pulse", type: "circle", source: "jobs", filter: NOTHING, paint: { "circle-opacity": 0 } });
   map.addLayer({ id: "job-clusters", type: "circle", source: "jobs", filter: ["has", "point_count"] });
   map.addLayer({

@@ -95,7 +95,7 @@ export default async function OccupationPage({ params }: Params) {
           <span className="text-sm font-medium tabular-nums text-muted-foreground">SOC 2020 code {occ.code}</span>
           <Badge tone={sponsorable ? "success" : "warning"}>{STATUS_LABELS[occ.status]}</Badge>
         </div>
-        <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{occ.title}: Skilled Worker visa salary</h1>
+        <h1 className="mt-2 font-display text-3xl sm:text-4xl">{occ.title}: Skilled Worker visa salary</h1>
         <Answer>{answer}</Answer>
       </header>
 
@@ -103,20 +103,20 @@ export default async function OccupationPage({ params }: Params) {
         <dl className="mt-8 grid gap-3 sm:grid-cols-3">
           <div className="card p-4">
             <dt className="text-sm text-muted-foreground">Minimum salary</dt>
-            <dd className="mt-1 font-display text-3xl font-semibold tabular-nums">{fmt(general.minimum)}</dd>
+            <dd className="mt-1 font-display text-3xl tabular-nums">{fmt(general.minimum)}</dd>
             <dd className="text-xs text-muted-foreground">{hourly(general.minimum)} an hour</dd>
           </div>
           {occ.goingRate !== undefined && (
             <div className="card p-4">
               <dt className="text-sm text-muted-foreground">Going rate</dt>
-              <dd className="mt-1 font-display text-3xl font-semibold tabular-nums">{fmt(occ.goingRate)}</dd>
+              <dd className="mt-1 font-display text-3xl tabular-nums">{fmt(occ.goingRate)}</dd>
               <dd className="text-xs text-muted-foreground">For a 37.5-hour week</dd>
             </div>
           )}
           {entrant.minimum !== undefined && occ.status !== "health-education" && (
             <div className="card p-4">
               <dt className="text-sm text-muted-foreground">New entrants</dt>
-              <dd className="mt-1 font-display text-3xl font-semibold tabular-nums">{fmt(entrant.minimum)}</dd>
+              <dd className="mt-1 font-display text-3xl tabular-nums">{fmt(entrant.minimum)}</dd>
               <dd className="text-xs text-muted-foreground">70% of the going rate, at least {fmt(THRESHOLDS.newEntrant)}</dd>
             </div>
           )}
@@ -124,7 +124,7 @@ export default async function OccupationPage({ params }: Params) {
       )}
 
       <section className="mt-10 space-y-3 text-muted-foreground">
-        <h2 className="font-display text-2xl font-semibold text-foreground">What this covers</h2>
+        <h2 className="font-display text-2xl text-foreground">What this covers</h2>
         {occ.examples.length > 0 && (
           <p>
             Job titles in SOC {occ.code} include: <span className="text-foreground">{occ.examples.join(", ")}</span>.
@@ -141,7 +141,7 @@ export default async function OccupationPage({ params }: Params) {
       {jobs.total > 0 && (
         <section className="mt-12" aria-labelledby="live-jobs">
           <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-3">
-            <h2 id="live-jobs" className="font-display text-2xl font-semibold">
+            <h2 id="live-jobs" className="font-display text-2xl">
               Live {occ.title.toLowerCase()} jobs at licensed sponsors
             </h2>
             <span className="text-sm text-muted-foreground">{n(jobs.total)} open now</span>
@@ -158,7 +158,7 @@ export default async function OccupationPage({ params }: Params) {
 
       {related.length > 0 && (
         <section className="mt-12" aria-labelledby="related">
-          <h2 id="related" className="font-display text-2xl font-semibold">
+          <h2 id="related" className="font-display text-2xl">
             Related occupations
           </h2>
           <ul className="mt-4 divide-y divide-border border-y border-border">

@@ -72,12 +72,12 @@ export default async function RolePage({ params }: Params) {
       <Breadcrumbs items={crumbs} />
       <header className="mt-6">
         <p className="eyebrow">Jobs with visa sponsorship</p>
-        <h1 className="mt-2 font-display text-4xl font-semibold sm:text-5xl">{role.label} jobs with UK visa sponsorship</h1>
+        <h1 className="mt-2 font-display text-4xl sm:text-5xl">{role.label} jobs with UK visa sponsorship</h1>
         <Answer>{answer}</Answer>
       </header>
 
       <section className="mt-12" aria-labelledby="jobs">
-        <h2 id="jobs" className="font-display text-2xl font-semibold">
+        <h2 id="jobs" className="font-display text-2xl">
           Latest {label} roles from licensed sponsors
         </h2>
         {jobs.items.length ? (
@@ -97,7 +97,7 @@ export default async function RolePage({ params }: Params) {
       </section>
 
       <section className="mt-12" aria-labelledby="salary">
-        <h2 id="salary" className="font-display text-2xl font-semibold">
+        <h2 id="salary" className="font-display text-2xl">
           Salary needed for a Skilled Worker visa
         </h2>
         <ul className="mt-4 divide-y divide-border border-y border-border">
@@ -124,7 +124,7 @@ export default async function RolePage({ params }: Params) {
       </section>
 
       <section className="mt-12" aria-labelledby="sponsors">
-        <h2 id="sponsors" className="font-display text-2xl font-semibold">
+        <h2 id="sponsors" className="font-display text-2xl">
           A-rated sponsors that hire for {label}
         </h2>
         <div className="mt-4">
@@ -140,7 +140,7 @@ export default async function RolePage({ params }: Params) {
       <FaqList title={`${role.label} visa sponsorship: common questions`} entries={faqs} />
 
       <section className="mt-12" aria-labelledby="other">
-        <h2 id="other" className="font-display text-2xl font-semibold">
+        <h2 id="other" className="font-display text-2xl">
           Other jobs with visa sponsorship
         </h2>
         <ul className="mt-4 flex flex-wrap gap-2 text-sm">

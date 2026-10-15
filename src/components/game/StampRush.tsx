@@ -29,31 +29,31 @@ interface Theme {
   stamp: Record<Rarity, { fill: string; ink: string }>;
 }
 const LIGHT: Theme = {
-  bg: "#F8F7FF",
-  rule: "#E5DEF4",
-  ink: "#242039",
-  muted: "#625B75",
-  tape: "#9B3B31",
+  bg: "#FCFCFC",
+  rule: "#E3E6E8",
+  ink: "#16181D",
+  muted: "#596167",
+  tape: "#B42A37",
   tapeInk: "#FFFFFF",
   stamp: {
-    legendary: { fill: "#805012", ink: "#FFFFFF" },
-    epic: { fill: "#5934CF", ink: "#FFFFFF" },
-    rare: { fill: "#C6F4DC", ink: "#5934CF" },
-    common: { fill: "#FFFFFF", ink: "#242039" },
+    legendary: { fill: "#7A5410", ink: "#FFFFFF" },
+    epic: { fill: "#275FCE", ink: "#FFFFFF" },
+    rare: { fill: "#DCF2E2", ink: "#275FCE" },
+    common: { fill: "#FFFFFF", ink: "#16181D" },
   },
 };
 const DARK: Theme = {
-  bg: "#201B30",
-  rule: "#2C253D",
-  ink: "#F4F0FF",
-  muted: "#BEB4D2",
-  tape: "#FFB4A5",
-  tapeInk: "#361913",
+  bg: "#1A1D21",
+  rule: "#22262A",
+  ink: "#ECEEEF",
+  muted: "#A9B0B6",
+  tape: "#FFADA8",
+  tapeInk: "#3A1012",
   stamp: {
-    legendary: { fill: "#F5CD86", ink: "#141120" },
-    epic: { fill: "#C3AAFF", ink: "#141120" },
-    rare: { fill: "#244C40", ink: "#B5F1D2" },
-    common: { fill: "#35264F", ink: "#F4F0FF" },
+    legendary: { fill: "#EBC77F", ink: "#111315" },
+    epic: { fill: "#8FB2FF", ink: "#111315" },
+    rare: { fill: "#1F3A28", ink: "#BDEBC8" },
+    common: { fill: "#232845", ink: "#ECEEEF" },
   },
 };
 const theme = (): Theme =>
@@ -164,14 +164,14 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   const bob = Math.sin(t * 8) * 2;
   ctx.save();
   ctx.translate(x, y + bob);
-  ctx.fillStyle = "#5934CF";
+  ctx.fillStyle = "#275FCE";
   roundRect(ctx, -s / 2, -s / 2, s, s, 18);
   ctx.fill();
-  ctx.fillStyle = "#F8F7FF";
+  ctx.fillStyle = "#FCFCFC";
   ctx.beginPath();
   if (ouch) {
     // X_X
-    ctx.strokeStyle = "#F8F7FF";
+    ctx.strokeStyle = "#FCFCFC";
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
     for (const dx of [-10, 10]) {
@@ -184,20 +184,20 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   } else {
     ctx.ellipse(0, -4, 20, 11, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#C6F4DC";
+    ctx.fillStyle = "#DCF2E2";
     ctx.beginPath();
     ctx.arc(look * 7, -6, 7.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#242039";
+    ctx.fillStyle = "#16181D";
     ctx.beginPath();
     ctx.arc(look * 7, -6, 3.2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#F8F7FF";
+    ctx.fillStyle = "#FCFCFC";
     ctx.beginPath();
     ctx.arc(look * 7 + 2.5, -8.5, 1.4, 0, Math.PI * 2);
     ctx.fill();
   }
-  ctx.strokeStyle = "#F8F7FF";
+  ctx.strokeStyle = "#FCFCFC";
   ctx.lineWidth = 3.5;
   ctx.lineCap = "round";
   ctx.beginPath();
@@ -556,7 +556,7 @@ export default function StampRush() {
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/85 p-6 text-center text-foreground">
           {phase === "idle" ? (
             <>
-              <p className="font-display text-4xl font-semibold sm:text-5xl">
+              <p className="font-display text-4xl sm:text-5xl">
                 Stamp <span className="text-primary">Rush</span>
               </p>
               <p className="max-w-sm text-sm text-muted-foreground">
@@ -573,7 +573,7 @@ export default function StampRush() {
             result && (
               <div aria-live="polite" className="flex flex-col items-center gap-3">
                 <p className="eyebrow">Game over</p>
-                <p className="font-display text-5xl font-semibold">{result.score.toLocaleString("en-GB")}</p>
+                <p className="font-display text-5xl">{result.score.toLocaleString("en-GB")}</p>
                 {result.record ? (
                   <p className="rounded bg-gold/10 px-2.5 py-1 text-sm font-medium text-gold">New high score</p>
                 ) : (

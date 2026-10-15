@@ -51,7 +51,7 @@ export default async function SponsorChangesPage({ searchParams }: Props) {
       <Breadcrumbs items={crumbs} />
       <header className="mt-6">
         <p className="eyebrow">Daily register changes</p>
-        <h1 className="mt-2 font-display text-4xl font-semibold sm:text-5xl">New sponsors and licence changes</h1>
+        <h1 className="mt-2 font-display text-4xl sm:text-5xl">New sponsors and licence changes</h1>
         <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
           See which employers have joined or left the GOV.UK sponsor register, changed rating, or added and removed visa routes.
         </p>
@@ -81,13 +81,13 @@ export default async function SponsorChangesPage({ searchParams }: Props) {
       <section className="mt-8" aria-label="Recent register changes">
         {result === null ? (
           <div className="card p-8 text-center">
-            <h2 className="font-display text-xl font-semibold">Couldn&apos;t load register changes</h2>
+            <h2 className="font-display text-xl">Couldn&apos;t load register changes</h2>
             <p className="mt-2 text-muted-foreground">Please try again in a moment.</p>
             <Link href={pagePath(filters.page)} className="mt-4 inline-block text-primary hover:underline">Try again</Link>
           </div>
         ) : result.items.length === 0 ? (
           <div className="card p-8 text-center">
-            <h2 className="font-display text-xl font-semibold">No changes found</h2>
+            <h2 className="font-display text-xl">No changes found</h2>
             <p className="mt-2 text-muted-foreground">
               {filters.type || filters.location ? "Try another change type or location." : "Changes will appear here after daily register comparisons find them."}
             </p>
@@ -103,7 +103,7 @@ export default async function SponsorChangesPage({ searchParams }: Props) {
                     <span className="rounded-md bg-muted px-2.5 py-1 font-medium">{CHANGE_LABELS[change.type]}</span>
                     <time dateTime={date} className="text-muted-foreground">{formatDate(date)}</time>
                   </div>
-                  <h2 className="mt-3 font-display text-xl font-semibold">
+                  <h2 className="mt-3 font-display text-xl">
                     {sponsor ? <Link href={sponsorPath(sponsor.id)} className="hover:text-primary hover:underline">{change.sponsorName}</Link> : change.sponsorName}
                   </h2>
                   <p className="mt-1 text-sm text-muted-foreground">{change.location}</p>

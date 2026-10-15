@@ -96,7 +96,7 @@ export function DailyQuest({ className }: { className?: string }) {
         <div className="flex items-center gap-3">
           <Horus size={40} mood={doneToday ? "party" : "curious"} interactive={false} />
           <div>
-            <h2 id="daily-quest" className="font-display text-lg font-semibold leading-tight">
+            <h2 id="daily-quest" className="font-display text-lg leading-tight">
               {doneToday ? "Quest complete. See you tomorrow!" : "Today's quest: 3 matches for you"}
             </h2>
             <p className="text-xs text-muted-foreground">

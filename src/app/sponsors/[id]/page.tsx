@@ -101,7 +101,7 @@ export default async function SponsorPage({ params }: Params) {
 
       <header className="mt-6">
         <p className="eyebrow">Licensed UK visa sponsor</p>
-        <h1 className="mt-2 font-display text-4xl font-semibold sm:text-5xl">{sponsor.name}</h1>
+        <h1 className="mt-2 font-display text-4xl sm:text-5xl">{sponsor.name}</h1>
         <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">{answer}</p>
       </header>
 
@@ -132,7 +132,7 @@ export default async function SponsorPage({ params }: Params) {
 
       {history && history.items.length > 0 && (
         <section className="mt-10" aria-labelledby="history">
-          <h2 id="history" className="font-display text-2xl font-semibold">Register history</h2>
+          <h2 id="history" className="font-display text-2xl">Register history</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Changes observed in our daily register comparisons. First seen dates do not establish the original licence grant date.
             Earlier history may not be available.
@@ -156,7 +156,7 @@ export default async function SponsorPage({ params }: Params) {
       )}
 
       <section className="mt-10" aria-labelledby="live">
-        <h2 id="live" className="font-display text-2xl font-semibold">
+        <h2 id="live" className="font-display text-2xl">
           Website, careers page and live roles
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">Looked up live. Save the sponsor to track your application.</p>
@@ -167,7 +167,7 @@ export default async function SponsorPage({ params }: Params) {
 
       {jobs.length > 0 && (
         <section className="mt-10" aria-labelledby="jobs">
-          <h2 id="jobs" className="font-display text-2xl font-semibold">
+          <h2 id="jobs" className="font-display text-2xl">
             Open UK roles at {sponsor.name}
           </h2>
           <div className="mt-4 space-y-4">
@@ -201,7 +201,7 @@ export default async function SponsorPage({ params }: Params) {
 
       {nearby.length > 0 && (
         <section className="mt-10" aria-labelledby="nearby">
-          <h2 id="nearby" className="font-display text-2xl font-semibold">
+          <h2 id="nearby" className="font-display text-2xl">
             Other A-rated sponsors in {city}
           </h2>
           <ul className="mt-4 grid gap-2 sm:grid-cols-2">

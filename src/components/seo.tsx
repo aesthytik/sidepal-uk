@@ -28,7 +28,7 @@ export function Breadcrumbs({ items }: { items: { name: string; path: string }[]
 export function FaqList({ title, entries }: { title: string; entries: { q: string; a: string }[] }) {
   return (
     <section className="mt-12" aria-labelledby="faq">
-      <h2 id="faq" className="font-display text-2xl font-semibold">
+      <h2 id="faq" className="font-display text-2xl">
         {title}
       </h2>
       <dl className="mt-4 divide-y divide-border border-y border-border">

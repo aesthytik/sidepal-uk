@@ -32,7 +32,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
 
   return (
     <main className="mx-auto max-w-sm px-4 py-24">
-      <h1 className="font-display text-2xl font-semibold text-foreground">Admin</h1>
+      <h1 className="font-display text-2xl text-foreground">Admin</h1>
       {configured ? (
         <form action={login} className="mt-6 space-y-3">
           <input type="hidden" name="next" value={next ?? ""} />

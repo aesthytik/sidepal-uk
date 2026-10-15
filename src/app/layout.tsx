@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { DM_Sans, Space_Grotesk, Press_Start_2P } from "next/font/google";
+import { Inter, Source_Serif_4, Press_Start_2P } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 import { ShortlistHydrator } from "@/components/ShortlistHydrator";
@@ -11,8 +11,8 @@ import { CookieBanner, CookieSettingsLink } from "@/components/CookieBanner";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE, SITE_DESCRIPTION, SITE_TITLE, pageMetadata } from "@/lib/seo";
 
-const body = DM_Sans({ subsets: ["latin"], display: "swap", variable: "--font-body" });
-const display = Space_Grotesk({ subsets: ["latin"], display: "swap", variable: "--font-display" });
+const body = Inter({ subsets: ["latin"], display: "swap", variable: "--font-body" });
+const display = Source_Serif_4({ subsets: ["latin"], display: "swap", weight: ["400", "500"], variable: "--font-display" });
 // Only used by the arcade-mode easter egg, so it isn't preloaded
 const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], display: "swap", preload: false, variable: "--font-pixel" });
 
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F8F7FF" },
-    { media: "(prefers-color-scheme: dark)", color: "#141120" },
+    { media: "(prefers-color-scheme: light)", color: "#FCFCFC" },
+    { media: "(prefers-color-scheme: dark)", color: "#111315" },
   ],
 };
 
@@ -59,21 +59,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GameLayer />
         <Navigation />
         <div className="flex-1">{children}</div>
-        <footer className="mt-16 border-t border-border bg-muted/40 py-14 text-sm text-muted-foreground">
+        <footer className="mt-16 bg-muted py-16 text-sm text-muted-foreground">
           <div className="container grid max-w-6xl gap-10 px-4 sm:grid-cols-[2fr_1fr_1fr]">
             <div>
-              <p className="font-display text-3xl font-semibold text-foreground">Horus</p>
+              <p className="font-display text-4xl text-foreground">Horus</p>
               <p className="mt-3 max-w-sm">
                 Find UK employers licensed to sponsor your work visa, see who&apos;s hiring, and track your applications.
               </p>
-              <div className="mt-6 max-w-sm rounded-lg border border-border bg-card p-4">
+              <div className="mt-6 max-w-sm rounded-lg bg-card p-5 shadow-card">
                 <p className="text-foreground">Horus is free and independent.</p>
                 <p className="mt-1">If it helped your search, you can keep it running with a coffee.</p>
                 <a
                   href={SUPPORT_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-flex h-9 items-center gap-2 rounded-md bg-primary px-3.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                  className="mt-3 inline-flex h-9 items-center gap-2 rounded-xl bg-foreground px-3.5 text-sm font-medium text-background hover:bg-foreground/85"
                 >
                   <span aria-hidden="true">☕</span> Buy me a coffee
                 </a>

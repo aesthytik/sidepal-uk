@@ -54,7 +54,7 @@ export function JobSearch({ initial }: { initial?: InitialSearch<IndexedJob> }) 
     ) : items.length === 0 ? (
       <div className="card p-8 text-center">
         <Horus size={72} mood="shocked" say="Nothing?!" className="mb-4" />
-        <h2 className="font-display text-xl font-semibold">No jobs found</h2>
+        <h2 className="font-display text-xl">No jobs found</h2>
         <p className="mt-2 text-muted-foreground">
           We only list roles from sponsors whose job boards we can read, so try fewer filters or browse all sponsors.
         </p>
@@ -89,7 +89,7 @@ export function JobSearch({ initial }: { initial?: InitialSearch<IndexedJob> }) 
     <main className="container px-4 py-6 sm:py-10">
       <header className="mb-6 space-y-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold sm:text-4xl">UK jobs from visa sponsors</h1>
+          <h1 className="font-display text-3xl sm:text-4xl">UK jobs from visa sponsors</h1>
           <p className="mt-1 text-muted-foreground">
             {info && info.count > 0
               ? `${info.count.toLocaleString()} live roles from ${info.sponsors.toLocaleString()} licensed sponsors${updated ? `, updated ${updated}` : ""}. `

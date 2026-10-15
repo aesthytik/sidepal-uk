@@ -20,7 +20,7 @@ const REGISTER_URL = "https://www.gov.uk/government/publications/register-of-lic
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border-t border-border pt-8">
-      <h2 className="font-display text-2xl font-semibold">{title}</h2>
+      <h2 className="font-display text-2xl">{title}</h2>
       <div className="mt-3 space-y-3 leading-relaxed text-muted-foreground [&_li]:pl-1 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5">{children}</div>
     </section>
   );
@@ -58,7 +58,7 @@ export default async function AboutPage() {
       />
       <Breadcrumbs items={crumbs} />
       <header>
-        <h1 className="font-display text-4xl font-semibold sm:text-5xl">About Horus</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">About Horus</h1>
         <Answer>
           Horus is a free, independent tool for finding UK employers that can sponsor a work visa. It turns the Home Office&apos;s
           register of licensed sponsors{info ? ` (${n(info.count)} organisations` : ""}

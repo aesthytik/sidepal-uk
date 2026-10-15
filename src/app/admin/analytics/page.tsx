@@ -18,7 +18,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
   } catch (error) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-12">
-        <h1 className="font-display text-3xl font-semibold">Analytics</h1>
+        <h1 className="font-display text-3xl">Analytics</h1>
         <p className="mt-4 rounded-lg border border-destructive/40 bg-card p-4 text-sm text-destructive">
           {error instanceof Error ? error.message : String(error)}
         </p>
@@ -30,7 +30,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
     <main className="mx-auto max-w-5xl px-4 py-12">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold">Analytics</h1>
+          <h1 className="font-display text-3xl">Analytics</h1>
           <p className="mt-1 text-sm text-muted-foreground">Live site only, from PostHog. Refreshes every 5 minutes.</p>
         </div>
         <nav aria-label="Date range" className="flex rounded-md border border-border bg-card p-0.5 text-sm">
@@ -111,7 +111,7 @@ function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-border bg-card p-4">
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="mt-1 font-display text-3xl font-semibold tabular-nums">{number.format(value)}</p>
+      <p className="mt-1 font-display text-3xl tabular-nums">{number.format(value)}</p>
     </div>
   );
 }

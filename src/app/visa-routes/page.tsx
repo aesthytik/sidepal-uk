@@ -25,7 +25,7 @@ export default async function RoutesPage() {
       <JsonLd data={breadcrumbs(crumbs)} />
       <Breadcrumbs items={crumbs} />
       <header className="mt-6">
-        <h1 className="font-display text-4xl font-semibold sm:text-5xl">UK work visa routes</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">UK work visa routes</h1>
         <Answer>
           Employers are licensed for specific visa routes. Skilled Worker is by far the most common
           {counts[0] ? `, with ${n(counts[0])} licensed sponsors` : ""}. Pick a route to see who can sponsor it.
@@ -35,7 +35,7 @@ export default async function RoutesPage() {
         {VISA_CATEGORIES.map((v, i) => (
           <li key={v}>
             <Link href={routePath(v)} className="flex items-baseline justify-between gap-4 py-4 hover:bg-muted/40 sm:px-2">
-              <span className="font-display text-xl font-semibold">{v}</span>
+              <span className="font-display text-xl">{v}</span>
               {counts[i] !== null && <span className="text-sm tabular-nums text-muted-foreground">{n(counts[i]!)} sponsors</span>}
             </Link>
           </li>

@@ -83,7 +83,7 @@ export default function SalaryCheckerPage() {
       <JsonLd data={[breadcrumbs(crumbs), faq(FAQ), dataset, tool]} />
       <Breadcrumbs items={crumbs} />
       <header className="mb-6 mt-4">
-        <h1 className="font-display text-3xl font-semibold sm:text-4xl">Skilled Worker visa salary checker</h1>
+        <h1 className="font-display text-3xl sm:text-4xl">Skilled Worker visa salary checker</h1>
         <Answer>
           To be sponsored for a UK Skilled Worker visa, your salary must usually be at least {fmt(THRESHOLDS.general)} a year or the going rate for
           your job&apos;s occupation code, whichever is higher. New entrants need {fmt(THRESHOLDS.newEntrant)} or 70% of the going rate. Type a job
@@ -96,7 +96,7 @@ export default function SalaryCheckerPage() {
       </Suspense>
 
       <section className="mt-10" aria-labelledby="popular">
-        <h2 id="popular" className="font-display text-2xl font-semibold">
+        <h2 id="popular" className="font-display text-2xl">
           Popular jobs
         </h2>
         <ul className="mt-3 grid gap-x-6 sm:grid-cols-2">

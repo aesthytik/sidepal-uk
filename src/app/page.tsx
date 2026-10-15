@@ -95,35 +95,41 @@ export default async function Home() {
           faq(FAQ),
         ]} />
 
-      <section className="hero-stage border-b border-border">
-        <div className="reveal container max-w-6xl px-4 pb-12 pt-10 sm:pb-16 sm:pt-16">
-          <div className="grid items-center gap-12 lg:grid-cols-[1fr_17rem]">
+      <section className="hero-stage">
+        <div className="reveal container max-w-6xl px-4 pb-16 pt-12 sm:pb-24 sm:pt-24">
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_20rem]">
             <div className="max-w-3xl">
-              <p className="inline-flex items-center gap-2 rounded-full border border-sage/25 bg-mint px-3 py-2 text-xs font-medium text-mint-foreground">
+              <p className="inline-flex items-center gap-2 rounded-full bg-mint px-3 py-1.5 text-xs font-medium text-mint-foreground">
                 <ShieldCheckIcon className="text-sage" />
                 Official Home Office data{date && ` · updated ${date}`}
               </p>
-              <h1 className="mt-6 font-display text-[2.75rem] font-bold leading-[1.04] tracking-[-0.045em] sm:text-6xl xl:text-7xl">
+              <h1 className="mt-7 font-display text-[3.25rem] leading-[0.95] tracking-[-0.015em] sm:text-7xl xl:text-[5.75rem]">
                 Big plans.<br />
-                <span className="text-primary">Clear next steps.</span>
+                <span className="text-muted-foreground">Clear next steps.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
                 Find UK employers that can sponsor your work visa. Search {countLabel} licensed sponsors, see who&apos;s hiring, and build your next chapter, one application at a time.
               </p>
 
-              <form action="/sponsors" className="mt-8 flex max-w-xl items-center gap-2 rounded-full border border-input bg-card p-2 shadow-card focus-within:border-primary">
-                <label className="relative min-w-0 flex-1">
-                  <span className="sr-only">Company name</span>
-                  <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" width={18} height={18} />
-                  <input
-                    name="q"
-                    type="search"
-                    placeholder="Company name, e.g. Deliveroo"
-                    className="h-10 w-full bg-transparent pl-10 pr-3 text-base outline-none"
-                  />
-                </label>
-                <Button type="submit">Search</Button>
-              </form>
+              <div className="search-tabs mt-10 max-w-xl">
+                <p className="flex items-center gap-2 px-3 pb-2 pt-1.5 text-sm font-medium text-accent-foreground">
+                  Search {countLabel} sponsors
+                  <span className="rounded-md bg-card/80 px-1.5 py-0.5 text-xs text-primary">Free</span>
+                </p>
+                <form action="/sponsors" className="flex items-center gap-2 rounded-[0.9rem] bg-card p-1.5 shadow-card">
+                  <label className="relative min-w-0 flex-1">
+                    <span className="sr-only">Company name</span>
+                    <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" width={18} height={18} />
+                    <input
+                      name="q"
+                      type="search"
+                      placeholder="Company name, e.g. Deliveroo"
+                      className="h-11 w-full bg-transparent pl-10 pr-3 text-base outline-none"
+                    />
+                  </label>
+                  <Button type="submit" variant="brand">Search</Button>
+                </form>
+              </div>
 
               <AskAi className="mt-3 max-w-xl text-left" />
 
@@ -158,14 +164,14 @@ export default async function Home() {
             </div>
             <div className="relative hidden py-10 lg:block">
               <div className="hero-mascot flex aspect-square items-center justify-center">
-                <Horus size={170} />
+                <Horus size={180} />
               </div>
-              <span className="hero-sticker absolute -left-5 top-1 rounded-full bg-apricot px-4 py-2 text-sm font-bold text-apricot-foreground -rotate-6">Big moves start small.</span>
-              <span className="hero-sticker absolute -right-2 bottom-1 rounded-full bg-mint px-4 py-2 text-sm font-semibold text-mint-foreground rotate-3"><span aria-hidden="true">✦</span> Your next chapter</span>
+              <span className="hero-sticker absolute -left-6 top-2 rounded-full bg-card px-4 py-2 text-sm font-medium">Big moves start small.</span>
+              <span className="hero-sticker absolute -right-3 bottom-2 rounded-full bg-mint px-4 py-2 text-sm font-medium text-mint-foreground">Your next chapter</span>
             </div>
           </div>
 
-          <div className="mt-12 grid gap-4 text-left sm:grid-cols-3">
+          <div className="mt-16 grid gap-4 text-left sm:grid-cols-3">
             {[
               {
                 href: "/jobs",
@@ -173,18 +179,19 @@ export default async function Home() {
                 title: "Explore open roles",
                 body: jobCount > 0 ? `${jobCount.toLocaleString("en-GB")} live roles, newest first.` : "Live roles from licensed sponsors.",
                 cta: "Browse jobs",
+                tone: "bg-mint text-mint-foreground",
               },
-              { href: "/sponsors", eyebrow: "Looking for a sponsor", title: "Browse licensed employers", body: "Filter by town, visa route and rating.", cta: "Find sponsors" },
-              { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Save jobs and sponsors, and get reminded when to follow up.", cta: "Open tracker" },
+              { href: "/sponsors", eyebrow: "Looking for a sponsor", title: "Browse licensed employers", body: "Filter by town, visa route and rating.", cta: "Find sponsors", tone: "bg-accent text-accent-foreground" },
+              { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Save jobs and sponsors, and get reminded when to follow up.", cta: "Open tracker", tone: "bg-muted text-foreground" },
             ].map((c, i) => (
-              <Link key={c.href} href={c.href} className="card interactive-card group p-6">
+              <Link key={c.href} href={c.href} className={`interactive-card group flex min-h-[17rem] flex-col rounded-[1.75rem] p-7 ${c.tone}`}>
                 <p className="eyebrow">
                   <span className="tabular-nums">0{i + 1}</span> · {c.eyebrow}
                 </p>
-                <h2 className="mt-3 font-display text-2xl font-semibold">{c.title}</h2>
-                <p className="mt-2 text-muted-foreground">{c.body}</p>
-                <p className="mt-5 text-sm font-medium text-primary">
-                  <span className="underline decoration-primary/30 underline-offset-4 group-hover:decoration-primary">{c.cta}</span> →
+                <h2 className="mt-auto pt-10 font-display text-[2rem] leading-tight">{c.title}</h2>
+                <p className="mt-2 opacity-80">{c.body}</p>
+                <p className="mt-5 text-sm font-medium">
+                  <span className="underline decoration-current/30 underline-offset-4 group-hover:decoration-current">{c.cta}</span> →
                 </p>
               </Link>
             ))}
@@ -197,8 +204,8 @@ export default async function Home() {
         <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>
             <p className="eyebrow">New · Visa salary checker</p>
-            <h2 id="salary-check" className="mt-3 font-display text-3xl font-semibold sm:text-4xl">
-              Is the salary high enough <span className="text-primary">to sponsor you?</span>
+            <h2 id="salary-check" className="mt-3 font-display text-3xl sm:text-4xl">
+              Is the salary high enough <span className="text-muted-foreground">to sponsor you?</span>
             </h2>
             <p className="mt-3 text-muted-foreground">
               Each job has its own going rate, not just the {fmt(THRESHOLDS.general)} minimum. A software developer needs {fmt(goingRate("2134"))},
@@ -241,8 +248,8 @@ export default async function Home() {
         <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>
             <p className="eyebrow">New · Tailor my application</p>
-            <h2 id="tailor" className="mt-3 font-display text-3xl font-semibold sm:text-4xl">
-              Fit your CV to the job <span className="text-primary">in seconds.</span>
+            <h2 id="tailor" className="mt-3 font-display text-3xl sm:text-4xl">
+              Fit your CV to the job <span className="text-muted-foreground">in seconds.</span>
             </h2>
             <p className="mt-3 text-muted-foreground">
               Pick any job and Horus reads the full ad, shows which of its keywords your CV already covers, and drafts CV bullets and a cover
@@ -300,7 +307,7 @@ export default async function Home() {
       <section className="section-band py-16">
         <div className="container flex max-w-6xl flex-wrap items-end justify-between gap-6 px-4">
           <div>
-            <p className="font-display text-6xl font-semibold tabular-nums sm:text-7xl">{countLabel}</p>
+            <p className="font-display text-7xl tabular-nums tracking-[-0.02em] sm:text-8xl">{countLabel}</p>
             <p className="mt-2 text-muted-foreground">licensed sponsors on the register</p>
           </div>
         </div>
@@ -312,7 +319,7 @@ export default async function Home() {
       {latestJobs.length > 0 && (
         <section className="container max-w-6xl px-4 pt-20">
           <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
-            <h2 className="font-display text-3xl font-semibold sm:text-4xl">Latest jobs from licensed sponsors</h2>
+            <h2 className="font-display text-3xl sm:text-4xl">Latest jobs from licensed sponsors</h2>
             <Link href="/jobs" className="text-sm font-medium text-primary hover:underline">
               See all {jobCount.toLocaleString("en-GB")} jobs →
             </Link>
@@ -329,8 +336,8 @@ export default async function Home() {
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="eyebrow">A short break</p>
-            <h2 id="stamp-rush" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-              Bored of forms? Play <span className="text-primary">Stamp Rush</span>.
+            <h2 id="stamp-rush" className="mt-2 font-display text-3xl sm:text-4xl">
+              Bored of forms? Play <span className="text-muted-foreground">Stamp Rush</span>.
             </h2>
             <p className="mt-2 max-w-xl text-muted-foreground">
               Every stamp is a real A-rated sponsor. Catch a gold one and it might just be your next employer.
@@ -341,15 +348,15 @@ export default async function Home() {
       </section>
 
       <section className="container max-w-4xl px-4 py-24">
-        <h2 className="font-display text-4xl font-semibold sm:text-5xl">
-          From register to <span className="text-primary">application in three steps.</span>
+        <h2 className="font-display text-4xl sm:text-5xl">
+          From register to <span className="text-muted-foreground">application in three steps.</span>
         </h2>
         <ol className="mt-14 divide-y divide-border">
           {STEPS.map(({ icon: Icon, title, body }, i) => (
             <li key={title} className="grid gap-4 py-8 sm:grid-cols-[6rem_1fr]">
-              <span className="font-display text-5xl font-bold text-primary">{i + 1}.</span>
+              <span className="font-display text-6xl text-muted-foreground">{i + 1}</span>
               <div>
-                <h3 className="flex items-center gap-2 font-display text-2xl font-semibold">
+                <h3 className="flex items-center gap-2 font-display text-2xl">
                   <Icon width={20} height={20} className="text-primary" /> {title}
                 </h3>
                 <p className="mt-2 max-w-xl text-lg text-muted-foreground">{body}</p>
@@ -361,7 +368,7 @@ export default async function Home() {
 
       <section className="section-band py-20">
         <div className="container max-w-4xl px-4">
-          <h2 className="font-display text-3xl font-semibold">Good to know</h2>
+          <h2 className="font-display text-3xl">Good to know</h2>
           <ul className="mt-8 grid gap-8 text-muted-foreground md:grid-cols-3">
             <li>
               <strong className="block text-foreground">A licence isn&apos;t a promise.</strong> Being on the register means
@@ -385,11 +392,11 @@ export default async function Home() {
       </section>
 
       <section className="container px-4 py-20">
-        <div className="rounded-[2rem] bg-primary px-6 py-16 shadow-card text-center text-primary-foreground">
-          <h2 className="font-display text-4xl font-semibold sm:text-5xl">
+        <div className="rounded-[2rem] bg-foreground px-6 py-20 text-center text-background">
+          <h2 className="font-display text-5xl sm:text-6xl">
             Ready to find your sponsor?
           </h2>
-          <Button asChild size="lg" className="mt-8 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+          <Button asChild size="lg" className="mt-8 bg-background text-foreground hover:bg-background/90">
             <Link href="/sponsors">Search sponsors</Link>
           </Button>
         </div>
