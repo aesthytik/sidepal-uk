@@ -115,6 +115,7 @@ Success, warning and error badge text was also checked on its 10% tint over the 
 - Buttons: `default` is charcoal (`bg-foreground`); `brand` is cobalt (`bg-primary`) for the single most important action on a surface; `outline` and `ghost` for the rest.
 - Depth is soft: `shadow-card` is a faint, wide blur; `shadow-float` is for hover and menus. No hard offset shadows. Sections alternate between `background` and the cool-grey `section-band`.
 - The hero has a blurred cobalt/lavender glow behind a frosted mascot card.
+- Scroll motion lives in `src/components/motion.tsx`: `Reveal` (blur, fade and lift on entering the viewport, with `delay` for staggering), `BlurWords` (headline words sharpen in one by one), `ScrollFill` (a paragraph fills in word by word as it scrolls past) and `MorphWord` (the hero's last word melts into the next using an SVG alpha threshold). The hero glow drifts slowly and a soft scan line sweeps the mascot card. Content is only hidden when JS has run (`html.js`), so it never gets stuck invisible.
 - Hover lifts a card 3px with a larger, softer shadow; pressing a button scales it to 98%. `prefers-reduced-motion` and Calm mode disable decorative motion globally.
 
 ## Illustration and emoji

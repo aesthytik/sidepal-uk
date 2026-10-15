@@ -387,3 +387,70 @@ html.calm *, html.calm *::before, html.calm *::after {
     font: 11pt/1.5 Arial, sans-serif;
   }
 }
+
+/* ───────────────────────── Scroll motion (see components/motion.tsx) ───────────────────────── */
+/* Content is only hidden once JS has run, motion is welcome and Calm mode is off, so it can never get stuck invisible. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.calm) [data-reveal] {
+    transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  html.js:not(.calm) [data-reveal]:not([data-in]) {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(24px);
+  }
+
+  html.js:not(.calm) [data-blur-words] > span {
+    display: inline-block;
+    white-space: pre;
+    transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out;
+    transition-delay: calc(var(--i) * 70ms);
+  }
+  html.js:not(.calm) [data-blur-words]:not([data-in]) > span {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(0.25em);
+  }
+
+  html.js:not(.calm) [data-scroll-fill] > span {
+    /* Each word fades from faint to full as --p (0 → 1) passes its position */
+    opacity: clamp(0.16, calc(var(--p, 0) * (var(--n) + 4) - var(--i)), 1);
+    transition: opacity 0.15s linear;
+  }
+
+  html:not(.calm) .hero-stage::before {
+    animation: hero-drift 14s ease-in-out infinite alternate;
+  }
+  html:not(.calm) .hero-mascot::after {
+    animation: hero-scan 5.5s ease-in-out infinite;
+  }
+}
+
+/* The eye's scan line: a soft band of light sweeping down the frosted card */
+.hero-mascot {
+  position: relative;
+  overflow: hidden;
+}
+.hero-mascot::after {
+  content: "";
+  position: absolute;
+  inset-inline: -10%;
+  top: 0;
+  height: 18%;
+  background: linear-gradient(180deg, transparent, hsl(var(--primary) / 0.22) 45%, hsl(var(--card) / 0.9) 50%, hsl(var(--primary) / 0.22) 55%, transparent);
+  filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes hero-scan {
+  0% { transform: translateY(-120%); opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateY(560%); opacity: 0; }
+}
+@keyframes hero-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-6%, 8%) scale(1.08); }
+}

@@ -16,6 +16,7 @@ import { Horus } from "@/components/game/Horus";
 import { StampRushLoader } from "@/components/game/StampRushLoader";
 import { THRESHOLDS } from "@/lib/eligibility/thresholds";
 import { OCCUPATIONS, occupationByCode } from "@/lib/soc";
+import { BlurWords, MorphWord, Reveal, ScrollFill } from "@/components/motion";
 
 const fmt = (n: number) => `£${n.toLocaleString("en-GB")}`;
 const goingRate = (code: string) => occupationByCode(code)?.goingRate ?? THRESHOLDS.general;
@@ -103,9 +104,12 @@ export default async function Home() {
                 <ShieldCheckIcon className="text-sage" />
                 Official Home Office data{date && ` · updated ${date}`}
               </p>
-              <h1 className="mt-7 font-display text-[3.25rem] leading-[0.95] tracking-[-0.015em] sm:text-7xl xl:text-[5.75rem]">
-                Big plans.<br />
-                <span className="text-muted-foreground">Clear next steps.</span>
+              <h1 className="mt-7 font-display text-[3.25rem] leading-[0.95] tracking-[-0.015em] sm:text-7xl xl:text-[5.25rem]">
+                <BlurWords text="Big plans." />
+                <br />
+                <span className="text-muted-foreground">
+                  Clear next <MorphWord words={["steps.", "moves.", "goals."]} />
+                </span>
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
                 Find UK employers that can sponsor your work visa. Search {countLabel} licensed sponsors, see who&apos;s hiring, and build your next chapter, one application at a time.
@@ -184,16 +188,18 @@ export default async function Home() {
               { href: "/sponsors", eyebrow: "Looking for a sponsor", title: "Browse licensed employers", body: "Filter by town, visa route and rating.", cta: "Find sponsors", tone: "bg-accent text-accent-foreground" },
               { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Save jobs and sponsors, and get reminded when to follow up.", cta: "Open tracker", tone: "bg-muted text-foreground" },
             ].map((c, i) => (
-              <Link key={c.href} href={c.href} className={`interactive-card group flex min-h-[17rem] flex-col rounded-[1.75rem] p-7 ${c.tone}`}>
-                <p className="eyebrow">
-                  <span className="tabular-nums">0{i + 1}</span> · {c.eyebrow}
-                </p>
-                <h2 className="mt-auto pt-10 font-display text-[2rem] leading-tight">{c.title}</h2>
-                <p className="mt-2 opacity-80">{c.body}</p>
-                <p className="mt-5 text-sm font-medium">
-                  <span className="underline decoration-current/30 underline-offset-4 group-hover:decoration-current">{c.cta}</span> →
-                </p>
-              </Link>
+              <Reveal key={c.href} delay={i * 120} className="flex">
+                <Link href={c.href} className={`interactive-card group flex min-h-[17rem] w-full flex-col rounded-[1.75rem] p-7 ${c.tone}`}>
+                  <p className="eyebrow">
+                    <span className="tabular-nums">0{i + 1}</span> · {c.eyebrow}
+                  </p>
+                  <h2 className="mt-auto pt-10 font-display text-[2rem] leading-tight">{c.title}</h2>
+                  <p className="mt-2 opacity-80">{c.body}</p>
+                  <p className="mt-5 text-sm font-medium">
+                    <span className="underline decoration-current/30 underline-offset-4 group-hover:decoration-current">{c.cta}</span> →
+                  </p>
+                </Link>
+              </Reveal>
             ))}
           </div>
           <DailyQuest className="mt-10" />
@@ -201,7 +207,7 @@ export default async function Home() {
       </section>
 
       <section className="container max-w-6xl px-4 pb-6 pt-12" aria-labelledby="salary-check">
-        <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+        <Reveal className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>
             <p className="eyebrow">New · Visa salary checker</p>
             <h2 id="salary-check" className="mt-3 font-display text-3xl sm:text-4xl">
@@ -241,11 +247,11 @@ export default async function Home() {
               </Link>
             </p>
           </form>
-        </div>
+        </Reveal>
       </section>
 
       <section className="container max-w-6xl px-4 pb-20" aria-labelledby="tailor">
-        <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+        <Reveal className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>
             <p className="eyebrow">New · Tailor my application</p>
             <h2 id="tailor" className="mt-3 font-display text-3xl sm:text-4xl">
@@ -301,13 +307,35 @@ export default async function Home() {
               </p>
             </li>
           </ol>
+        </Reveal>
+      </section>
+
+      <section className="section-band py-24 sm:py-32" aria-labelledby="why-horus">
+        <div className="container grid max-w-6xl gap-10 px-4 lg:grid-cols-[0.9fr_1.1fr]">
+          <h2 id="why-horus" className="font-display text-5xl leading-[1.02] sm:text-6xl lg:sticky lg:top-32 lg:self-start">
+            <BlurWords text="A list of licences isn't a job search." />
+          </h2>
+          <div className="space-y-8">
+            <ScrollFill
+              className="text-2xl leading-snug sm:text-[2rem]"
+              text={`The register names ${countLabel} employers. It doesn't say which of them are hiring, which roles pay enough to sponsor you, or where to start.`}
+            />
+            <ScrollFill
+              className="text-2xl leading-snug sm:text-[2rem]"
+              text="So you end up with a spreadsheet, fifty open tabs and a cover letter you've rewritten for the tenth time."
+            />
+            <ScrollFill
+              className="text-2xl leading-snug sm:text-[2rem]"
+              text="Horus does the sorting. Your energy goes into the applications that can actually go somewhere."
+            />
+          </div>
         </div>
       </section>
 
       <section className="section-band py-16">
         <div className="container flex max-w-6xl flex-wrap items-end justify-between gap-6 px-4">
           <div>
-            <p className="font-display text-7xl tabular-nums tracking-[-0.02em] sm:text-8xl">{countLabel}</p>
+            <Reveal as="p" className="font-display text-7xl tabular-nums tracking-[-0.02em] sm:text-8xl">{countLabel}</Reveal>
             <p className="mt-2 text-muted-foreground">licensed sponsors on the register</p>
           </div>
         </div>
@@ -325,8 +353,10 @@ export default async function Home() {
             </Link>
           </div>
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            {latestJobs.map((job) => (
-              <JobCard key={job.url} job={job} />
+            {latestJobs.map((job, i) => (
+              <Reveal key={job.url} delay={(i % 2) * 100}>
+                <JobCard job={job} />
+              </Reveal>
             ))}
           </div>
         </section>
@@ -353,7 +383,7 @@ export default async function Home() {
         </h2>
         <ol className="mt-14 divide-y divide-border">
           {STEPS.map(({ icon: Icon, title, body }, i) => (
-            <li key={title} className="grid gap-4 py-8 sm:grid-cols-[6rem_1fr]">
+            <Reveal as="li" key={title} delay={i * 80} className="grid gap-4 py-8 sm:grid-cols-[6rem_1fr]">
               <span className="font-display text-6xl text-muted-foreground">{i + 1}</span>
               <div>
                 <h3 className="flex items-center gap-2 font-display text-2xl">
@@ -361,7 +391,7 @@ export default async function Home() {
                 </h3>
                 <p className="mt-2 max-w-xl text-lg text-muted-foreground">{body}</p>
               </div>
-            </li>
+            </Reveal>
           ))}
         </ol>
       </section>
@@ -392,14 +422,14 @@ export default async function Home() {
       </section>
 
       <section className="container px-4 py-20">
-        <div className="rounded-[2rem] bg-foreground px-6 py-20 text-center text-background">
+        <Reveal className="rounded-[2rem] bg-foreground px-6 py-20 text-center text-background">
           <h2 className="font-display text-5xl sm:text-6xl">
-            Ready to find your sponsor?
+            <BlurWords text="Ready to find your sponsor?" />
           </h2>
           <Button asChild size="lg" className="mt-8 bg-background text-foreground hover:bg-background/90">
             <Link href="/sponsors">Search sponsors</Link>
           </Button>
-        </div>
+        </Reveal>
       </section>
     </main>
   );
