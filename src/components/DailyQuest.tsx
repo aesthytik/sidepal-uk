@@ -18,6 +18,7 @@ import { Horus } from "./game/Horus";
 import { JobActions } from "./JobActions";
 import { JobMatch } from "./JobMatch";
 import { JobTailorButton } from "./JobTailor";
+import { JobInterviewPrepButton } from "./JobInterviewPrep";
 
 const APPLIED = new Set(["applied", "interviewing", "offer"]);
 const RANKED = 40; // How many top-ranked jobs to choose from
@@ -155,8 +156,9 @@ export function DailyQuest({ className }: { className?: string }) {
                 <JobMatch job={job} />
                 <div className="mt-auto flex flex-wrap items-end justify-between gap-2">
                   <JobActions job={job} />
-                  <div className="flex gap-3 text-xs">
+                  <div className="flex flex-wrap gap-3 text-xs">
                     <JobTailorButton job={job} className="font-medium text-primary hover:underline" />
+                    <JobInterviewPrepButton job={job} className="font-medium text-primary hover:underline" />
                     {!status && !doneToday && (
                       <button type="button" className="text-muted-foreground hover:text-foreground" onClick={() => skip(job.url)}>
                         Swap

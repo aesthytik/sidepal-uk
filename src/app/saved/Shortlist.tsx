@@ -7,6 +7,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { DownloadIcon } from "@/components/ui/icons";
 import { JobTailorButton } from "@/components/JobTailor";
+import { JobInterviewPrepButton } from "@/components/JobInterviewPrep";
 import { DailyQuest } from "@/components/DailyQuest";
 import { Horus } from "@/components/game/Horus";
 import { type BoardCard, QuestBoard } from "@/components/game/QuestBoard";
@@ -236,6 +237,7 @@ function JobRow({ saved }: { saved: SavedJob }) {
           </Button>
         )}
         <JobTailorButton job={job} className="text-sm font-medium text-primary hover:underline" />
+        <JobInterviewPrepButton job={job} className="text-sm font-medium text-primary hover:underline" />
       </div>
       <Note note={note} onSave={(n) => updateJob(job.url, { note: n })} />
     </article>

@@ -5,6 +5,7 @@ import { Badge } from "./ui/badge";
 import { JobActions } from "./JobActions";
 import { JobMatch } from "./JobMatch";
 import { JobTailorButton } from "./JobTailor";
+import { JobInterviewPrepButton } from "./JobInterviewPrep";
 import { JobVerdict } from "./JobVerdict";
 import { MapPinIcon } from "./ui/icons";
 import { jobPath, sponsorPath } from "@/lib/seo";
@@ -41,6 +42,7 @@ export function JobCard({ job }: { job: IndexedJob }) {
       <div className="mt-2 flex flex-wrap items-start gap-x-4 gap-y-2">
         <JobMatch job={job} />
         <JobTailorButton job={job} className="py-0.5 text-xs font-medium text-primary hover:underline" />
+        <JobInterviewPrepButton job={job} className="py-0.5 text-xs font-medium text-primary hover:underline" />
       </div>
 
       <div className="mt-4 rounded-md border border-border bg-muted/40 pt-2">
