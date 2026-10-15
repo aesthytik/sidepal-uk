@@ -7,7 +7,7 @@ import { Answer, Breadcrumbs, FaqList } from "@/components/seo";
 import { Badge } from "@/components/ui/badge";
 import { THRESHOLDS } from "@/lib/eligibility/thresholds";
 import { jobsForOccupation } from "@/lib/jobs";
-import { SALARY_CHECKER_PATH, SITE, breadcrumbs, faq, n, occupationPath } from "@/lib/seo";
+import { SALARY_CHECKER_PATH, SITE, breadcrumbs, faq, n, occupationPath, pageMetadata } from "@/lib/seo";
 import { OCCUPATIONS, type Occupation, SNAPSHOT_SOURCES, STATUS_LABELS, salaryRule } from "@/lib/soc";
 import { hourly, occupationAnswer, occupationFaq, relatedOccupations, snapshotDateLabel } from "@/lib/soc/content";
 
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const title = titleFor(occ);
   const description = occupationAnswer(occ).slice(0, 300);
   const path = occupationPath(occ);
-  return { title, description, alternates: { canonical: path }, openGraph: { title, description, url: path } };
+  return pageMetadata({ title, description, path: path });
 }
 
 export default async function OccupationPage({ params }: Params) {

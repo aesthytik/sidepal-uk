@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      ...["/api/:path*", "/ingest/:path*", "/data/:path*"].map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      })),
+      ...(process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production"
+        ? [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }]
+        : []),
+    ];
+  },
   // Crawlers look for /sitemap.xml first; serve the index of sitemap slices there
   async rewrites() {
     return [

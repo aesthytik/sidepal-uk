@@ -3,16 +3,16 @@ import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { Answer, Breadcrumbs } from "@/components/seo";
 import { countSponsors, directoryInfo, listPlaces } from "@/lib/directory";
-import { MIN_PLACE_SPONSORS, breadcrumbs, formatDate, n, placePath } from "@/lib/seo";
+import { MIN_PLACE_SPONSORS, breadcrumbs, formatDate, n, placePath, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 86400;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "UK visa sponsors by town and county",
   description:
     "Every UK town and county with employers licensed to sponsor work visas, from London and Manchester to Aberdeen. Browse the licensed sponsors in each place.",
-  alternates: { canonical: "/visa-sponsors" },
-};
+  path: "/visa-sponsors",
+});
 
 export default async function PlacesPage() {
   const [places, info] = await Promise.all([listPlaces(MIN_PLACE_SPONSORS).catch(() => []), directoryInfo().catch(() => null)]);

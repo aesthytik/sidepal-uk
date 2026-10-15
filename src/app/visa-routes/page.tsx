@@ -4,15 +4,15 @@ import { JsonLd } from "@/components/JsonLd";
 import { Answer, Breadcrumbs } from "@/components/seo";
 import { countSponsors } from "@/lib/directory";
 import { VISA_CATEGORIES } from "@/lib/sponsorTypes";
-import { breadcrumbs, n, routePath } from "@/lib/seo";
+import { breadcrumbs, n, routePath, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 86400;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "UK work visa routes and their licensed sponsors",
   description: "Every sponsored UK work visa route, from Skilled Worker to Seasonal Worker, with the number of employers licensed for each.",
-  alternates: { canonical: "/visa-routes" },
-};
+  path: "/visa-routes",
+});
 
 export default async function RoutesPage() {
   const counts = await Promise.all(VISA_CATEGORIES.map((v) => countSponsors({ visa: v }).catch(() => null)));

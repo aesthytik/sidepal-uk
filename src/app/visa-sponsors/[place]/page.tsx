@@ -7,7 +7,7 @@ import { Answer, Breadcrumbs, FaqList, SponsorList } from "@/components/seo";
 import { countSponsors, directoryInfo, listPlaces, searchSponsors } from "@/lib/directory";
 import { searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
-import { MIN_PLACE_SPONSORS, breadcrumbs, faq, formatDate, itemList, n, placePath, rolePath, slug, sponsorPath } from "@/lib/seo";
+import { MIN_PLACE_SPONSORS, breadcrumbs, faq, formatDate, itemList, n, placePath, rolePath, slug, sponsorPath, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 86400;
 export const dynamicParams = true;
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const total = await countSponsors({ location: place.place }).catch(() => place.count);
   const title = `Visa sponsors in ${place.place}: ${n(total)} licensed employers`;
   const description = `${n(total)} employers in ${place.place} are licensed by the Home Office to sponsor UK work visas. Browse A-rated Skilled Worker sponsors and live sponsored jobs in ${place.place}.`;
-  return { title, description, alternates: { canonical: placePath(place.place) }, openGraph: { title, description, url: placePath(place.place) } };
+  return pageMetadata({ title, description, path: placePath(place.place) });
 }
 
 export default async function PlacePage({ params }: Params) {

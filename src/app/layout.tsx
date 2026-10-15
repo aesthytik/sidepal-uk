@@ -8,6 +8,8 @@ import { GameLayer } from "@/components/game/GameLayer";
 import { SecretEye } from "@/components/game/SecretEye";
 import { Analytics } from "@vercel/analytics/next";
 import { CookieBanner, CookieSettingsLink } from "@/components/CookieBanner";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE, SITE_DESCRIPTION, SITE_TITLE, pageMetadata } from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 const fraunces = Fraunces({ subsets: ["latin"], display: "swap", variable: "--font-fraunces", axes: ["opsz", "SOFT"] });
@@ -16,33 +18,17 @@ const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], display: "swap
 
 const SUPPORT_URL = "https://buymeacoffee.com/aesthytik";
 
-const DESCRIPTION =
-  "Search every UK employer licensed to sponsor work visas, browse live jobs from them, check whether a role is likely sponsorable, and track your applications. Built on the official Home Office register.";
+const defaults = pageMetadata({ title: SITE_TITLE, description: SITE_DESCRIPTION, path: "/" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://horus.to"),
-  title: { default: "Horus | Find UK visa sponsor jobs", template: "%s | Horus" },
-  description: DESCRIPTION,
+  metadataBase: new URL(SITE),
+  title: { default: `${SITE_TITLE} | Horus`, template: "%s | Horus" },
+  description: SITE_DESCRIPTION,
   applicationName: "Horus",
-  keywords: [
-    "UK visa sponsorship jobs",
-    "Skilled Worker visa jobs",
-    "licensed sponsors register",
-    "Home Office sponsor list",
-    "jobs that sponsor visas UK",
-    "Certificate of Sponsorship",
-  ],
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    siteName: "Horus",
-    locale: "en_GB",
-    url: "/",
-    title: "Horus | Find UK visa sponsor jobs",
-    description: DESCRIPTION,
-  },
-  twitter: { card: "summary_large_image", title: "Horus | Find UK visa sponsor jobs", description: DESCRIPTION },
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" } },
+  openGraph: defaults.openGraph,
+  twitter: defaults.twitter,
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
+  robots: { index: true, follow: true, googleBot: { "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 } },
 };
 
 export const viewport: Viewport = {
@@ -56,17 +42,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-GB">
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "Horus",
-              url: "https://horus.to",
-              logo: "https://horus.to/icon.svg",
-              description: DESCRIPTION,
-            }),
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": `${SITE}/#organization`,
+            name: "Horus",
+            url: SITE,
+            logo: `${SITE}/icon.svg`,
+            description: SITE_DESCRIPTION,
           }}
         />
       </head>
@@ -99,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="flex flex-col gap-2">
               <p className="font-medium text-foreground">Product</p>
               <Link href="/sponsors" className="hover:text-foreground">Find sponsors</Link>
+              <Link href="/jobs" className="hover:text-foreground">Browse jobs</Link>
               <Link href="/saved" className="hover:text-foreground">My shortlist</Link>
               <Link href="/guide/visa-basics" className="hover:text-foreground">Visa guide</Link>
               <Link href="/visa-salary-checker" className="hover:text-foreground">Visa salary checker</Link>

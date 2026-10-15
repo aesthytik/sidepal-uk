@@ -7,7 +7,7 @@ import { JobMatch } from "./JobMatch";
 import { JobTailorButton } from "./JobTailor";
 import { JobVerdict } from "./JobVerdict";
 import { MapPinIcon } from "./ui/icons";
-import { sponsorPath } from "@/lib/seo";
+import { jobPath, sponsorPath } from "@/lib/seo";
 
 export function JobCard({ job }: { job: IndexedJob }) {
   const posted = postedAgo(job.postedAt);
@@ -16,9 +16,9 @@ export function JobCard({ job }: { job: IndexedJob }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="font-display text-lg font-semibold leading-snug">
-            <a href={job.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+            <Link href={jobPath(job)} className="hover:underline">
               {job.title}
-            </a>
+            </Link>
           </h2>
           <p className="mt-1 text-sm">
             <Link href={sponsorPath(job.sponsorId)} className="font-medium hover:underline">

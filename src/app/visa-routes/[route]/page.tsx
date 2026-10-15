@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Answer, Breadcrumbs, FaqList, SponsorList } from "@/components/seo";
 import { countSponsors, directoryInfo, listPlaces, searchSponsors } from "@/lib/directory";
 import { VISA_CATEGORIES } from "@/lib/sponsorTypes";
-import { MIN_PLACE_SPONSORS, breadcrumbs, faq, formatDate, itemList, n, routeFromSlug, routePath, sponsorPath } from "@/lib/seo";
+import { MIN_PLACE_SPONSORS, breadcrumbs, faq, formatDate, itemList, n, routeFromSlug, routePath, sponsorPath, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 86400;
 export const dynamicParams = true;
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const total = await countSponsors({ visa: route }).catch(() => null);
   const title = `${route} visa sponsors in the UK${total ? `: ${n(total)} licensed employers` : ""}`;
   const description = `${total ? n(total) : "All"} employers licensed by the Home Office to sponsor ${route} visas. Browse them by town, see A-rated sponsors and live jobs.`;
-  return { title, description, alternates: { canonical: routePath(route) }, openGraph: { title, description, url: routePath(route) } };
+  return pageMetadata({ title, description, path: routePath(route) });
 }
 
 export default async function RoutePage({ params }: Params) {

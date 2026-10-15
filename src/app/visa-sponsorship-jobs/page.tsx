@@ -4,15 +4,15 @@ import { JsonLd } from "@/components/JsonLd";
 import { Answer, Breadcrumbs } from "@/components/seo";
 import { jobsInfo, searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
-import { breadcrumbs, n, rolePath } from "@/lib/seo";
+import { breadcrumbs, n, rolePath, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Jobs with UK visa sponsorship, by role",
   description: "Live UK jobs from employers licensed to sponsor work visas, grouped by role: software, data, nursing and care, engineering, finance, teaching and more.",
-  alternates: { canonical: "/visa-sponsorship-jobs" },
-};
+  path: "/visa-sponsorship-jobs",
+});
 
 export default async function RolesPage() {
   const [info, counts] = await Promise.all([

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { Answer, Breadcrumbs, FaqList } from "@/components/seo";
 import { THRESHOLDS } from "@/lib/eligibility/thresholds";
-import { SALARY_CHECKER_PATH, SITE, breadcrumbs, faq, occupationPath } from "@/lib/seo";
+import { SALARY_CHECKER_PATH, SITE, breadcrumbs, faq, occupationPath, pageMetadata } from "@/lib/seo";
 import { OCCUPATIONS, SHORTAGE_LIST_ENDS, SNAPSHOT_DATE, SNAPSHOT_SOURCES, occupationByCode, salaryRule } from "@/lib/soc";
 import { snapshotDateLabel } from "@/lib/soc/content";
 import { OccupationTable } from "./OccupationTable";
@@ -15,12 +15,11 @@ const fmt = (n: number) => `£${n.toLocaleString("en-GB")}`;
 // Common jobs people search for, linked to their own pages
 const POPULAR = ["2134", "2139", "2133", "2433", "3544", "2237", "2231", "2121", "2122", "2421", "2412", "2314", "2221", "2132", "2141", "5434"];
 
-export const metadata: Metadata = {
-  alternates: { canonical: SALARY_CHECKER_PATH },
+export const metadata: Metadata = pageMetadata({
+  path: SALARY_CHECKER_PATH,
   title: "Skilled Worker visa salary checker: going rates for every job (2026)",
   description: `The minimum salary for a UK Skilled Worker visa is ${fmt(THRESHOLDS.general)} or the job's going rate, whichever is higher (${fmt(THRESHOLDS.newEntrant)} for new entrants). Check the going rate for any job title across all ${OCCUPATIONS.length} SOC 2020 codes.`,
-  openGraph: { url: SALARY_CHECKER_PATH },
-};
+});
 
 const FAQ = [
   {

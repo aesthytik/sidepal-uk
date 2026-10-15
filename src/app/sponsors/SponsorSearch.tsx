@@ -10,9 +10,12 @@ import { SlidersIcon } from "@/components/ui/icons";
 import { Sheet } from "@/components/ui/sheet";
 import { useEnrichment } from "@/lib/useEnrichment";
 import { useSponsorSearch } from "@/lib/useSponsorSearch";
+import type { InitialSearch } from "@/lib/useSponsorSearch";
+import type { Sponsor } from "@/lib/sponsorTypes";
+import { SearchPagination } from "@/components/SearchPagination";
 
-export function SponsorSearch() {
-  const search = useSponsorSearch();
+export function SponsorSearch({ initial }: { initial?: InitialSearch<Sponsor> }) {
+  const search = useSponsorSearch(initial);
   const { filters, setFilters, items, total, status } = search;
   const enrichment = useEnrichment(
     items.map((s) => s.id),
@@ -125,16 +128,7 @@ export function SponsorSearch() {
                   <CompanyCard key={s.id} sponsor={s} enrichment={enrichment.get(s.id)} pending={enrichment.isPending(s.id)} />
                 ))}
               </div>
-              {search.hasMore && (
-                <div className="flex flex-col items-center gap-2 pt-2">
-                  <Button variant="outline" size="lg" onClick={search.loadMore} disabled={status === "loading-more"}>
-                    {status === "loading-more" ? "Loading…" : "Load more"}
-                  </Button>
-                  <span className="text-xs text-muted-foreground">
-                    Showing {items.length.toLocaleString()} of {total.toLocaleString()}
-                  </span>
-                </div>
-              )}
+              <SearchPagination search={search} shown={items.length} label="sponsors" />
             </>
           )}
         </section>

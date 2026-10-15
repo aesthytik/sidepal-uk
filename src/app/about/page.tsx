@@ -4,16 +4,16 @@ import { JsonLd } from "@/components/JsonLd";
 import { Answer, Breadcrumbs } from "@/components/seo";
 import { directoryInfo } from "@/lib/directory";
 import { jobsInfo } from "@/lib/jobs";
-import { SITE, breadcrumbs, formatDate, n } from "@/lib/seo";
+import { SITE, breadcrumbs, formatDate, n, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 86400;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About Horus and its data",
   description:
     "Where Horus's data comes from, how often it updates, how jobs are found and checked for sponsorship, and its limitations. Built on the Home Office register of licensed sponsors.",
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 
 const REGISTER_URL = "https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers";
 

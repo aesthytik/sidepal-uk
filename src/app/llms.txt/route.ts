@@ -36,7 +36,7 @@ export async function GET() {
 
 ## Main pages
 
-- [Jobs](${SITE}/jobs): Latest UK roles from licensed sponsors, newest first, filterable by location, visa route, role, sector and "likely sponsorable".
+- [Jobs](${SITE}/jobs): Latest UK roles from licensed sponsors, newest first, filterable by location, visa route, role, sector and "likely sponsorable". Each role has its own page at ${SITE}/jobs/<title>-<id> with the full ad, pay, the sponsor's rating and a sponsorship check.
 - [Find sponsors](${SITE}/sponsors): Search the whole register by company name, town, visa route and rating.
 - [Visa sponsors by place](${SITE}/visa-sponsors): Every UK town and county with its number of licensed sponsors.
 - [Jobs with visa sponsorship by role](${SITE}/visa-sponsorship-jobs)

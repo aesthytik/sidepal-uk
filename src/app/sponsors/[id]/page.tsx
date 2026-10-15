@@ -7,7 +7,7 @@ import { Breadcrumbs, FaqList } from "@/components/seo";
 import { directoryInfo, getSponsor, listPlaces, searchSponsors } from "@/lib/directory";
 import { jobsForSponsor } from "@/lib/jobs";
 import { sectorLabel } from "@/lib/sectors/taxonomy";
-import { MIN_PLACE_SPONSORS, SITE, breadcrumbs, faq, formatDate, placePath, ratingSentence, routePath, slug, sponsorPath } from "@/lib/seo";
+import { MIN_PLACE_SPONSORS, SITE, breadcrumbs, faq, formatDate, placePath, ratingSentence, routePath, slug, sponsorPath, pageMetadata } from "@/lib/seo";
 import { SponsorLive } from "./SponsorLive";
 
 // Sponsor pages are rendered on first visit and cached for a day (the register updates daily)
@@ -30,12 +30,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const rating = sponsor.rating ? `${sponsor.rating}-rated` : "licensed";
   const title = `Does ${sponsor.name} sponsor visas? ${rating} UK sponsor`;
   const description = `Yes. ${sponsor.name} (${sponsor.location}) is on the Home Office register of licensed sponsors for ${routeList(sponsor.visaTypes)}. See its rating, visa routes and open roles.`;
-  return {
-    title,
-    description,
-    alternates: { canonical: sponsorPath(sponsor.id) },
-    openGraph: { title, description, url: sponsorPath(sponsor.id), type: "website" },
-  };
+  return pageMetadata({ title, description, path: sponsorPath(sponsor.id) });
 }
 
 export default async function SponsorPage({ params }: Params) {

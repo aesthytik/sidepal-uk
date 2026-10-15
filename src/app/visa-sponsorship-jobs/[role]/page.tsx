@@ -7,7 +7,7 @@ import { Answer, Breadcrumbs, FaqList, SponsorList } from "@/components/seo";
 import { countSponsors, searchSponsors } from "@/lib/directory";
 import { searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES, sectorLabel } from "@/lib/sectors/taxonomy";
-import { breadcrumbs, faq, n, occupationPath, roleFromSlug, rolePath } from "@/lib/seo";
+import { breadcrumbs, faq, n, occupationPath, roleFromSlug, rolePath, pageMetadata } from "@/lib/seo";
 import { salaryRule, STATUS_LABELS } from "@/lib/soc";
 import { occupationsForRole } from "@/lib/soc/content";
 
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const jobs = await searchJobs({ role: role.id, limit: 1 }).catch(() => ({ total: 0 }));
   const title = `${role.label} jobs with UK visa sponsorship${jobs.total ? ` (${n(jobs.total)} live)` : ""}`;
   const description = `Live ${role.label.toLowerCase()} roles from UK employers licensed to sponsor Skilled Worker visas, with a sponsorship check on every job. Updated daily.`;
-  return { title, description, alternates: { canonical: rolePath(role.id) }, openGraph: { title, description, url: rolePath(role.id) } };
+  return pageMetadata({ title, description, path: rolePath(role.id) });
 }
 
 export default async function RolePage({ params }: Params) {

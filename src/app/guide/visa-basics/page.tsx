@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/JsonLd";
 import { Button } from "@/components/ui/button";
+import { SITE, breadcrumbs, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/guide/visa-basics" },
+const PATH = "/guide/visa-basics";
+// Bump when the guide's content changes
+const UPDATED = "2026-10-13";
+
+export const metadata: Metadata = pageMetadata({
+  path: PATH,
   title: "UK work visa basics",
   description: "How sponsored UK work visas work: the main routes, what employers must do, and how to apply.",
-};
+});
 
 function Gov({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -30,6 +36,25 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function VisaBasicsGuidePage() {
   return (
     <main className="container max-w-3xl space-y-6 px-4 py-10">
+      <JsonLd
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: "UK work visa basics",
+            description: metadata.description,
+            url: `${SITE}${PATH}`,
+            dateModified: UPDATED,
+            inLanguage: "en-GB",
+            author: { "@type": "Organization", name: "Horus", url: SITE },
+            publisher: { "@type": "Organization", name: "Horus", url: SITE, logo: { "@type": "ImageObject", url: `${SITE}/icon.svg` } },
+          },
+          breadcrumbs([
+            { name: "Home", path: "/" },
+            { name: "Visa guide", path: PATH },
+          ]),
+        ]}
+      />
       <header>
         <h1 className="font-display text-3xl font-semibold sm:text-4xl">UK work visa basics</h1>
         <p className="mt-2 text-muted-foreground">

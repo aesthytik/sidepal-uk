@@ -8,6 +8,7 @@ import { roleFamily } from "../sectors/taxonomy";
 import type { Salary, SearchQuery } from "../sponsorTypes";
 import { fetchAll, supabaseRead } from "../supabase/client";
 import { type JobRow, rowToJob } from "../supabase/mappers";
+import { jobId } from "../seo";
 import type { IndexedJob } from "./indexer";
 
 // The index is small (hundreds of roles) and refreshed once a day, so each
@@ -203,4 +204,18 @@ export async function jobsForOccupation(code: string, limit = 6): Promise<{ item
 /** One indexed role by its URL, or null if it isn't in today's index. */
 export async function jobByUrl(url: string): Promise<IndexedJob | null> {
   return (await load()).jobs.find((j) => j.url === url) ?? null;
+}
+
+let byId: { index: LoadedJobs; map: Map<string, IndexedJob> } | null = null;
+
+/** One indexed role by its page id (see `jobId`), or null if it isn't in today's index. */
+export async function jobById(id: string): Promise<IndexedJob | null> {
+  const index = await load();
+  if (byId?.index !== index) byId = { index, map: new Map(index.jobs.map((j) => [jobId(j.url), j])) };
+  return byId.map.get(id) ?? null;
+}
+
+/** Every role in today's index, newest first (for the sitemap). */
+export async function allJobs(): Promise<IndexedJob[]> {
+  return (await load()).jobs;
 }

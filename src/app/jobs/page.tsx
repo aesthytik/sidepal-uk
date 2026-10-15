@@ -1,47 +1,65 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { searchJobs } from "@/lib/jobs";
+import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/JsonLd";
+import { jobsInfo, searchJobs } from "@/lib/jobs";
+import { SITE, breadcrumbs, jobPath, pageMetadata } from "@/lib/seo";
+import { type PageSearchParams, pageSearchParams, parseSearchParams, searchPageSeo, searchQueryKey, validPage } from "@/lib/searchParams";
 import { JobSearch } from "./JobSearch";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/jobs" },
-  title: "UK visa sponsorship jobs",
-  description:
-    "Latest UK jobs from employers licensed to sponsor work visas. Filter by location, role, sector and visa route, with a sponsorship check on every role.",
-};
+type Props = { searchParams: Promise<PageSearchParams> };
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { page, canonical, noIndex } = searchPageSeo("/jobs", pageSearchParams(await searchParams));
+  return pageMetadata({
+    title: `UK Visa Sponsorship Jobs${page > 1 ? ` – Page ${page}` : ""}`,
+    description: "Browse UK jobs from licensed visa sponsors. Filter by role, location, salary and visa route, and check sponsorship requirements before applying.",
+    path: canonical,
+    noIndex,
+  });
+}
 
 // Re-render hourly so the structured data tracks the index
 export const revalidate = 3600;
 
 /**
  * The newest roles as a plain ItemList. Google's job-posting rules forbid JobPosting markup on
- * list pages (it belongs on a single job's own page, which here is the employer's), so this
- * only describes the list.
+ * list pages (it belongs on each job's own page under /jobs/<slug>), so this only describes the list.
  */
-async function jobsJsonLd() {
-  const { items } = await searchJobs({ limit: 25 }).catch(() => ({ items: [] }));
-  return {
+export default async function JobsPage({ searchParams }: Props) {
+  const params = pageSearchParams(await searchParams);
+  if (!validPage(params)) notFound();
+  const query = parseSearchParams(params);
+  const [result, info] = await Promise.all([
+    searchJobs({ ...query, limit: 20 }).catch(() => undefined),
+    jobsInfo().catch(() => undefined),
+  ]);
+  if (result && (query.page ?? 1) > result.pageCount) notFound();
+  const initial = result ? { ...result, info, queryKey: searchQueryKey(query) } : undefined;
+  const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Latest UK jobs from licensed visa sponsors",
-    itemListElement: items.map((j, i) => ({
+    itemListElement: (result?.items ?? []).map((j, i) => ({
       "@type": "ListItem",
-      position: i + 1,
+      position: ((result?.page ?? 1) - 1) * 20 + i + 1,
       name: `${j.title} at ${j.sponsor}`,
-      url: j.url,
+      url: `${SITE}${jobPath(j)}`,
     })),
   };
-}
-
-export default async function JobsPage() {
-  const jsonLd = await jobsJsonLd();
   return (
     <>
-      {jsonLd.itemListElement.length > 0 && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      )}
+      <JsonLd
+        data={[
+          ...(jsonLd.itemListElement.length > 0 ? [jsonLd] : []),
+          breadcrumbs([
+            { name: "Home", path: "/" },
+            { name: "Jobs", path: "/jobs" },
+          ]),
+        ]}
+      />
       <Suspense>
-        <JobSearch />
+        <JobSearch initial={initial} />
       </Suspense>
     </>
   );

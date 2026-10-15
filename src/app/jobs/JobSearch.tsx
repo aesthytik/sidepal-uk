@@ -12,7 +12,9 @@ import { DailyQuest } from "@/components/DailyQuest";
 import { ListIcon, MapIcon, SlidersIcon } from "@/components/ui/icons";
 import { Sheet } from "@/components/ui/sheet";
 import { hasMatchable } from "@/lib/profile/types";
-import { useJobSearch } from "@/lib/useSponsorSearch";
+import { type InitialSearch, useJobSearch } from "@/lib/useSponsorSearch";
+import type { IndexedJob } from "@/lib/jobs/indexer";
+import { SearchPagination } from "@/components/SearchPagination";
 import { useProfile, useProfileHydrated } from "@/store/useProfile";
 import { cn } from "@/lib/utils";
 import { SortSelect } from "./SortSelect";
@@ -23,8 +25,8 @@ const JobMap = dynamic(() => import("./JobMap"), {
   loading: () => <div className="card h-[55vh] min-h-[22rem] animate-pulse lg:h-[72vh]" aria-hidden="true" />,
 });
 
-export function JobSearch() {
-  const search = useJobSearch();
+export function JobSearch({ initial }: { initial?: InitialSearch<IndexedJob> }) {
+  const search = useJobSearch(initial);
   const { filters, setFilters, items, total, status, info } = search;
   const [sheetOpen, setSheetOpen] = useState(false);
   const canMatch = useProfile((s) => hasMatchable(s.profile));
@@ -79,16 +81,7 @@ export function JobSearch() {
             <JobCard key={job.url} job={job} />
           ))}
         </div>
-        {search.hasMore && (
-          <div className="flex flex-col items-center gap-2 pt-2">
-            <Button variant="outline" size="lg" onClick={search.loadMore} disabled={status === "loading-more"}>
-              {status === "loading-more" ? "Loading…" : "Show more jobs"}
-            </Button>
-            <span className="text-xs text-muted-foreground">
-              Showing {items.length.toLocaleString()} of {total.toLocaleString()}
-            </span>
-          </div>
-        )}
+        <SearchPagination search={search} shown={items.length} label="jobs" />
       </>
     );
 

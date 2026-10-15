@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { AskAi } from "@/components/AskAi";
+import { JsonLd } from "@/components/JsonLd";
 import { Marquee } from "@/components/Marquee";
 import { Button } from "@/components/ui/button";
 import { BriefcaseIcon, BookmarkIcon, SearchIcon, ShieldCheckIcon } from "@/components/ui/icons";
@@ -9,7 +11,7 @@ import { DailyQuest } from "@/components/DailyQuest";
 import { jobsInfo, searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
-import { placePath, rolePath } from "@/lib/seo";
+import { SITE, SITE_TITLE, SITE_DESCRIPTION, faq, pageMetadata, placePath, rolePath } from "@/lib/seo";
 import { Horus } from "@/components/game/Horus";
 import { StampRushLoader } from "@/components/game/StampRushLoader";
 import { THRESHOLDS } from "@/lib/eligibility/thresholds";
@@ -17,6 +19,9 @@ import { OCCUPATIONS, occupationByCode } from "@/lib/soc";
 
 const fmt = (n: number) => `£${n.toLocaleString("en-GB")}`;
 const goingRate = (code: string) => occupationByCode(code)?.goingRate ?? THRESHOLDS.general;
+
+// Set here, not in the layout, so other pages never inherit the home page's canonical
+export const metadata: Metadata = pageMetadata({ title: SITE_TITLE, description: SITE_DESCRIPTION, path: "/" });
 
 // Re-render hourly so the sponsor count and register date stay current
 export const revalidate = 3600;
@@ -76,37 +81,19 @@ export default async function Home() {
 
   return (
     <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+      <JsonLd data={[
+          {
             "@context": "https://schema.org",
             "@type": "WebSite",
+            "@id": `${SITE}/#website`,
             name: "Horus",
-            url: "https://horus.to",
-            potentialAction: {
-              "@type": "SearchAction",
-              target: { "@type": "EntryPoint", urlTemplate: "https://horus.to/sponsors?q={search_term_string}" },
-              "query-input": "required name=search_term_string",
-            },
-          }),
-        }}
-      />
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: FAQ.map(({ q, a }) => ({
-              "@type": "Question",
-              name: q,
-              acceptedAnswer: { "@type": "Answer", text: a },
-            })),
-          }),
-        }}
-      />
+            url: SITE,
+            description: SITE_DESCRIPTION,
+            inLanguage: "en-GB",
+            publisher: { "@id": `${SITE}/#organization` },
+          },
+          faq(FAQ),
+        ]} />
 
       <section className="reveal container max-w-6xl px-4 pb-16 pt-12 sm:pt-20">
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
@@ -319,7 +306,7 @@ export default async function Home() {
       {latestJobs.length > 0 && (
         <section className="container max-w-6xl px-4 pt-20">
           <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
-            <h2 className="font-display text-3xl font-semibold sm:text-4xl">Latest sponsored jobs</h2>
+            <h2 className="font-display text-3xl font-semibold sm:text-4xl">Latest jobs from licensed sponsors</h2>
             <Link href="/jobs" className="text-sm font-medium text-primary hover:underline">
               See all {jobCount.toLocaleString("en-GB")} jobs →
             </Link>

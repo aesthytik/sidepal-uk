@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { IndexedJob } from "@/lib/jobs/indexer";
+import { jobPath } from "@/lib/seo";
 import { confetti } from "@/lib/game/fx";
 import { scoreJob } from "@/lib/match/score";
 import { type Profile, hasMatchable } from "@/lib/profile/types";
@@ -143,9 +144,9 @@ export function DailyQuest({ className }: { className?: string }) {
                     {applied && <span className="ml-1.5 text-sage">✓ Applied</span>}
                   </p>
                   <h3 className="mt-1 font-semibold leading-snug">
-                    <a href={job.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    <Link href={jobPath(job)} className="hover:underline">
                       {job.title}
-                    </a>
+                    </Link>
                   </h3>
                   <p className="mt-0.5 truncate text-sm text-muted-foreground">
                     {job.sponsor} · {job.location || "UK"}

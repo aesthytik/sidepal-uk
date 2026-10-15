@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { sponsorPath } from "@/lib/seo";
 import type { Enrichment, Sponsor } from "@/lib/sponsorTypes";
 import { cn } from "@/lib/utils";
 import { RARITY_LABEL, type Rarity, rarityOf } from "@/lib/game/rarity";
@@ -158,7 +160,9 @@ export function CompanyCard({
               {RARITY_LABEL[rarity]} find
             </p>
           )}
-          <h3 className="font-display text-lg font-semibold leading-snug">{sponsor.name}</h3>
+          <h2 className="font-display text-lg font-semibold leading-snug">
+            <Link href={sponsorPath(sponsor.id)} prefetch={false} className="hover:underline">{sponsor.name}</Link>
+          </h2>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1">
               <MapPinIcon /> {sponsor.location}

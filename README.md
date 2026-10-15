@@ -33,6 +33,8 @@ your applications. Data comes from the GOV.UK
 npm install
 npm run dev
 npm test        # vitest
+npm run lint   # ESLint
+npm run build  # production build (requires access to Supabase)
 ```
 
 All data lives in Supabase (sponsors, jobs, enrichment). Copy the Supabase variables below into `.env`,
@@ -70,6 +72,17 @@ To run it locally: `npx ts-node-script --transpile-only --compiler-options '{"mo
 | `OPENROUTER_API_KEY`                        | Optional. AI search, job checks, CV reading, tailoring and `scripts/classify-sectors.ts`. Uses free models by default (see `src/lib/ai/openrouter.ts`); `OPENROUTER_MODEL` overrides |
 | `GOOGLE_API_KEY`, `GOOGLE_SEARCH_ENGINE_ID` | More accurate website lookup (falls back to DNS guesses) |
 | `SPONSOR_CSV_URL`                           | Override the register CSV URL                            |
+| `GOOGLE_SITE_VERIFICATION`                 | Optional. Search Console HTML verification token (token only) |
 | `CRON_SECRET`                               | Require `Authorization: Bearer <secret>` on updates      |
 
 The schema (tables, RLS policies and the `search_sponsors` function) is applied through Supabase migrations.
+
+## Search visibility
+
+Public search pages render the first results on the server and expose real pagination links.
+Filtered and personalised searches use `noindex, follow`; unfiltered later pages have their own
+canonical URL. Public page metadata is shared through `pageMetadata` in `src/lib/seo.ts`.
+The sitemap index at `/sitemap.xml` separates curated pages, sponsor slices and job slices.
+
+After deployment, verify `https://horus.to` in Google Search Console and submit `sitemap.xml`.
+See [the SEO maintenance notes](docs/seo.md) for validation steps and data requirements.
