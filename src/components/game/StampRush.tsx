@@ -28,36 +28,20 @@ interface Theme {
   tapeInk: string;
   stamp: Record<Rarity, { fill: string; ink: string }>;
 }
-const LIGHT: Theme = {
-  bg: "#FCFCFC",
-  rule: "#E3E6E8",
-  ink: "#16181D",
-  muted: "#596167",
-  tape: "#B42A37",
+const THEME: Theme = {
+  bg: "#FFFFFF",
+  rule: "#E3E3E3",
+  ink: "#000000",
+  muted: "#4D4D4D",
+  tape: "#C00000",
   tapeInk: "#FFFFFF",
   stamp: {
-    legendary: { fill: "#7A5410", ink: "#FFFFFF" },
-    epic: { fill: "#275FCE", ink: "#FFFFFF" },
-    rare: { fill: "#DCF2E2", ink: "#275FCE" },
-    common: { fill: "#FFFFFF", ink: "#16181D" },
+    legendary: { fill: "#FFB82A", ink: "#000000" },
+    epic: { fill: "#FC57E5", ink: "#000000" },
+    rare: { fill: "#10A3FF", ink: "#000000" },
+    common: { fill: "#FFFFFF", ink: "#000000" },
   },
 };
-const DARK: Theme = {
-  bg: "#1A1D21",
-  rule: "#22262A",
-  ink: "#ECEEEF",
-  muted: "#A9B0B6",
-  tape: "#FFADA8",
-  tapeInk: "#3A1012",
-  stamp: {
-    legendary: { fill: "#EBC77F", ink: "#111315" },
-    epic: { fill: "#8FB2FF", ink: "#111315" },
-    rare: { fill: "#1F3A28", ink: "#BDEBC8" },
-    common: { fill: "#232845", ink: "#ECEEEF" },
-  },
-};
-const theme = (): Theme =>
-  typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
 const RED_TAPE = ["Missing form", "Wrong route", "Expired CoS", "Unpaid fee", "Typo in name", "Lost passport", "B-rated", "No reply"];
 const FALLBACK = [
   { id: "", name: "Visa Vibes Ltd" },
@@ -164,14 +148,14 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   const bob = Math.sin(t * 8) * 2;
   ctx.save();
   ctx.translate(x, y + bob);
-  ctx.fillStyle = "#275FCE";
+  ctx.fillStyle = "#224B17";
   roundRect(ctx, -s / 2, -s / 2, s, s, 18);
   ctx.fill();
-  ctx.fillStyle = "#FCFCFC";
+  ctx.fillStyle = "#FFFFFF";
   ctx.beginPath();
   if (ouch) {
     // X_X
-    ctx.strokeStyle = "#FCFCFC";
+    ctx.strokeStyle = "#FFFFFF";
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
     for (const dx of [-10, 10]) {
@@ -184,20 +168,20 @@ function drawHorus(ctx: CanvasRenderingContext2D, x: number, y: number, look: nu
   } else {
     ctx.ellipse(0, -4, 20, 11, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#DCF2E2";
+    ctx.fillStyle = "#E5FAE0";
     ctx.beginPath();
     ctx.arc(look * 7, -6, 7.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#16181D";
+    ctx.fillStyle = "#000000";
     ctx.beginPath();
     ctx.arc(look * 7, -6, 3.2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#FCFCFC";
+    ctx.fillStyle = "#FFFFFF";
     ctx.beginPath();
     ctx.arc(look * 7 + 2.5, -8.5, 1.4, 0, Math.PI * 2);
     ctx.fill();
   }
-  ctx.strokeStyle = "#FCFCFC";
+  ctx.strokeStyle = "#FFFFFF";
   ctx.lineWidth = 3.5;
   ctx.lineCap = "round";
   ctx.beginPath();
@@ -363,16 +347,16 @@ export default function StampRush() {
         if (hit) {
           if (it.kind === "stamp") {
             const r = RARITIES.find((x) => x.rarity === it.rarity)!;
-            const color = theme().stamp[it.rarity].fill;
+            const color = THEME.stamp[it.rarity].fill;
             w.combo++;
             const mult = Math.min(5, 1 + Math.floor(w.combo / 5));
             const gained = r.points * mult;
             w.score += gained;
-            w.pops.push({ x: it.x, y: it.y - 20, text: `+${gained}${mult > 1 ? ` ×${mult}` : ""}`, life: 0.9, color: it.rarity === "common" ? theme().ink : color });
+            w.pops.push({ x: it.x, y: it.y - 20, text: `+${gained}${mult > 1 ? ` ×${mult}` : ""}`, life: 0.9, color: it.rarity === "common" ? THEME.ink : color });
             for (let i = 0; i < (still ? 4 : 10); i++) {
               const a = Math.random() * Math.PI * 2;
               const v = 60 + Math.random() * 200;
-              w.particles.push({ x: it.x, y: it.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 80, life: 0.6 + Math.random() * 0.4, color: it.rarity === "common" ? theme().muted : color });
+              w.particles.push({ x: it.x, y: it.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 80, life: 0.6 + Math.random() * 0.4, color: it.rarity === "common" ? THEME.muted : color });
             }
             if (it.rarity === "legendary" && it.sponsor && !w.legendary.some((s) => s.name === it.sponsor!.name)) {
               w.legendary.push(it.sponsor);
@@ -383,7 +367,7 @@ export default function StampRush() {
             w.combo = 0;
             w.shake = still ? 0 : 0.35;
             w.ouch = 0.5;
-            w.pops.push({ x: it.x, y: it.y - 20, text: "Ouch! −1 ♥", life: 1, color: theme().tape });
+            w.pops.push({ x: it.x, y: it.y - 20, text: "Ouch! −1 ♥", life: 1, color: THEME.tape });
             playSound("bonk", sfx);
           }
           continue;
@@ -420,7 +404,7 @@ export default function StampRush() {
     ctx.clearRect(0, 0, w.w, w.h);
     if (w.shake > 0) ctx.translate((Math.random() - 0.5) * 12 * w.shake, (Math.random() - 0.5) * 12 * w.shake);
 
-    const t = theme();
+    const t = THEME;
     // A ruled desk blotter
     ctx.fillStyle = t.bg;
     ctx.fillRect(-10, -10, w.w + 20, w.h + 20);

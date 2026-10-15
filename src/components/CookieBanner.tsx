@@ -50,7 +50,7 @@ export function CookieSettingsLink() {
     <button
       type="button"
       onClick={() => window.dispatchEvent(new Event(OPEN_CONSENT_EVENT))}
-      className="text-left hover:text-foreground"
+      className="text-left hover:underline"
     >
       Cookie settings
     </button>

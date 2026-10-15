@@ -13,12 +13,12 @@ const TRAVEL_X = 9;
 const TRAVEL_Y = 4.5;
 const EYE_CENTRE = { x: 32, y: 34 };
 
-const INK = "#16181D";
-const PAPER = "#FCFCFC";
-const TILE = "#2C3235";
-const IRIS = "#8FB2FF";
-const CLAY = "#B42A37";
-const GOLD = "#F6E6D3";
+const INK = "#000000";
+const PAPER = "#FFFFFF";
+const TILE = "#224B17";
+const IRIS = "#68E246";
+const CLAY = "#C00000";
+const GOLD = "#FFB82A";
 
 const POKE_QUIPS = ["Ow!", "Hey!", "That's my eye!", "Rude.", "I'm watching you.", "Eye see you."];
 

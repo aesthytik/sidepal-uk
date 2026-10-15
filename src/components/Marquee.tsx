@@ -1,8 +1,10 @@
-export function Marquee({ items }: { items: string[] }) {
+import { cn } from "@/lib/utils";
+
+export function Marquee({ items, itemClassName }: { items: string[]; itemClassName?: string }) {
   const row = (hidden: boolean) => (
     <ul className="flex shrink-0 items-center gap-12 pr-12" aria-hidden={hidden || undefined}>
       {items.map((name) => (
-        <li key={name} className="whitespace-nowrap font-display text-xl text-muted-foreground/70">
+        <li key={name} className={cn("whitespace-nowrap font-display text-xl text-muted-foreground/70", itemClassName)}>
           {name}
         </li>
       ))}

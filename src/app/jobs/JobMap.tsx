@@ -100,11 +100,7 @@ export default function JobMap({ filters, onChange, children }: Props) {
     });
     mapRef.current = map;
 
-    const dark = window.matchMedia("(prefers-color-scheme: dark)");
-    const repaint = () => { if (map.getLayer("job-places")) paint(map, selectedRef.current); };
-    dark.addEventListener("change", repaint);
     return () => {
-      dark.removeEventListener("change", repaint);
       map.remove();
       mapRef.current = null;
     };
@@ -457,7 +453,7 @@ function addJobLayers(map: MapLibre) {
   });
 }
 
-/** The site's palette, read from the CSS custom properties so light and dark both match. */
+/** The site's palette, read from the CSS custom properties so the map always matches the theme. */
 function palette() {
   const css = getComputedStyle(document.documentElement);
   const hsl = (name: string, alpha = 1) => {
@@ -475,10 +471,10 @@ function palette() {
     primary: hsl("--primary"),
     onPrimary: hsl("--primary-foreground"),
     clay: hsl("--clay"),
-    mint: hsl("--mint"),
-    onMint: hsl("--mint-foreground"),
-    apricot: hsl("--apricot"),
-    onApricot: hsl("--apricot-foreground"),
+    mint: hsl("--lime"),
+    onMint: hsl("--green-ink"),
+    apricot: hsl("--amber-dot"),
+    onApricot: hsl("--amber-ink"),
     park: hsl("--map-park"),
     water: hsl("--map-water"),
     land: hsl("--map-land"),

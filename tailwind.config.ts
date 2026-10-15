@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "media",
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -45,11 +45,19 @@ const config: Config = {
         // Semantic supporting tones; see docs/brand.md
         mint: { DEFAULT: "hsl(var(--mint) / <alpha-value>)", foreground: "hsl(var(--mint-foreground) / <alpha-value>)" },
         apricot: { DEFAULT: "hsl(var(--apricot) / <alpha-value>)", foreground: "hsl(var(--apricot-foreground) / <alpha-value>)" },
+        // Five colour families, each a bright dot, a pale fill and a dark ink; see docs/brand.md
+        green: { dot: "hsl(var(--green-dot) / <alpha-value>)", soft: "hsl(var(--green-soft) / <alpha-value>)", ink: "hsl(var(--green-ink) / <alpha-value>)" },
+        pink: { dot: "hsl(var(--pink-dot) / <alpha-value>)", soft: "hsl(var(--pink-soft) / <alpha-value>)", ink: "hsl(var(--pink-ink) / <alpha-value>)" },
+        blue: { dot: "hsl(var(--blue-dot) / <alpha-value>)", soft: "hsl(var(--blue-soft) / <alpha-value>)", ink: "hsl(var(--blue-ink) / <alpha-value>)" },
+        amber: { dot: "hsl(var(--amber-dot) / <alpha-value>)", soft: "hsl(var(--amber-soft) / <alpha-value>)", ink: "hsl(var(--amber-ink) / <alpha-value>)" },
+        purple: { dot: "hsl(var(--purple-dot) / <alpha-value>)", soft: "hsl(var(--purple-soft) / <alpha-value>)", ink: "hsl(var(--purple-ink) / <alpha-value>)" },
+        forest: { DEFAULT: "hsl(var(--primary) / <alpha-value>)", deep: "hsl(var(--forest-deep) / <alpha-value>)" },
+        lime: "hsl(var(--lime) / <alpha-value>)",
         gold: "hsl(var(--gold) / <alpha-value>)",
         clay: "hsl(var(--clay) / <alpha-value>)",
         sage: "hsl(var(--sage) / <alpha-value>)",
       },
-      boxShadow: { card: "var(--shadow-card)", float: "var(--shadow-float)", button: "0 1px 2px hsl(var(--foreground) / 0.12), inset 0 1px 0 hsl(0 0% 100% / 0.08)" },
+      boxShadow: { card: "var(--shadow-card)", float: "var(--shadow-float)", button: "none" },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
