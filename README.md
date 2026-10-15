@@ -19,6 +19,10 @@ your applications. Data comes from the GOV.UK
 - **Tailor my application** on any job: fetches the full ad from the job board, shows which of its keywords your
   profile/CV covers (no AI), and, opt-in, uses AI to suggest CV bullets in the ad's language and draft a cover letter
   that is upfront about needing sponsorship
+- **Prep for interview** next to Tailor: opt-in AI practice questions grouped by theme, with technical and behavioural
+  STAR outlines backed by quotes from your CV/experience summary and honest gaps to fill. Includes employer questions,
+  a script matched to your profile's visa situation, and copy/print controls. Opening the panel does not send your profile
+  or CV to AI; generation sends them through OpenRouter for that request. Results are not saved
 - **Daily quest**: once you have a profile, Horus picks three strong matches each day (stable all day, different
   employers, swappable). Apply to any one to complete the quest and grow your 🔥 streak (XP and achievements)
 - Tracker for saved **jobs and sponsors** (Interested → Applied → Interviewing → Offer / Rejected) as a board or
@@ -60,6 +64,7 @@ To run it locally: `npx ts-node-script --transpile-only --compiler-options '{"mo
 | `src/lib/quest/`       | `pickDaily(candidates, day, exclude)` (deterministic per day), `questStreak(days, today)` |
 | `src/lib/tracker/`     | Follow-up dates (`followUpFor`, `dueState`) and `.ics` calendar events |
 | `src/lib/profile/`     | `extractProfile(cvText)`, the skills lexicon, `sanitizeProfile`, `readCv(file)` (browser only) |
+| `src/lib/ai/interviewPrep.ts` | Pure interview-prep input handling, prompt, nested response validation, visa scripts and copy/print text |
 | `src/lib/match/`       | `scoreJob(job, profile)` → 0–100 with reasons; `rankJobs` for the "match" sort |
 | `src/store/useProfile.ts`     | The user's profile (localStorage); CV text only kept if they opt in   |
 
@@ -69,7 +74,7 @@ To run it locally: `npx ts-node-script --transpile-only --compiler-options '{"mo
 | ------------------------------------------- | -------------------------------------------------------- |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | **Required.** Supabase project for reads (RLS limits it to public data) |
 | `SUPABASE_SERVICE_ROLE_KEY`                 | **Required, server-only.** Register refresh, enrichment cache and the indexer |
-| `OPENROUTER_API_KEY`                        | Optional. AI search, job checks, CV reading, tailoring and `scripts/classify-sectors.ts`. Uses free models by default (see `src/lib/ai/openrouter.ts`); `OPENROUTER_MODEL` overrides |
+| `OPENROUTER_API_KEY`                        | Optional. AI search, job checks, CV reading, tailoring, interview prep and `scripts/classify-sectors.ts`. Uses free models by default (see `src/lib/ai/openrouter.ts`); `OPENROUTER_MODEL` overrides |
 | `GOOGLE_API_KEY`, `GOOGLE_SEARCH_ENGINE_ID` | More accurate website lookup (falls back to DNS guesses) |
 | `SPONSOR_CSV_URL`                           | Override the register CSV URL                            |
 | `GOOGLE_SITE_VERIFICATION`                 | Optional. Search Console HTML verification token (token only) |
