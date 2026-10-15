@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { SectorId } from "../sectors/taxonomy";
 import { roleFamily } from "../sectors/taxonomy";
 import type { SearchPage, SearchQuery, Sponsor } from "../sponsorTypes";
@@ -146,13 +147,14 @@ export async function loadSectorOverrides(): Promise<Record<string, SectorId | n
 }
 
 /** Downloads the latest register from GOV.UK and stores it in Supabase. */
-export async function refreshFromGovUk(): Promise<{ count: number; source: string; saved: boolean }> {
+export async function refreshFromGovUk(): Promise<{ count: number; changes: number; source: string; saved: boolean }> {
   const url = await findLatestCsvUrl();
   console.log("Fetching register from:", url);
   const res = await fetch(url, { signal: AbortSignal.timeout(120_000) });
   if (!res.ok) throw new Error(`Failed to fetch CSV: ${res.status} ${res.statusText}`);
 
-  const rows = parseRegisterCsv(await res.text());
+  const csv = await res.text();
+  const rows = parseRegisterCsv(csv);
   if (rows.length < MIN_SPONSORS) {
     throw new Error(`Downloaded CSV only had ${rows.length} sponsors; aborting`);
   }
@@ -160,9 +162,19 @@ export async function refreshFromGovUk(): Promise<{ count: number; source: strin
   const overrides = await loadSectorOverrides();
   const sponsors = toSponsors(rows, overrides);
   const registerDate = decodeURIComponent(url).match(/(\d{4}-\d{2}-\d{2})/)?.[1] ?? null;
-  await syncSponsors(supabaseAdmin(), sponsors, { overrides, registerDate });
+  const observedAt = new Date().toISOString();
+  const changes = await syncSponsors(supabaseAdmin(), sponsors, {
+    overrides,
+    snapshot: {
+      key: `${registerDate ?? observedAt.slice(0, 10)}:${createHash("sha256").update(csv).digest("hex")}`,
+      source: url,
+      registerDate,
+      observedAt,
+    },
+  });
   infoCache = null;
-  return { count: sponsors.length, source: url, saved: true };
+  placesCache = null;
+  return { count: sponsors.length, changes, source: url, saved: true };
 }
 
 export async function getSponsor(id: string): Promise<Sponsor | null> {

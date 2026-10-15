@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { CompanyCard, CompanyCardSkeleton } from "@/components/CompanyCard";
 import { SearchBar } from "@/components/SearchBar";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Horus } from "@/components/game/Horus";
 import { SlidersIcon } from "@/components/ui/icons";
 import { Sheet } from "@/components/ui/sheet";
+import { SPONSOR_CHANGES_PATH } from "@/lib/seo";
 import { useEnrichment } from "@/lib/useEnrichment";
 import { useSponsorSearch } from "@/lib/useSponsorSearch";
 import type { InitialSearch } from "@/lib/useSponsorSearch";
@@ -34,6 +36,7 @@ export function SponsorSearch({ initial }: { initial?: InitialSearch<Sponsor> })
           <p className="mt-1 text-muted-foreground">
             Every employer on the Home Office register, with their careers page and open roles where we can find them.
           </p>
+          <Link href={SPONSOR_CHANGES_PATH} className="mt-2 inline-block text-sm text-primary hover:underline">New sponsors and register changes →</Link>
         </div>
         <div className="flex gap-2">
           <SearchBar

@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { SectorId } from "../sectors/taxonomy";
 import type { Sponsor } from "../sponsorTypes";
 import { rankPlaces } from "../directory/core";
+import { createChangeRecorder, type RegisterSnapshot, type SponsorChange } from "../directory/changes";
 import type { IndexedJob } from "../jobs/indexer";
 import type { EnrichmentStore, StoredEnrichment } from "../enrichment/store";
 import { fetchAll } from "./client";
@@ -43,33 +44,63 @@ const signature = (row: Record<string, unknown>) => JSON.stringify(SPONSOR_FIELD
 export async function syncSponsors(
   db: SupabaseClient,
   sponsors: Sponsor[],
-  opts: { overrides: Record<string, SectorId | null>; registerDate: string | null }
-): Promise<void> {
-  const stamp = new Date().toISOString();
-  const rows = sponsors.map((s, i) => sponsorToRow(s, i, { ...opts, stamp }));
+  opts: { overrides: Record<string, SectorId | null>; snapshot: RegisterSnapshot }
+): Promise<number> {
+  const rows = sponsors.map((s, i) => sponsorToRow(s, i, {
+    overrides: opts.overrides, registerDate: opts.snapshot.registerDate, stamp: opts.snapshot.observedAt,
+  }));
 
-  const existing = await fetchAll<Record<string, unknown>>((from, to) =>
-    db.from("sponsors").select(SPONSOR_FIELDS.join(",")).order("name").range(from, to).returns<Record<string, unknown>[]>()
+  const existing = await fetchAll<SponsorRow & Record<string, unknown>>((from, to) =>
+    db.from("sponsors").select(SPONSOR_FIELDS.join(",")).order("name").range(from, to).returns<(SponsorRow & Record<string, unknown>)[]>()
   );
   const stored = new Map(existing.map((r) => [r.name as string, signature(r)]));
 
   // Names are the natural key (enrichment is keyed by them); ids may shift if slugs collide
   const changed = rows.filter((r) => stored.get(r.name) !== signature(r));
   console.log(`Sponsors: ${changed.length} new or changed of ${rows.length}`);
-  await upsert(db, "sponsors", changed, "name");
-
   const current = new Set(rows.map((r) => r.name));
   const removed = existing.map((r) => r.name as string).filter((n) => !current.has(n));
-  for (let i = 0; i < removed.length; i += 100) {
-    const gone = await db.from("sponsors").delete().in("name", removed.slice(i, i + 100));
-    if (gone.error) throw new Error(`sponsors cleanup: ${gone.error.message}`);
-  }
+
+  const recordChanges = createChangeRecorder({
+    store: {
+      async save(changes, snapshot) {
+        const byName = new Map<string, SponsorChange[]>();
+        for (const change of changes) {
+          const events = byName.get(change.sponsorName) ?? [];
+          events.push(change);
+          byName.set(change.sponsorName, events);
+        }
+        const eventsFor = (names: string[]) => names.flatMap((name) => (byName.get(name) ?? []).map((c) => ({
+          snapshot_key: snapshot.key, sponsor_id: c.sponsorId, sponsor_name: c.sponsorName,
+          location: c.location, change_type: c.type, previous_value: c.previousValue, new_value: c.newValue,
+          register_date: snapshot.registerDate, observed_at: snapshot.observedAt, source_url: snapshot.source,
+        })));
+
+        // The RPC commits each batch and its history together. A failed batch
+        // leaves the old sponsors available to diff on the next refresh.
+        await inBatches(changed, BATCH, async (batch) => {
+          const { error } = await db.rpc("apply_sponsor_register_batch", {
+            sponsor_rows: batch, removed_names: [], change_rows: eventsFor(batch.map((r) => r.name)),
+          });
+          if (error) throw new Error(`sponsors and history: ${error.message}`);
+        });
+        await inBatches(removed, 100, async (batch) => {
+          const { error } = await db.rpc("apply_sponsor_register_batch", {
+            sponsor_rows: [], removed_names: batch, change_rows: eventsFor(batch),
+          });
+          if (error) throw new Error(`sponsors cleanup and history: ${error.message}`);
+        });
+      },
+    },
+  });
+  const changeCount = await recordChanges(existing.length ? existing.map(rowToSponsor) : null, sponsors, opts.snapshot);
   if (removed.length) console.log(`Sponsors: removed ${removed.length} no longer listed`);
 
   const places = rankPlaces(sponsors).map(([place, n]) => ({ place, n }));
   const cleared = await db.from("places").delete().neq("place", "");
   if (cleared.error) throw new Error(`places: ${cleared.error.message}`);
   await upsert(db, "places", places, "place");
+  return changeCount;
 }
 
 /** Stores a finished job index: upserts current jobs, drops ones no longer listed, logs the run. */
