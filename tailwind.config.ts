@@ -49,7 +49,7 @@ const config: Config = {
         clay: "hsl(var(--clay) / <alpha-value>)",
         sage: "hsl(var(--sage) / <alpha-value>)",
       },
-      boxShadow: { card: "var(--shadow-card)", float: "var(--shadow-float)", button: "0 3px 0 hsl(var(--foreground) / 0.2)" },
+      boxShadow: { card: "var(--shadow-card)", float: "var(--shadow-float)", button: "0 1px 2px hsl(var(--foreground) / 0.12), inset 0 1px 0 hsl(0 0% 100% / 0.08)" },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

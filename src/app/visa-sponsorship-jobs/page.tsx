@@ -28,7 +28,7 @@ export default async function RolesPage() {
       <JsonLd data={breadcrumbs(crumbs)} />
       <Breadcrumbs items={crumbs} />
       <header className="mt-6">
-        <h1 className="font-display text-4xl font-semibold sm:text-5xl">Jobs with UK visa sponsorship</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">Jobs with UK visa sponsorship</h1>
         <Answer>
           {info?.count ? `${n(info.count)} live roles from ${n(info.sponsors)} licensed sponsors` : "Live roles from licensed sponsors"}, read from
           their own job boards and updated daily. Choose a role to see the latest openings and the sponsors that hire for it.
@@ -38,7 +38,7 @@ export default async function RolesPage() {
         {ROLE_FAMILIES.map((r, i) => (
           <li key={r.id}>
             <Link href={rolePath(r.id)} className="flex items-baseline justify-between gap-4 py-4 hover:bg-muted/40 sm:px-2">
-              <span className="font-display text-xl font-semibold">{r.label}</span>
+              <span className="font-display text-xl">{r.label}</span>
               {counts[i] !== null && <span className="text-sm tabular-nums text-muted-foreground">{n(counts[i]!)} live roles</span>}
             </Link>
           </li>

@@ -29,10 +29,10 @@ export function Navigation() {
       onClick={() => setOpen(false)}
       aria-current={pathname === href ? "page" : undefined}
       className={cn(
-        "flex items-center gap-2 rounded-full px-3 py-2.5 text-sm transition-colors",
+        "flex items-center gap-2 rounded-lg px-3 py-2 text-[15px] font-medium transition-colors",
         pathname === href
-          ? "bg-accent font-semibold text-accent-foreground"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          ? "bg-foreground/[0.06] text-foreground"
+          : "text-foreground/75 hover:text-foreground"
       )}
     >
       {label}
@@ -43,14 +43,14 @@ export function Navigation() {
   ));
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl">
       <nav className="container flex h-[4.5rem] max-w-6xl items-center justify-between gap-2 px-4" aria-label="Main">
-        <Link href="/" aria-label="Horus home" className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight">
+        <Link href="/" aria-label="Horus home" className="flex items-center gap-2.5 font-display text-[1.6rem] tracking-tight">
           {/* eslint-disable-next-line @next/next/no-img-element -- tiny static SVG */}
-          <img src="/icon.svg" alt="" width={36} height={36} className="rounded-xl" />
+          <img src="/icon.svg" alt="" width={36} height={36} className="rounded-[10px]" />
           <span className="hidden min-[400px]:inline">Horus</span>
         </Link>
-        <div className="hidden items-center gap-1 lg:gap-2 xl:flex">{links}</div>
+        <div className="hidden items-center gap-0.5 xl:flex">{links}</div>
         <div className="flex items-center gap-1">
           <HUD />
           <button

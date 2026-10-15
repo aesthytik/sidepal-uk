@@ -35,7 +35,7 @@ export default async function PlacesPage() {
       <JsonLd data={breadcrumbs(crumbs)} />
       <Breadcrumbs items={crumbs} />
       <header className="mt-6">
-        <h1 className="font-display text-4xl font-semibold sm:text-5xl">UK visa sponsors by place</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">UK visa sponsors by place</h1>
         <Answer>
           {info ? `${n(info.count)} organisations` : "Over 120,000 organisations"} are licensed to sponsor UK work visas
           {info?.registerDate ? ` (register updated ${formatDate(info.registerDate)})` : ""}. Pick a town or county to see its
@@ -56,7 +56,7 @@ export default async function PlacesPage() {
       <div className="mt-10 space-y-8">
         {[...byLetter].map(([letter, group]) => (
           <section key={letter} aria-label={letter}>
-            <h2 className="border-b border-border pb-1 font-display text-2xl font-semibold">{letter}</h2>
+            <h2 className="border-b border-border pb-1 font-display text-2xl">{letter}</h2>
             <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm sm:grid-cols-3 lg:grid-cols-4">
               {group.map((p) => (
                 <li key={p.place}>

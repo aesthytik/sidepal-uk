@@ -91,7 +91,7 @@ export default async function JobPage({ params }: Params) {
       <header className="mt-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="eyebrow">Job at a licensed UK visa sponsor</p>
-          <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{job.title}</h1>
+          <h1 className="mt-2 font-display text-3xl sm:text-4xl">{job.title}</h1>
           <p className="mt-2 text-lg">
             <Link href={sponsorPath(job.sponsorId)} className="font-medium hover:underline">
               {job.sponsor}
@@ -120,7 +120,7 @@ export default async function JobPage({ params }: Params) {
       </div>
 
       <section className="mt-10">
-        <h2 className="font-display text-2xl font-semibold">About the role</h2>
+        <h2 className="font-display text-2xl">About the role</h2>
         {description.text ? (
           <div className="mt-4 whitespace-pre-line leading-relaxed text-muted-foreground">{description.text}</div>
         ) : (
@@ -145,7 +145,7 @@ export default async function JobPage({ params }: Params) {
 
       {others.length > 0 && (
         <section className="mt-12">
-          <h2 className="font-display text-2xl font-semibold">More roles at {job.sponsor}</h2>
+          <h2 className="font-display text-2xl">More roles at {job.sponsor}</h2>
           <div className="mt-4 grid gap-4">
             {others.map((j) => (
               <JobCard key={j.url} job={j} />

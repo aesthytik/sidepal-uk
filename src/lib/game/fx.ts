@@ -4,7 +4,7 @@
  */
 
 // Brand confetti: violet, mint, apricot, lilac and ink.
-const COLORS = ["#5934CF", "#C3AAFF", "#C6F4DC", "#FFD6B0", "#242039", "#DCD5EC"];
+const COLORS = ["#275FCE", "#8FB2FF", "#DCF2E2", "#F6E6D3", "#16181D", "#E3E6E8"];
 
 interface Piece {
   x: number;
@@ -67,11 +67,11 @@ function tick() {
     } else if (p.shape === "eye") {
       ctx.beginPath();
       ctx.ellipse(0, 0, p.size, p.size / 2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#F8F7FF";
+      ctx.fillStyle = "#FCFCFC";
       ctx.fill();
       ctx.beginPath();
       ctx.arc(0, 0, p.size / 3, 0, Math.PI * 2);
-      ctx.fillStyle = "#5934CF";
+      ctx.fillStyle = "#275FCE";
       ctx.fill();
     } else {
       ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);

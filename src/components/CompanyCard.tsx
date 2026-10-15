@@ -160,7 +160,7 @@ export function CompanyCard({
               {RARITY_LABEL[rarity]} find
             </p>
           )}
-          <h2 className="font-display text-xl font-semibold leading-snug">
+          <h2 className="font-display text-xl leading-snug">
             <Link href={sponsorPath(sponsor.id)} prefetch={false} className="hover:underline">{sponsor.name}</Link>
           </h2>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">

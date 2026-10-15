@@ -86,7 +86,7 @@ export default async function RoutePage({ params }: Params) {
       <Breadcrumbs items={crumbs} />
       <header className="mt-6">
         <p className="eyebrow">UK visa route</p>
-        <h1 className="mt-2 font-display text-4xl font-semibold sm:text-5xl">{route} visa sponsors</h1>
+        <h1 className="mt-2 font-display text-4xl sm:text-5xl">{route} visa sponsors</h1>
         <Answer>{answer}</Answer>
         {about && (
           <p className="mt-3 text-sm">
@@ -98,7 +98,7 @@ export default async function RoutePage({ params }: Params) {
       </header>
 
       <section className="mt-12" aria-labelledby="sponsors">
-        <h2 id="sponsors" className="font-display text-2xl font-semibold">
+        <h2 id="sponsors" className="font-display text-2xl">
           A-rated {route} sponsors
         </h2>
         <div className="mt-4">
@@ -112,7 +112,7 @@ export default async function RoutePage({ params }: Params) {
       </section>
 
       <section className="mt-12" aria-labelledby="places">
-        <h2 id="places" className="font-display text-2xl font-semibold">
+        <h2 id="places" className="font-display text-2xl">
           {route} sponsors by place
         </h2>
         <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
@@ -129,7 +129,7 @@ export default async function RoutePage({ params }: Params) {
       <FaqList title={`${route} visa sponsorship: common questions`} entries={faqs} />
 
       <section className="mt-12" aria-labelledby="other">
-        <h2 id="other" className="font-display text-2xl font-semibold">
+        <h2 id="other" className="font-display text-2xl">
           Other visa routes
         </h2>
         <ul className="mt-4 flex flex-wrap gap-2 text-sm">

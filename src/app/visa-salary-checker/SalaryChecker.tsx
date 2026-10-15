@@ -31,7 +31,7 @@ function OccupationResult({ occ, salary, who }: { occ: Occupation; salary: numbe
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">SOC {occ.code}</p>
-          <h2 className="font-display text-xl font-semibold">{occ.title}</h2>
+          <h2 className="font-display text-xl">{occ.title}</h2>
         </div>
         <Badge tone={TONE[occ.status]}>{STATUS_LABELS[occ.status]}</Badge>
       </div>
@@ -40,18 +40,18 @@ function OccupationResult({ occ, salary, who }: { occ: Occupation; salary: numbe
         <dl className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
           <div className="rounded-md bg-muted/60 p-3">
             <dt className="text-xs text-muted-foreground">You need at least</dt>
-            <dd className="font-display text-2xl font-semibold tabular-nums">{fmt(rule.minimum)}</dd>
+            <dd className="font-display text-2xl tabular-nums">{fmt(rule.minimum)}</dd>
           </div>
           {occ.goingRate !== undefined && (
             <div className="rounded-md bg-muted/60 p-3">
               <dt className="text-xs text-muted-foreground">Going rate</dt>
-              <dd className="font-display text-2xl font-semibold tabular-nums">{fmt(occ.goingRate)}</dd>
+              <dd className="font-display text-2xl tabular-nums">{fmt(occ.goingRate)}</dd>
             </div>
           )}
           {occ.newEntrantRate !== undefined && (
             <div className="rounded-md bg-muted/60 p-3">
               <dt className="text-xs text-muted-foreground">New-entrant rate</dt>
-              <dd className="font-display text-2xl font-semibold tabular-nums">{fmt(occ.newEntrantRate)}</dd>
+              <dd className="font-display text-2xl tabular-nums">{fmt(occ.newEntrantRate)}</dd>
             </div>
           )}
         </dl>

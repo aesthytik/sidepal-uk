@@ -24,7 +24,7 @@ export function OccupationTable() {
 
   return (
     <section aria-labelledby="all-heading">
-      <h2 id="all-heading" className="font-display text-2xl font-semibold">
+      <h2 id="all-heading" className="font-display text-2xl">
         Going rates for every occupation code
       </h2>
       <div className="mt-3 flex flex-wrap gap-2">

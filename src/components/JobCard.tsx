@@ -16,7 +16,7 @@ export function JobCard({ job }: { job: IndexedJob }) {
     <article className="card interactive-card border-t-[3px] border-t-primary p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="font-display text-xl font-semibold leading-snug">
+          <h2 className="font-display text-xl leading-snug">
             <Link href={jobPath(job)} className="hover:underline">
               {job.title}
             </Link>

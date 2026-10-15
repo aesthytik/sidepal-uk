@@ -95,7 +95,7 @@ export function HUD() {
           <div className="flex items-center gap-3 px-2 pb-3">
             <Horus size={44} />
             <div className="min-w-0">
-              <p className="font-display font-semibold">
+              <p className="font-display">
                 Lv {level.index + 1} · {level.title}
               </p>
               <p className="text-xs text-muted-foreground">

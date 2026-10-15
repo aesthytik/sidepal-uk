@@ -191,7 +191,7 @@ function JobRow({ saved }: { saved: SavedJob }) {
     <article className="card p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="font-display text-lg font-semibold leading-snug">
+          <h2 className="font-display text-lg leading-snug">
             <a href={job.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
               {job.title}
             </a>
@@ -337,7 +337,7 @@ export function Shortlist() {
       <main className="container max-w-5xl px-4 py-16">
         <div className="mx-auto max-w-2xl text-center">
           <Horus size={88} mood="sleepy" say="Wake me when you find one" />
-          <h1 className="mt-5 font-display text-3xl font-semibold">Your quest log is empty</h1>
+          <h1 className="mt-5 font-display text-3xl">Your quest log is empty</h1>
           <p className="mt-3 text-muted-foreground">
             Save jobs and sponsors while you search, then drag them from <em>Interested</em> all the way to <em>Offer</em>.
             Every step earns XP, and Horus reminds you when to follow up. It all stays in this browser.
@@ -376,7 +376,7 @@ export function Shortlist() {
     <main className={cn("container px-4 py-6 sm:py-10", view === "board" ? "max-w-6xl" : "max-w-4xl")}>
       <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold sm:text-4xl">My quest board</h1>
+          <h1 className="font-display text-3xl sm:text-4xl">My quest board</h1>
           <p className="mt-1 text-muted-foreground">Drag cards right as you progress. Saved in this browser.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

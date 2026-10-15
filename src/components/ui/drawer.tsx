@@ -46,7 +46,7 @@ export function Drawer({
       >
         <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-4">
           <div className="min-w-0">
-            <h2 className="font-display text-xl font-semibold leading-snug">{title}</h2>
+            <h2 className="font-display text-xl leading-snug">{title}</h2>
             {subtitle && <p className="mt-0.5 truncate text-sm text-muted-foreground">{subtitle}</p>}
           </div>
           <button type="button" onClick={onClose} aria-label="Close" className="-mr-2 rounded-md p-2 hover:bg-muted">

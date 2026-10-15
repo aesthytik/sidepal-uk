@@ -30,7 +30,7 @@ function Toasts() {
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-apricot text-xl">{achievement.emoji}</span>
           <span className="min-w-0">
             <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-gold">Achievement unlocked</span>
-            <span className="block font-display text-base font-semibold">{achievement.title}</span>
+            <span className="block font-display text-base">{achievement.title}</span>
             <span className="block text-xs text-muted-foreground">
               {achievement.description} <strong className="font-semibold text-sage">+{achievement.xp} XP</strong>
             </span>
@@ -63,7 +63,7 @@ function LevelUp() {
       <div className="levelup-card max-w-sm rounded-lg border border-border border-t-4 border-t-primary bg-card p-8 text-center shadow-lg">
         <Horus size={110} mood="party" interactive={false} />
         <p className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-gold">Level up!</p>
-        <p className="mt-1 font-display text-4xl font-semibold">
+        <p className="mt-1 font-display text-4xl">
           <span className="text-muted-foreground">Lv {level + 1}</span> {info.title}
         </p>
         <p className="mt-3 text-muted-foreground">{info.blurb}</p>

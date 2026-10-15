@@ -2,70 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Horus: your next chapter. Semantic colour pairs live in docs/brand.md. */
+/* Horus: quiet, editorial and calm. Semantic colour pairs live in docs/brand.md. */
 @layer base {
   :root {
-    --background: 247.5 100.0% 98.4%; /* #F8F7FF */
-    --foreground: 249.6 28.1% 17.5%; /* #242039 */
+    --background: 0.0 0.0% 98.8%; /* #FCFCFC */
+    --foreground: 222.9 13.7% 10.0%; /* #16181D */
     --card: 0.0 0.0% 100.0%; /* #FFFFFF */
-    --card-foreground: 249.6 28.1% 17.5%; /* #242039 */
-    --primary: 254.3 61.8% 50.8%; /* #5934CF */
+    --card-foreground: 222.9 13.7% 10.0%; /* #16181D */
+    --primary: 219.9 68.2% 48.0%; /* #275FCE */
     --primary-foreground: 0.0 0.0% 100.0%; /* #FFFFFF */
-    --muted: 253.8 48.1% 94.7%; /* #EEEBF8 */
-    --muted-foreground: 256.2 12.5% 40.8%; /* #625B75 */
-    --accent: 256.8 100.0% 95.1%; /* #EDE6FF */
-    --accent-foreground: 258.8 62.1% 38.2%; /* #4B259E */
-    --destructive: 5.7 52.0% 40.0%; /* #9B3B31 */
+    --muted: 180.0 6.2% 93.7%; /* #EEF0F0 */
+    --muted-foreground: 205.7 7.3% 37.6%; /* #596167 */
+    --accent: 240.0 63.0% 94.7%; /* #E9E9FA */
+    --accent-foreground: 230.5 57.6% 38.8%; /* #2A3C9C */
+    --destructive: 354.3 62.2% 43.5%; /* #B42A37 */
     --destructive-foreground: 0.0 0.0% 100.0%; /* #FFFFFF */
-    --border: 258.3 37.7% 88.0%; /* #DCD5EC */
-    --input: 262.0 13.5% 56.5%; /* #8C819F */
-    --ring: 254.3 61.8% 50.8%; /* #5934CF */
-    --gold: 33.8 75.3% 28.6%; /* #805012 */
-    --clay: 5.7 52.0% 40.0%; /* #9B3B31 */
-    --sage: 157.6 49.6% 26.5%; /* #22654C */
-    --mint: 148.7 67.6% 86.7%; /* #C6F4DC */
-    --mint-foreground: 158.1 51.0% 20.0%; /* #194D3A */
-    --apricot: 28.9 100.0% 84.5%; /* #FFD6B0 */
-    --apricot-foreground: 26.8 60.3% 24.7%; /* #653B19 */
-    --map-water: 253.8 79.6% 90.4%; /* #DCD3FA */
-    --map-land: 252.0 100.0% 98.0%; /* #F7F5FF */
-    --map-park: 150.0 36.1% 85.9%; /* #CEE8DB */
+    --border: 204.0 9.8% 90.0%; /* #E3E6E8 */
+    --input: 205.7 6.1% 55.3%; /* #868E94 */
+    --ring: 219.9 68.2% 48.0%; /* #275FCE */
+    --gold: 38.5 76.8% 27.1%; /* #7A5410 */
+    --clay: 354.3 62.2% 43.5%; /* #B42A37 */
+    --sage: 129.8 40.4% 29.6%; /* #2D6A37 */
+    --mint: 136.4 45.8% 90.6%; /* #DCF2E2 */
+    --mint-foreground: 115.7 34.1% 16.1%; /* #1D371B */
+    --apricot: 32.6 66.0% 89.6%; /* #F6E6D3 */
+    --apricot-foreground: 30.0 55.2% 22.7%; /* #5A3A1A */
+    --map-water: 223.8 59.1% 91.4%; /* #DCE3F6 */
+    --map-land: 180.0 6.7% 97.1%; /* #F7F8F8 */
+    --map-park: 136.7 36.0% 90.2%; /* #DDEFE2 */
     --map-road: 0.0 0.0% 100.0%; /* #FFFFFF */
-    --map-road-casing: 265.0 31.6% 77.6%; /* #C3B4D8 */
-    --radius: 1.25rem;
-    --shadow-card: 0 3px 0 hsl(var(--border) / 0.65);
-    --shadow-float: 0 12px 36px -12px hsl(var(--foreground) / 0.22);
+    --map-road-casing: 213.3 12.0% 85.3%; /* #D5D9DE */
+    --radius: 1.5rem;
+    --shadow-card: 0 1px 2px hsl(var(--foreground) / 0.04), 0 10px 30px -18px hsl(var(--foreground) / 0.18);
+    --shadow-float: 0 18px 48px -20px hsl(var(--foreground) / 0.28);
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --background: 252.0 30.6% 9.6%; /* #141120 */
-      --foreground: 256.0 100.0% 97.1%; /* #F4F0FF */
-      --card: 254.3 28.0% 14.7%; /* #201B30 */
-      --card-foreground: 256.0 100.0% 97.1%; /* #F4F0FF */
-      --primary: 257.6 100.0% 83.3%; /* #C3AAFF */
-      --primary-foreground: 263.6 46.5% 13.9%; /* #201334 */
-      --muted: 257.5 24.5% 19.2%; /* #2C253D */
-      --muted-foreground: 260.0 25.0% 76.5%; /* #BEB4D2 */
-      --accent: 262.0 35.0% 22.9%; /* #35264F */
-      --accent-foreground: 260.0 100.0% 89.4%; /* #DBC9FF */
-      --destructive: 10.0 100.0% 82.4%; /* #FFB4A5 */
-      --destructive-foreground: 10.3 47.9% 14.3%; /* #361913 */
-      --border: 259.3 17.9% 30.6%; /* #49405C */
-      --input: 273.1 11.4% 50.0%; /* #81718E */
-      --ring: 257.6 100.0% 83.3%; /* #C3AAFF */
-      --gold: 38.4 84.7% 74.3%; /* #F5CD86 */
-      --clay: 10.0 100.0% 82.4%; /* #FFB4A5 */
-      --sage: 150.0 54.3% 72.5%; /* #93DFB9 */
-      --mint: 162.0 35.7% 22.0%; /* #244C40 */
-      --mint-foreground: 149.0 68.2% 82.7%; /* #B5F1D2 */
-      --apricot: 25.7 43.4% 22.2%; /* #513520 */
-      --apricot-foreground: 28.7 100.0% 86.5%; /* #FFDBBA */
-      --map-water: 262.9 32.7% 20.4%; /* #302345 */
-      --map-land: 249.5 24.7% 15.1%; /* #201D30 */
-      --map-park: 162.6 29.0% 21.0%; /* #26453C */
-      --map-road: 268.9 13.7% 38.6%; /* #625570 */
-      --map-road-casing: 257.1 29.2% 9.4%; /* #15111F */
+      --background: 210.0 10.5% 7.5%; /* #111315 */
+      --foreground: 200.0 8.6% 93.1%; /* #ECEEEF */
+      --card: 214.3 11.9% 11.6%; /* #1A1D21 */
+      --card-foreground: 200.0 8.6% 93.1%; /* #ECEEEF */
+      --primary: 221.2 100.0% 78.0%; /* #8FB2FF */
+      --primary-foreground: 222.7 63.4% 13.9%; /* #0D1A3A */
+      --muted: 210.0 10.5% 14.9%; /* #22262A */
+      --muted-foreground: 207.7 8.2% 68.8%; /* #A9B0B6 */
+      --accent: 231.2 32.7% 20.4%; /* #232845 */
+      --accent-foreground: 228.9 100.0% 89.4%; /* #C9D3FF */
+      --destructive: 3.4 100.0% 82.9%; /* #FFADA8 */
+      --destructive-foreground: 357.1 56.8% 14.5%; /* #3A1012 */
+      --border: 210.0 9.8% 20.0%; /* #2E3338 */
+      --input: 208.0 6.1% 48.0%; /* #737B82 */
+      --ring: 221.2 100.0% 78.0%; /* #8FB2FF */
+      --gold: 40.0 73.0% 71.0%; /* #EBC77F */
+      --clay: 3.4 100.0% 82.9%; /* #FFADA8 */
+      --sage: 133.7 47.9% 71.4%; /* #93D9A3 */
+      --mint: 140.0 30.3% 17.5%; /* #1F3A28 */
+      --mint-foreground: 134.3 53.5% 83.1%; /* #BDEBC8 */
+      --apricot: 29.2 38.1% 19.0%; /* #43301E */
+      --apricot-foreground: 31.4 79.7% 84.5%; /* #F7D9B8 */
+      --map-water: 221.5 30.2% 16.9%; /* #1E2638 */
+      --map-land: 210.0 12.0% 9.8%; /* #16191C */
+      --map-park: 144.7 22.7% 14.7%; /* #1D2E24 */
+      --map-road: 212.3 10.1% 25.3%; /* #3A4047 */
+      --map-road-casing: 210.0 12.5% 6.3%; /* #0E1012 */
+      --shadow-card: 0 1px 0 hsl(0 0% 100% / 0.04) inset, 0 10px 30px -18px hsl(0 0% 0% / 0.6);
     }
   }
 
@@ -82,8 +83,9 @@
   h2,
   h3 {
     text-wrap: balance;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
   }
+
 
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
@@ -96,14 +98,14 @@
 
 @layer components {
   .card {
-    @apply rounded-lg border border-border bg-card text-card-foreground;
+    @apply rounded-lg border border-border/70 bg-card text-card-foreground;
     box-shadow: var(--shadow-card);
   }
   .section-band {
-    @apply border-y border-border bg-accent/50;
+    @apply bg-muted;
   }
   .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.12em] text-primary;
+    @apply inline-flex w-fit items-center gap-1 rounded-full bg-foreground/[0.06] px-2.5 py-1 text-xs font-medium text-muted-foreground;
   }
 }
 
@@ -184,7 +186,7 @@
 .loot-legendary {
   border-color: hsl(var(--gold) / 0.7);
   border-top: 3px solid hsl(var(--gold));
-  box-shadow: 0 3px 0 hsl(var(--gold) / 0.2);
+  box-shadow: 0 10px 30px -18px hsl(var(--gold) / 0.5);
 }
 .loot-reveal {
   animation: loot-reveal 0.6s ease-out;
@@ -274,8 +276,7 @@ html.calm .loot-reveal {
   font-family: var(--font-body), sans-serif;
   font-size: 13px;
   line-height: 1.5;
-  box-shadow: 0 4px 0 hsl(var(--primary) / 0.2), var(--shadow-float);
-  border-bottom: 3px solid hsl(var(--primary));
+  box-shadow: var(--shadow-float);
   animation: drop-in 0.18s ease-out both;
 }
 .job-map-tip .maplibregl-popup-content span { color: hsl(var(--muted-foreground)); font-size: 12px; }
@@ -301,35 +302,54 @@ html.calm .job-map-tip .maplibregl-popup-content { animation: none; }
 
 /* Distinctive surfaces, built from CSS so they stay crisp at every size. */
 .hero-stage {
-  background: radial-gradient(ellipse at 85% 15%, hsl(var(--mint) / 0.65), transparent 45%),
-    radial-gradient(ellipse at 10% 90%, hsl(var(--accent)), transparent 50%);
+  position: relative;
+  overflow: hidden;
 }
+/* A soft, frosted glow behind the hero art */
+.hero-stage::before {
+  content: "";
+  position: absolute;
+  right: -10%;
+  top: 4%;
+  width: min(48rem, 70vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, hsl(var(--primary) / 0.16), hsl(var(--accent) / 0.55) 55%, transparent 100%);
+  filter: blur(24px);
+  pointer-events: none;
+}
+.hero-stage > * { position: relative; }
 .hero-mascot {
-  background: hsl(var(--accent));
-  border: 1px solid hsl(var(--primary) / 0.25);
-  border-radius: 45% 55% 58% 42% / 48% 40% 60% 52%;
-  box-shadow: 12px 12px 0 hsl(var(--mint));
+  border-radius: 2.5rem;
+  border: 1px solid hsl(var(--card) / 0.9);
+  background: linear-gradient(180deg, hsl(var(--card) / 0.85), hsl(var(--accent) / 0.7));
+  box-shadow: 0 40px 80px -40px hsl(var(--primary) / 0.45), inset 0 1px 0 hsl(var(--card));
+  backdrop-filter: blur(12px);
 }
 .hero-sticker {
-  border: 1px solid hsl(var(--input));
-  box-shadow: 3px 4px 0 hsl(var(--border));
+  border: 1px solid hsl(var(--border));
+  box-shadow: var(--shadow-card);
+}
+.search-tabs {
+  border-radius: 1.25rem;
+  background: hsl(var(--accent));
+  padding: 6px;
 }
 .interactive-card {
-  transition: border-color 180ms ease-out, box-shadow 180ms ease-out, transform 180ms ease-out;
+  transition: box-shadow 220ms ease-out, transform 220ms ease-out, background-color 220ms ease-out;
 }
 .interactive-card:hover, .interactive-card:focus-within {
-  border-color: hsl(var(--primary) / 0.65);
-  box-shadow: 0 5px 0 hsl(var(--primary) / 0.14);
+  box-shadow: var(--shadow-float);
 }
 @media (prefers-reduced-motion: no-preference) {
-  html:not(.calm) .interactive-card:hover { transform: translateY(-2px); }
-  html:not(.calm) .brand-button:active { transform: translateY(2px); box-shadow: none; }
+  html:not(.calm) .interactive-card:hover { transform: translateY(-3px); }
+  html:not(.calm) .brand-button:active { transform: scale(0.98); }
 }
-.quest-panel { border: 1px solid hsl(var(--primary) / 0.5); }
-.quest-header { background: linear-gradient(110deg, hsl(var(--accent)), hsl(var(--mint) / 0.65)); }
+.quest-panel { border: 1px solid hsl(var(--border)); }
+.quest-header { background: linear-gradient(110deg, hsl(var(--accent)), hsl(var(--mint) / 0.8)); }
 .quest-pick { border: 1px solid hsl(var(--border)); border-radius: 1rem; }
-.trophy-tile { box-shadow: 0 3px 0 hsl(var(--gold) / 0.18); }
-.game-surface { border: 2px solid hsl(var(--primary) / 0.4); box-shadow: 0 6px 0 hsl(var(--accent)); }
+.trophy-tile { box-shadow: var(--shadow-card); }
+.game-surface { border: 1px solid hsl(var(--border)); box-shadow: var(--shadow-float); }
 .maplibregl-ctrl-group { border-radius: 14px !important; overflow: hidden; box-shadow: var(--shadow-card) !important; }
 .maplibregl-ctrl-group button { width: 36px; height: 36px; }
 .maplibregl-ctrl button:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -3px; }
@@ -366,4 +386,71 @@ html.calm *, html.calm *::before, html.calm *::after {
     overflow-wrap: anywhere;
     font: 11pt/1.5 Arial, sans-serif;
   }
+}
+
+/* ───────────────────────── Scroll motion (see components/motion.tsx) ───────────────────────── */
+/* Content is only hidden once JS has run, motion is welcome and Calm mode is off, so it can never get stuck invisible. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.calm) [data-reveal] {
+    transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  html.js:not(.calm) [data-reveal]:not([data-in]) {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(24px);
+  }
+
+  html.js:not(.calm) [data-blur-words] > span {
+    display: inline-block;
+    white-space: pre;
+    transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out;
+    transition-delay: calc(var(--i) * 70ms);
+  }
+  html.js:not(.calm) [data-blur-words]:not([data-in]) > span {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(0.25em);
+  }
+
+  html.js:not(.calm) [data-scroll-fill] > span {
+    /* Each word fades from faint to full as --p (0 → 1) passes its position */
+    opacity: clamp(0.16, calc(var(--p, 0) * (var(--n) + 4) - var(--i)), 1);
+    transition: opacity 0.15s linear;
+  }
+
+  html:not(.calm) .hero-stage::before {
+    animation: hero-drift 14s ease-in-out infinite alternate;
+  }
+  html:not(.calm) .hero-mascot::after {
+    animation: hero-scan 5.5s ease-in-out infinite;
+  }
+}
+
+/* The eye's scan line: a soft band of light sweeping down the frosted card */
+.hero-mascot {
+  position: relative;
+  overflow: hidden;
+}
+.hero-mascot::after {
+  content: "";
+  position: absolute;
+  inset-inline: -10%;
+  top: 0;
+  height: 18%;
+  background: linear-gradient(180deg, transparent, hsl(var(--primary) / 0.22) 45%, hsl(var(--card) / 0.9) 50%, hsl(var(--primary) / 0.22) 55%, transparent);
+  filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes hero-scan {
+  0% { transform: translateY(-120%); opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateY(560%); opacity: 0; }
+}
+@keyframes hero-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-6%, 8%) scale(1.08); }
 }
