@@ -38,7 +38,7 @@ async function main() {
   for (let i = 0; i < todo.length; i += BATCH) {
     const batch = todo.slice(i, i + BATCH);
     try {
-      const reply = await complete(SYSTEM, batch.map((r, n) => `${n + 1}. ${r.name}`).join("\n"), 180_000, 8000);
+      const reply = await complete(SYSTEM, batch.map((r, n) => `${n + 1}. ${r.name}`).join("\n"), { timeoutMs: 180_000, maxTokens: 8000 });
       const parsed = lastJsonObject(reply);
       if (!parsed) throw new Error(`No JSON in reply: ${reply.slice(0, 200)}`);
       // Save as we go so a long run can be interrupted

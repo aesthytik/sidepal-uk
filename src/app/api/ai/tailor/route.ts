@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     .join("\n\n");
 
   try {
-    const parsed = lastJsonObject(await complete(SYSTEM, prompt, 25_000, 2500));
+    const parsed = lastJsonObject(await complete(SYSTEM, prompt, { timeoutMs: 25_000, maxTokens: 2500 }));
     if (!parsed) throw new Error("No JSON in reply");
     const result = {
       fit: str(parsed.fit, 600),
