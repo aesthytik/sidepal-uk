@@ -13,12 +13,12 @@ const TRAVEL_X = 9;
 const TRAVEL_Y = 4.5;
 const EYE_CENTRE = { x: 32, y: 34 };
 
-const INK = "#1A1A17";
-const PAPER = "#F6F3EC";
-const GREEN = "#1F5C4A";
-const IRIS = "#3E7E68";
-const CLAY = "#B5654A";
-const GOLD = "#B08D3C";
+const INK = "#242039";
+const PAPER = "#F8F7FF";
+const VIOLET = "#5934CF";
+const IRIS = "#C6F4DC";
+const CLAY = "#9B3B31";
+const GOLD = "#FFD6B0";
 
 const POKE_QUIPS = ["Ow!", "Hey!", "That's my eye!", "Rude.", "I'm watching you.", "Eye see you."];
 
@@ -232,7 +232,8 @@ export function Horus({
             <circle cx="32" cy="-10" r="2.5" fill={GOLD} />
           </g>
         )}
-        <rect x="0" y="4" width="64" height="64" rx="15" fill={GREEN} />
+        <rect x="0" y="4" width="64" height="64" rx="22" fill={VIOLET} />
+        <path d="M48 10v8m-4-4h8" stroke={GOLD} strokeWidth="2.5" strokeLinecap="round" />
         {!eyeOpen && (
           <>
             <ellipse cx="12" cy="46" rx="5" ry="3" fill={CLAY} opacity="0.45" />

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { Fraunces, Inter, Press_Start_2P } from "next/font/google";
+import { DM_Sans, Space_Grotesk, Press_Start_2P } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 import { ShortlistHydrator } from "@/components/ShortlistHydrator";
@@ -11,8 +11,8 @@ import { CookieBanner, CookieSettingsLink } from "@/components/CookieBanner";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE, SITE_DESCRIPTION, SITE_TITLE, pageMetadata } from "@/lib/seo";
 
-const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
-const fraunces = Fraunces({ subsets: ["latin"], display: "swap", variable: "--font-fraunces", axes: ["opsz", "SOFT"] });
+const body = DM_Sans({ subsets: ["latin"], display: "swap", variable: "--font-body" });
+const display = Space_Grotesk({ subsets: ["latin"], display: "swap", variable: "--font-display" });
 // Only used by the arcade-mode easter egg, so it isn't preloaded
 const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], display: "swap", preload: false, variable: "--font-pixel" });
 
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F6F3EC" },
-    { media: "(prefers-color-scheme: dark)", color: "#161513" },
+    { media: "(prefers-color-scheme: light)", color: "#F8F7FF" },
+    { media: "(prefers-color-scheme: dark)", color: "#141120" },
   ],
 };
 
@@ -54,12 +54,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className={`${inter.variable} ${fraunces.variable} ${pixel.variable} flex min-h-screen flex-col font-sans`}>
+      <body className={`${body.variable} ${display.variable} ${pixel.variable} flex min-h-screen flex-col font-sans`}>
         <ShortlistHydrator />
         <GameLayer />
         <Navigation />
         <div className="flex-1">{children}</div>
-        <footer className="mt-16 border-t border-border py-14 text-sm text-muted-foreground">
+        <footer className="mt-16 border-t border-border bg-muted/40 py-14 text-sm text-muted-foreground">
           <div className="container grid max-w-6xl gap-10 px-4 sm:grid-cols-[2fr_1fr_1fr]">
             <div>
               <p className="font-display text-3xl font-semibold text-foreground">Horus</p>

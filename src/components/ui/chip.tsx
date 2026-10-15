@@ -11,10 +11,10 @@ export function Chip({
       type="button"
       aria-pressed={selected}
       className={cn(
-        "inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-sm transition-colors",
+        "inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3 text-sm transition-colors",
         selected
-          ? "border-foreground bg-foreground text-background"
-          : "border-border bg-card hover:border-foreground/40",
+          ? "border-primary bg-primary text-primary-foreground shadow-button"
+          : "border-input bg-card hover:border-primary hover:bg-accent",
         className
       )}
       {...props}

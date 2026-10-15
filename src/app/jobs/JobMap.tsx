@@ -27,8 +27,8 @@ const LIMITS: LngLatBoundsLike = [[-16, 47], [8, 62]];
 const PLACE_ZOOM = 10; // Clusters break apart past zoom 9, so a selected place is always its own bubble
 
 // Bubble sizes grow with the square root of the job count, so area tracks jobs
-const CLUSTER_RADIUS: ExpressionSpecification = ["interpolate", ["linear"], ["sqrt", ["get", "jobs"]], 1, 15, 80, 48];
-const PLACE_RADIUS: ExpressionSpecification = ["interpolate", ["linear"], ["sqrt", ["get", "count"]], 1, 8, 80, 42];
+const CLUSTER_RADIUS: ExpressionSpecification = ["interpolate", ["linear"], ["sqrt", ["get", "jobs"]], 1, 22, 80, 50];
+const PLACE_RADIUS: ExpressionSpecification = ["interpolate", ["linear"], ["sqrt", ["get", "count"]], 1, 16, 80, 44];
 const ANY_RADIUS: ExpressionSpecification = ["case", ["has", "point_count"], CLUSTER_RADIUS, PLACE_RADIUS];
 const NOTHING: FilterSpecification = ["==", ["get", "id"], "__none__"];
 
@@ -101,7 +101,7 @@ export default function JobMap({ filters, onChange, children }: Props) {
     mapRef.current = map;
 
     const dark = window.matchMedia("(prefers-color-scheme: dark)");
-    const repaint = () => map.isStyleLoaded() && paint(map, selectedRef.current);
+    const repaint = () => { if (map.getLayer("job-places")) paint(map, selectedRef.current); };
     dark.addEventListener("change", repaint);
     return () => {
       dark.removeEventListener("change", repaint);
@@ -191,7 +191,7 @@ export default function JobMap({ filters, onChange, children }: Props) {
     wasSelected.current = selected;
   }, [selected, mapReady, calm]);
 
-  // A soft ring that pulses around whatever is hovered, on the map or in the list
+  // One brief bubble flourish on hover; Calm mode uses a static ring.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapReady) return;
@@ -208,12 +208,11 @@ export default function JobMap({ filters, onChange, children }: Props) {
       return;
     }
     return animate(
-      1300,
+      550,
       (t) => {
-        map.setPaintProperty("job-pulse", "circle-radius", ["*", ANY_RADIUS, 1 + 0.8 * t]);
-        map.setPaintProperty("job-pulse", "circle-opacity", 0.45 * (1 - t));
-      },
-      true
+        map.setPaintProperty("job-pulse", "circle-radius", ["*", ANY_RADIUS, 1.15 + 0.4 * t]);
+        map.setPaintProperty("job-pulse", "circle-opacity", 0.3 * (1 - t) + 0.1);
+      }
     );
   }, [hover, mapReady, calm]);
 
@@ -226,15 +225,15 @@ export default function JobMap({ filters, onChange, children }: Props) {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_20rem] xl:grid-cols-[1fr_22rem]">
-      <div className="card relative h-[55vh] min-h-[22rem] overflow-hidden p-0 lg:h-[72vh]">
+      <div className="card relative h-[55vh] border-2 border-primary/30 min-h-[22rem] overflow-hidden p-0 lg:h-[72vh]">
         <div ref={box} className="h-full w-full" aria-label="Map of UK jobs" role="region" />
         {(!mapReady || status === "loading") && (
-          <div className="pointer-events-none absolute left-3 top-3 rounded-md border bg-card/90 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur">
+          <div className="pointer-events-none absolute left-3 top-3 rounded-full border bg-card/95 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur">
             {mapReady ? "Updating…" : "Loading map…"}
           </div>
         )}
         {data && status === "ready" && (
-          <div className="pointer-events-none absolute bottom-3 left-3 rounded-md border bg-card/90 px-3 py-1.5 text-xs shadow-sm backdrop-blur">
+          <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-primary/30 bg-card/95 px-3 py-1.5 text-xs shadow-sm backdrop-blur">
             <span className="font-semibold tabular-nums">{(data.total - data.unplaced).toLocaleString()}</span> jobs in{" "}
             <span className="font-semibold tabular-nums">{data.places.length}</span> places
           </div>
@@ -244,7 +243,7 @@ export default function JobMap({ filters, onChange, children }: Props) {
       <aside className="card flex max-h-[72vh] min-h-[22rem] flex-col overflow-hidden p-0" aria-label="Places">
         {selected ? (
           <>
-            <div className="flex items-center gap-2 border-b px-4 py-3">
+            <div className="flex items-center gap-2 border-b bg-accent/60 px-4 py-4">
               <Button variant="ghost" size="sm" onClick={() => onChange({ place: undefined })} aria-label="Back to all places">
                 <ArrowLeftIcon />
               </Button>
@@ -258,8 +257,8 @@ export default function JobMap({ filters, onChange, children }: Props) {
           </>
         ) : (
           <>
-            <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
-              <h2 className="font-display text-lg font-semibold">Where the jobs are</h2>
+            <div className="flex items-center justify-between gap-2 border-b bg-accent/60 px-4 py-4">
+              <h2 className="font-display text-lg font-semibold">Find your next place</h2>
               <Segmented
                 label="Order places"
                 value={order}
@@ -350,7 +349,7 @@ function PlaceRow({
         onFocus={() => onHover?.(true)}
         onBlur={() => onHover?.(false)}
         className={cn(
-          "group relative flex w-full items-center gap-2 overflow-hidden rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent",
+          "group relative flex w-full items-center gap-2 overflow-hidden rounded-xl px-3 py-3 text-left text-sm transition-colors hover:bg-accent",
           active && "bg-accent"
         )}
       >
@@ -361,7 +360,7 @@ function PlaceRow({
         />
         {icon && <span className="relative">{icon}</span>}
         <span className="relative flex-1 truncate font-medium">{name}</span>
-        <span className="relative tabular-nums text-muted-foreground">{count.toLocaleString()}</span>
+        <span className="relative rounded-full bg-accent px-2 py-1 text-xs font-semibold tabular-nums text-accent-foreground">{count.toLocaleString()}</span>
       </button>
     </li>
   );
@@ -379,7 +378,7 @@ function Segmented<T extends string>({
   onChange: (value: T) => void;
 }) {
   return (
-    <div role="group" aria-label={label} className="inline-flex rounded-md border p-0.5 text-xs">
+    <div role="group" aria-label={label} className="inline-flex rounded-full border border-input bg-card p-0.5 text-xs">
       {options.map(([v, text]) => (
         <button
           key={v}
@@ -387,8 +386,8 @@ function Segmented<T extends string>({
           aria-pressed={value === v}
           onClick={() => onChange(v)}
           className={cn(
-            "rounded px-2 py-1 font-medium transition-colors",
-            value === v ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+            "rounded-full px-2 py-1.5 font-medium transition-colors",
+            value === v ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
           )}
         >
           {text}
@@ -428,6 +427,7 @@ function addJobLayers(map: MapLibre) {
     clusterMaxZoom: PLACE_ZOOM - 1,
     clusterProperties: { jobs: ["+", ["get", "count"]] },
   });
+  map.addLayer({ id: "job-shadow", type: "circle", source: "jobs", paint: { "circle-translate": [0, 4], "circle-opacity": 0.2 } });
   map.addLayer({ id: "job-pulse", type: "circle", source: "jobs", filter: NOTHING, paint: { "circle-opacity": 0 } });
   map.addLayer({ id: "job-clusters", type: "circle", source: "jobs", filter: ["has", "point_count"] });
   map.addLayer({
@@ -438,7 +438,7 @@ function addJobLayers(map: MapLibre) {
     layout: {
       "text-field": ["number-format", ["get", "jobs"], {}],
       "text-font": ["Noto Sans Bold"],
-      "text-size": 12,
+      "text-size": 13,
       "text-allow-overlap": true,
     },
   });
@@ -451,7 +451,7 @@ function addJobLayers(map: MapLibre) {
     layout: {
       "text-field": ["number-format", ["get", "count"], {}],
       "text-font": ["Noto Sans Bold"],
-      "text-size": 11,
+      "text-size": 12,
       "text-allow-overlap": true,
     },
   });
@@ -475,18 +475,26 @@ function palette() {
     primary: hsl("--primary"),
     onPrimary: hsl("--primary-foreground"),
     clay: hsl("--clay"),
-    sage: hsl("--sage", 0.12),
-    water: hsl("--accent"),
+    mint: hsl("--mint"),
+    onMint: hsl("--mint-foreground"),
+    apricot: hsl("--apricot"),
+    onApricot: hsl("--apricot-foreground"),
+    park: hsl("--map-park"),
+    water: hsl("--map-water"),
+    land: hsl("--map-land"),
+    road: hsl("--map-road"),
+    casing: hsl("--map-road-casing"),
   };
 }
 
 type Palette = ReturnType<typeof palette>;
 
-/** The open place turns clay with a thicker ring. */
+/** Apricot marks the open place; the matching sidebar heading also names it. */
 function highlight(map: MapLibre, c: Palette, selected: string | undefined) {
   const open: ExpressionSpecification = ["==", ["get", "id"], selected ?? ""];
-  map.setPaintProperty("job-places", "circle-color", ["case", open, c.clay, c.primary]);
-  map.setPaintProperty("job-places", "circle-stroke-width", ["case", open, 3, 1.5]);
+  map.setPaintProperty("job-places", "circle-color", ["case", open, c.apricot, c.mint]);
+  map.setPaintProperty("job-places", "circle-stroke-width", ["case", open, 4, 3]);
+  map.setPaintProperty("job-place-count", "text-color", ["case", open, c.onApricot, c.onMint]);
 }
 
 /** Recolours the base map and the job layers in the site's palette. */
@@ -502,30 +510,32 @@ function paint(map: MapLibre, selected: string | undefined) {
         // Not every layer has every property
       }
     };
-    if (type === "background") set("background-color", c.paper);
-    else if (id === "water") set("fill-color", c.water);
-    else if (type === "fill" && /park|wood|landcover/.test(id)) set("fill-color", c.sage);
-    else if (type === "fill") set("fill-color", c.muted);
-    else if (type === "line" && id.startsWith("water")) set("line-color", c.water);
-    else if (type === "line" && id.startsWith("boundary")) set("line-color", c.line);
-    else if (type === "line") set("line-color", c.border);
+    if (type === "background") set("background-color", c.land);
+    else if (type === "fill" && /water/.test(id)) set("fill-color", c.water);
+    else if (type === "fill" && /park|wood|landcover|landuse/.test(id)) set("fill-color", c.park);
+    else if (type === "fill") set("fill-color", /building/.test(id) ? c.border : c.land);
+    else if (type === "line" && /water/.test(id)) set("line-color", c.water);
+    else if (type === "line" && /boundary/.test(id)) set("line-color", c.line);
+    else if (type === "line") set("line-color", /casing|rail/.test(id) ? c.casing : c.road);
     else if (type === "symbol") {
-      set("text-color", c.faint);
-      set("text-halo-color", c.paper);
+      set("text-color", c.ink);
+      set("text-halo-color", c.land);
     }
   }
+  map.setPaintProperty("job-shadow", "circle-color", c.ink);
   map.setPaintProperty("job-clusters", "circle-color", c.primary);
-  map.setPaintProperty("job-clusters", "circle-opacity", 0.88);
-  map.setPaintProperty("job-clusters", "circle-stroke-color", c.paper);
-  map.setPaintProperty("job-clusters", "circle-stroke-width", 2);
-  map.setPaintProperty("job-places", "circle-opacity", 0.92);
-  map.setPaintProperty("job-places", "circle-stroke-color", c.paper);
+  map.setPaintProperty("job-clusters", "circle-opacity", 1);
+  map.setPaintProperty("job-clusters", "circle-stroke-color", c.card);
+  map.setPaintProperty("job-clusters", "circle-stroke-width", 3);
+  map.setPaintProperty("job-places", "circle-opacity", 1);
+  map.setPaintProperty("job-places", "circle-stroke-color", c.primary);
   map.setPaintProperty("job-pulse", "circle-color", c.primary);
-  for (const id of ["job-cluster-count", "job-place-count"]) map.setPaintProperty(id, "text-color", c.onPrimary);
+  map.setPaintProperty("job-cluster-count", "text-color", c.onPrimary);
   highlight(map, c, selected);
 }
 
 function setScale(map: MapLibre, s: number) {
+  map.setPaintProperty("job-shadow", "circle-radius", ["*", ANY_RADIUS, s]);
   map.setPaintProperty("job-clusters", "circle-radius", ["*", CLUSTER_RADIUS, s]);
   map.setPaintProperty("job-places", "circle-radius", ["*", PLACE_RADIUS, s]);
   const text = Math.max(0, Math.min(1, (s - 0.5) * 2));
