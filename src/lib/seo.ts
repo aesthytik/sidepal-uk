@@ -43,6 +43,7 @@ export function slug(text: string): string {
 }
 
 export const sponsorPath = (id: string) => `/sponsors/${id}`;
+export const SPONSOR_CHANGES_PATH = "/sponsors/new";
 export const placePath = (place: string) => `/visa-sponsors/${slug(place)}`;
 export const routePath = (route: string) => `/visa-routes/${slug(route)}`;
 export const rolePath = (roleId: string) => `/visa-sponsorship-jobs/${roleId}`;

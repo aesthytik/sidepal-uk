@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { directoryInfo, listPlaces, sponsorIdsInRange } from "@/lib/directory";
 import { allJobs, jobsInfo } from "@/lib/jobs";
-import { MIN_PLACE_SPONSORS, ROLE_IDS, SITE, jobPath, occupationPath, placePath, rolePath, routePath, sponsorPath } from "@/lib/seo";
+import { MIN_PLACE_SPONSORS, ROLE_IDS, SITE, SPONSOR_CHANGES_PATH, jobPath, occupationPath, placePath, rolePath, routePath, sponsorPath } from "@/lib/seo";
 import { OCCUPATIONS, SNAPSHOT_DATE } from "@/lib/soc";
 import { VISA_CATEGORIES } from "@/lib/sponsorTypes";
 import { JOBS_PER_SITEMAP, SPONSORS_PER_SITEMAP, sitemapIds } from "@/lib/sitemaps";
@@ -51,6 +51,7 @@ export default async function sitemap({ id }: { id: number | string }): Promise<
     { url: `${SITE}/`, changeFrequency: "daily", priority: 1, lastModified: jobsUpdated },
     { url: `${SITE}/jobs`, changeFrequency: "daily", priority: 0.9, lastModified: jobsUpdated },
     { url: `${SITE}/sponsors`, changeFrequency: "weekly", priority: 0.8, lastModified: registerUpdated },
+    { url: `${SITE}${SPONSOR_CHANGES_PATH}`, changeFrequency: "daily", priority: 0.8, lastModified: registerUpdated },
     { url: `${SITE}/visa-sponsorship-jobs`, changeFrequency: "daily", priority: 0.9, lastModified: jobsUpdated },
     ...ROLE_IDS.map((r) => ({ url: `${SITE}${rolePath(r)}`, changeFrequency: "daily" as const, priority: 0.9, lastModified: jobsUpdated })),
     { url: `${SITE}/visa-sponsors`, changeFrequency: "weekly", priority: 0.8, lastModified: registerUpdated },

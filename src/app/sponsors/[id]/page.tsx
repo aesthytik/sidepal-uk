@@ -5,9 +5,11 @@ import { JobCard } from "@/components/JobCard";
 import { JsonLd } from "@/components/JsonLd";
 import { Breadcrumbs, FaqList } from "@/components/seo";
 import { directoryInfo, getSponsor, listPlaces, searchSponsors } from "@/lib/directory";
+import { CHANGE_LABELS, changeDescription } from "@/lib/directory/changes";
+import { sponsorHistory } from "@/lib/directory/changeQueries";
 import { jobsForSponsor } from "@/lib/jobs";
 import { sectorLabel } from "@/lib/sectors/taxonomy";
-import { MIN_PLACE_SPONSORS, SITE, breadcrumbs, faq, formatDate, placePath, ratingSentence, routePath, slug, sponsorPath, pageMetadata } from "@/lib/seo";
+import { MIN_PLACE_SPONSORS, SITE, SPONSOR_CHANGES_PATH, breadcrumbs, faq, formatDate, placePath, ratingSentence, routePath, slug, sponsorPath, pageMetadata } from "@/lib/seo";
 import { SponsorLive } from "./SponsorLive";
 
 // Sponsor pages are rendered on first visit and cached for a day (the register updates daily)
@@ -38,10 +40,11 @@ export default async function SponsorPage({ params }: Params) {
   const sponsor = await getSponsor(id).catch(() => null);
   if (!sponsor) notFound();
 
-  const [info, jobs, places] = await Promise.all([
+  const [info, jobs, places, history] = await Promise.all([
     directoryInfo().catch(() => null),
     jobsForSponsor(sponsor.id).catch(() => []),
     listPlaces(MIN_PLACE_SPONSORS).catch(() => []),
+    sponsorHistory(sponsor.name).catch(() => null),
   ]);
   const city = sponsor.city || sponsor.county;
   const cityPage = places.find((p) => slug(p.place) === slug(city));
@@ -108,6 +111,7 @@ export default async function SponsorPage({ params }: Params) {
           ["Licence rating", sponsor.rating ? `${sponsor.rating}-rated` : "Not listed"],
           ["Sector (estimated)", sponsor.sector ? sectorLabel(sponsor.sector) : "Not known"],
           ["Register updated", updated ?? "Daily"],
+          ...(history?.licensedSince ? [["Licensed since (first seen)", formatDate(history.licensedSince.registerDate ?? history.licensedSince.observedAt)]] : []),
         ].map(([label, value]) => (
           <div key={label} className="bg-card p-4">
             <dt className="text-xs uppercase tracking-wider text-muted-foreground">{label}</dt>
@@ -125,6 +129,31 @@ export default async function SponsorPage({ params }: Params) {
           </dd>
         </div>
       </dl>
+
+      {history && history.items.length > 0 && (
+        <section className="mt-10" aria-labelledby="history">
+          <h2 id="history" className="font-display text-2xl font-semibold">Register history</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Changes observed in our daily register comparisons. First seen dates do not establish the original licence grant date.
+            Earlier history may not be available.
+          </p>
+          <ol className="mt-4 divide-y divide-border border-y border-border">
+            {history.items.map((change) => {
+              const date = change.registerDate ?? change.observedAt;
+              return (
+                <li key={change.id} className="py-3">
+                  <div className="flex flex-wrap justify-between gap-2 text-sm">
+                    <span className="font-medium">{CHANGE_LABELS[change.type]}</span>
+                    <time dateTime={date} className="text-muted-foreground">{formatDate(date)}</time>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">{changeDescription(change)}</p>
+                </li>
+              );
+            })}
+          </ol>
+          <Link href={SPONSOR_CHANGES_PATH} className="mt-4 inline-block text-sm text-primary hover:underline">All sponsor register changes →</Link>
+        </section>
+      )}
 
       <section className="mt-10" aria-labelledby="live">
         <h2 id="live" className="font-display text-2xl font-semibold">

@@ -26,6 +26,8 @@ your applications. Data comes from the GOV.UK
   set automatically (a week after applying, two days after an interview), shown when due, and downloadable as
   calendar events. Stored in the browser
 - Daily refresh of the register via `/api/update-sponsors` (Vercel cron, see `vercel.json`)
+- [Sponsor register changes](/sponsors/new): new listings, removals, rating and visa route changes,
+  filterable by location and change type, with observed licence dates and recent history on sponsor pages
 
 ## Development
 
@@ -52,6 +54,7 @@ To run it locally: `npx ts-node-script --transpile-only --compiler-options '{"mo
 | Module                 | Interface                                                                    |
 | ---------------------- | ---------------------------------------------------------------------------- |
 | `src/lib/directory/`   | `searchSponsors`, `getSponsors`, `suggestLocations`, `directoryInfo`, `refreshFromGovUk` |
+| `src/lib/directory/changes.ts` | Pure `diffSponsors(previous, current)` and `createChangeRecorder({ store })` for injected persistence; `changeQueries.ts` reads the feed and sponsor history |
 | `src/lib/enrichment/`  | `enrich(sponsors)` → website, careers page and job summary per sponsor. Built by `createEnricher({ store, http, resolves })` so tests inject a memory store and fake network |
 | `src/lib/useSponsorSearch.ts` | Search state, kept in the URL; load-more paging                      |
 | `src/lib/useEnrichment.ts`    | Batches `POST /api/enrich` for sponsors on screen                     |
@@ -86,3 +89,11 @@ The sitemap index at `/sitemap.xml` separates curated pages, sponsor slices and 
 
 After deployment, verify `https://horus.to` in Google Search Console and submit `sitemap.xml`.
 See [the SEO maintenance notes](docs/seo.md) for validation steps and data requirements.
+
+The register change feed needs `supabase/migrations/20261015120000_sponsor_register_changes.sql`
+before the next refresh. It adds public, read-only history and a service-role-only RPC that saves each
+refresh batch and its events together. The initial import into an empty directory establishes a baseline;
+it does not label all sponsors as newly licensed. Existing directories are compared from the first refresh
+after the migration. History uses organisation names, retains removed sponsors, and deduplicates retries
+of the same CSV. First-seen dates are observations, not original licence grant dates; name changes appear
+as a removal and a new listing because the register provides no stable organisation identifier.
