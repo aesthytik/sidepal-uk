@@ -1,49 +1,35 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { AskAi } from "@/components/AskAi";
 import { JsonLd } from "@/components/JsonLd";
 import { Marquee } from "@/components/Marquee";
-import { Button } from "@/components/ui/button";
-import { BriefcaseIcon, BookmarkIcon, SearchIcon, ShieldCheckIcon } from "@/components/ui/icons";
+import { ArrowChip, Button } from "@/components/ui/button";
+import { BookmarkIcon, FileTextIcon, MapIcon, MessageIcon, PoundIcon, SearchIcon, ShieldCheckIcon } from "@/components/ui/icons";
 import { directoryInfo } from "@/lib/directory";
 import { JobCard } from "@/components/JobCard";
 import { DailyQuest } from "@/components/DailyQuest";
 import { jobsInfo, searchJobs } from "@/lib/jobs";
 import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
-import { POPULAR_LOCATIONS } from "@/lib/sponsorTypes";
+import { POPULAR_LOCATIONS, VISA_CATEGORIES } from "@/lib/sponsorTypes";
 import { SITE, SITE_TITLE, SITE_DESCRIPTION, faq, pageMetadata, placePath, rolePath } from "@/lib/seo";
-import { Horus } from "@/components/game/Horus";
 import { StampRushLoader } from "@/components/game/StampRushLoader";
 import { THRESHOLDS } from "@/lib/eligibility/thresholds";
 import { OCCUPATIONS, occupationByCode } from "@/lib/soc";
-import { BlurWords, MorphWord, Reveal, ScrollFill } from "@/components/motion";
+import { Accordion, Carousel, Reveal, Tabs } from "@/components/motion";
+import { HeroScroll } from "@/components/HeroScroll";
 
 const fmt = (n: number) => `£${n.toLocaleString("en-GB")}`;
 const goingRate = (code: string) => occupationByCode(code)?.goingRate ?? THRESHOLDS.general;
+/** Points a `.eyebrow` or `.float-label` dot at one of the five colour families. */
+const dot = (family: string) => ({ "--dot": `var(--${family}-dot)` }) as CSSProperties;
 
 // Set here, not in the layout, so other pages never inherit the home page's canonical
 export const metadata: Metadata = pageMetadata({ title: SITE_TITLE, description: SITE_DESCRIPTION, path: "/" });
 
 // Re-render hourly so the sponsor count and register date stay current
 export const revalidate = 3600;
-
-const STEPS = [
-  {
-    icon: SearchIcon,
-    title: "Find a licensed sponsor",
-    body: "Search the official register by company, town or visa route. Every employer here can legally sponsor a work visa.",
-  },
-  {
-    icon: BriefcaseIcon,
-    title: "See their open roles",
-    body: "We find each company's careers page and, where they use Greenhouse, Lever, Ashby or Workable, list their live jobs, UK roles first.",
-  },
-  {
-    icon: BookmarkIcon,
-    title: "Track your applications",
-    body: "Shortlist sponsors and move them from Interested to Applied to Offer. Export to a spreadsheet any time.",
-  },
-];
 
 const FAQ = [
   {
@@ -59,6 +45,28 @@ const FAQ = [
     a: "The register lists legal company names, which can differ from the brand. Look up the legal name on Companies House and search for that.",
   },
 ];
+const FAQ_PHOTOS = ["/images/interview.webp", "/images/paperwork.webp", "/images/career-change.webp"];
+
+// Literal class names so Tailwind keeps them
+const HERO_LABELS = [
+  { text: "Licensed sponsors", family: "purple", tone: "bg-purple-soft text-purple-ink", pos: "-left-[9%] top-[9%]" },
+  { text: "Live jobs", family: "green", tone: "bg-green-soft text-green-ink", pos: "-right-[15%] top-[15%]" },
+  { text: "Salary check", family: "blue", tone: "bg-blue-soft text-blue-ink", pos: "-left-[22%] top-[45%]" },
+  { text: "Tailor my CV", family: "pink", tone: "bg-pink-soft text-pink-ink", pos: "-right-[6%] top-[52%]" },
+  { text: "Shortlist", family: "green", tone: "bg-green-soft text-green-ink", pos: "-left-[6%] bottom-[8%]" },
+  { text: "Interview prep", family: "amber", tone: "bg-amber-soft text-amber-ink", pos: "-right-[20%] bottom-[16%]" },
+];
+
+const PAINS = [
+  { text: "Most licensed sponsors aren't hiring right now", family: "green", tone: "bg-green-soft text-green-ink", photo: "/images/interview.webp", pos: "lg:left-[18%] lg:top-[4%]" },
+  { text: "Job ads rarely say whether they sponsor", family: "pink", tone: "bg-pink-soft text-pink-ink", photo: "/images/paperwork.webp", pos: "lg:right-[6%] lg:top-[12%]" },
+  { text: "Salary rules change with every occupation code", family: "blue", tone: "bg-blue-soft text-blue-ink", photo: null, pos: "lg:left-0 lg:top-[16%]" },
+  { text: "A cover letter rewritten for every single role", family: "purple", tone: "bg-purple-soft text-purple-ink", photo: "/images/smile.webp", pos: "lg:bottom-[14%] lg:left-[6%]" },
+  { text: "Applications scattered across fifty open tabs", family: "amber", tone: "bg-amber-soft text-amber-ink", photo: "/images/tech.webp", pos: "lg:bottom-[22%] lg:left-[44%]" },
+  { text: "Moving country is hard enough already", family: "green", tone: "bg-green-soft text-green-ink", photo: "/images/travel.webp", pos: "lg:bottom-[6%] lg:right-0" },
+];
+
+const ROLE_TONES = ["bg-green-dot", "bg-pink-dot", "bg-blue-dot", "bg-amber-dot", "bg-purple-dot"];
 
 async function getStats() {
   try {
@@ -75,14 +83,92 @@ async function getStats() {
   }
 }
 
+function Checklist({ items, className }: { items: string[]; className?: string }) {
+  return (
+    <ul className={`rounded-[12px] border border-border bg-white p-3 text-[13px] shadow-float ${className ?? ""}`}>
+      {items.map((item) => (
+        <li key={item} className="flex items-center gap-2 py-1">
+          <span aria-hidden="true" className="inline-flex size-4 items-center justify-center rounded-full bg-green-dot text-[10px] text-primary">
+            ✓
+          </span>
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default async function Home() {
   const { count, jobCount, date } = await getStats();
   const latestJobs = (await searchJobs({ limit: 6 }).catch(() => null))?.items ?? [];
   const countLabel = count ? count.toLocaleString("en-GB") : "120,000+";
 
+  const audiences = [
+    {
+      id: "graduates",
+      label: "Graduates",
+      photo: "/images/graduates.webp",
+      alt: "Students working together on laptops",
+      title: "Moving on from the Graduate visa",
+      body: "Find employers that already sponsor entry-level roles, and check the lower new-entrant salary rate that may apply to you.",
+      href: "/jobs",
+      cta: "Browse entry-level friendly jobs",
+    },
+    {
+      id: "skilled",
+      label: "Skilled workers",
+      photo: "/images/skilled-workers.webp",
+      alt: "Colleagues celebrating in an office",
+      title: "Switching sponsor, or coming from abroad",
+      body: "Search every licensed employer by town, route and rating, and see which of them have live roles today.",
+      href: "/sponsors",
+      cta: "Search licensed sponsors",
+    },
+    {
+      id: "health",
+      label: "Healthcare",
+      photo: "/images/healthcare.webp",
+      alt: "Doctor in a white coat",
+      title: "Nurses, carers and clinicians",
+      body: "Health and care roles have their own salary rules and some of the most active sponsors. Start with the jobs that are open now.",
+      href: rolePath("health"),
+      cta: "See nursing and care jobs",
+    },
+    {
+      id: "tech",
+      label: "Tech",
+      photo: "/images/tech.webp",
+      alt: "A team writing code together",
+      title: "Engineers, data and product people",
+      body: `A software developer needs at least ${fmt(goingRate("2134"))}. Filter by role and see which tech sponsors are hiring.`,
+      href: rolePath("software"),
+      cta: "See software jobs",
+    },
+    {
+      id: "changers",
+      label: "Career changers",
+      photo: "/images/career-change.webp",
+      alt: "A team meeting in an open-plan office",
+      title: "Trying a new field",
+      body: "Every occupation code has its own going rate. Check what your new role needs to pay before you apply.",
+      href: "/visa-salary-checker",
+      cta: "Check a salary",
+    },
+  ];
+
+  const tools = [
+    { id: "sponsors", title: "Sponsor search", summary: "Every employer on the Home Office register, searchable.", icon: <SearchIcon />, chip: "bg-pink-dot", body: "Filter by town, visa route and A or B rating. Each sponsor page shows its live jobs and careers page.", href: "/sponsors", cta: "Search sponsors" },
+    { id: "map", title: "Jobs map", summary: "See where licensed sponsors are hiring.", icon: <MapIcon />, chip: "bg-green-dot", body: `${jobCount > 0 ? jobCount.toLocaleString("en-GB") : "Thousands of"} live roles from licensed sponsors, grouped by place so you can see where the work is.`, href: "/jobs?view=map", cta: "Open the map" },
+    { id: "salary", title: "Salary checker", summary: "Is the pay high enough to sponsor you?", icon: <PoundIcon />, chip: "bg-blue-dot", body: `Official going rates for all ${OCCUPATIONS.length} occupation codes, including new-entrant rates.`, href: "/visa-salary-checker", cta: "Check a salary" },
+    { id: "tailor", title: "Tailor my CV", summary: "Match your CV to the job ad's own words.", icon: <FileTextIcon />, chip: "bg-amber-dot", body: "See which keywords your CV already covers and draft bullets and a cover letter that are upfront about sponsorship.", href: "/jobs?sort=match", cta: "Find a job to tailor" },
+    { id: "prep", title: "Interview prep", summary: "Likely questions for the role in front of you.", icon: <MessageIcon />, chip: "bg-purple-dot", body: "Get questions, talking points and sponsorship answers for a specific job, ready to print.", href: "/jobs", cta: "Pick a job" },
+    { id: "shortlist", title: "Shortlist tracker", summary: "From interested to offer, in one list.", icon: <BookmarkIcon />, chip: "bg-green-dot", body: "Save sponsors and jobs, move them through each stage and export to a spreadsheet any time.", href: "/saved", cta: "Open my shortlist" },
+  ];
+
   return (
     <main>
-      <JsonLd data={[
+      <JsonLd
+        data={[
           {
             "@context": "https://schema.org",
             "@type": "WebSite",
@@ -94,342 +180,387 @@ export default async function Home() {
             publisher: { "@id": `${SITE}/#organization` },
           },
           faq(FAQ),
-        ]} />
+        ]}
+      />
 
-      <section className="hero-stage">
-        <div className="reveal container max-w-6xl px-4 pb-16 pt-12 sm:pb-24 sm:pt-24">
-          <div className="grid items-center gap-12 lg:grid-cols-[1fr_20rem]">
-            <div className="max-w-3xl">
-              <p className="inline-flex items-center gap-2 rounded-full bg-mint px-3 py-1.5 text-xs font-medium text-mint-foreground">
-                <ShieldCheckIcon className="text-sage" />
-                Official Home Office data{date && ` · updated ${date}`}
+      <HeroScroll
+        intro={
+          <div className="container max-w-6xl px-4 pt-8 text-center sm:pt-10">
+            <div data-hero-copy="">
+              <p className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
+                <ShieldCheckIcon /> Official Home Office data{date && ` · updated ${date}`}
               </p>
-              <h1 className="mt-7 font-display text-[3.25rem] leading-[0.95] tracking-[-0.015em] sm:text-7xl xl:text-[5.25rem]">
-                <BlurWords text="Big plans." />
-                <br />
-                <span className="text-muted-foreground">
-                  Clear next <MorphWord words={["steps.", "moves.", "goals."]} />
-                </span>
+              <h1 className="mx-auto mt-5 max-w-4xl font-display text-[2.5rem] leading-[1.12] tracking-[-0.02em] sm:text-[52px] sm:leading-[1.15]">
+                Find UK employers that can sponsor your visa
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-                Find UK employers that can sponsor your work visa. Search {countLabel} licensed sponsors, see who&apos;s hiring, and build your next chapter, one application at a time.
+              <p className="mx-auto mt-4 max-w-2xl">
+                Search {countLabel} licensed sponsors, see who&apos;s hiring right now, check the salary you need and track every application in one place.
               </p>
-
-              <div className="search-tabs mt-10 max-w-xl">
-                <p className="flex items-center gap-2 px-3 pb-2 pt-1.5 text-sm font-medium text-accent-foreground">
-                  Search {countLabel} sponsors
-                  <span className="rounded-md bg-card/80 px-1.5 py-0.5 text-xs text-primary">Free</span>
-                </p>
-                <form action="/sponsors" className="flex items-center gap-2 rounded-[0.9rem] bg-card p-1.5 shadow-card">
-                  <label className="relative min-w-0 flex-1">
-                    <span className="sr-only">Company name</span>
-                    <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" width={18} height={18} />
-                    <input
-                      name="q"
-                      type="search"
-                      placeholder="Company name, e.g. Deliveroo"
-                      className="h-11 w-full bg-transparent pl-10 pr-3 text-base outline-none"
-                    />
-                  </label>
-                  <Button type="submit" variant="brand">Search</Button>
-                </form>
+              <div className="mt-7 flex flex-wrap justify-center gap-4">
+                <Button asChild size="lg">
+                  <Link href="/sponsors">
+                    Search sponsors <ArrowChip />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/jobs">Browse jobs</Link>
+                </Button>
               </div>
-
-              <AskAi className="mt-3 max-w-xl text-left" />
-
-              <dl className="mt-8 grid max-w-xl gap-3 text-sm">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-                  <dt className="w-14 text-muted-foreground">Places</dt>
-                  {POPULAR_LOCATIONS.slice(0, 6).map((place) => (
-                    <dd key={place}>
-                      <Link
-                        href={placePath(place)}
-                        className="underline decoration-border underline-offset-4 hover:decoration-foreground"
-                      >
-                        {place}
-                      </Link>
-                    </dd>
-                  ))}
-                </div>
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-                  <dt className="w-14 text-muted-foreground">Roles</dt>
-                  {ROLE_FAMILIES.slice(0, 6).map(({ id, label }) => (
-                    <dd key={id}>
-                      <Link
-                        href={rolePath(id)}
-                        className="underline decoration-border underline-offset-4 hover:decoration-foreground"
-                      >
-                        {label}
-                      </Link>
-                    </dd>
-                  ))}
-                </div>
-              </dl>
             </div>
-            <div className="relative hidden py-10 lg:block">
-              <div className="hero-mascot flex aspect-square items-center justify-center">
-                <Horus size={180} />
+            <div className="relative mx-auto mt-10 max-w-[710px]">
+              <div data-hero-photo="" className="relative aspect-[710/365] overflow-hidden rounded-[20px]">
+                <Image
+                  src="/images/hero-london.webp"
+                  alt="Aerial view of London and the River Thames"
+                  fill
+                  priority
+                  sizes="(min-width: 768px) 710px, 100vw"
+                  className="object-cover"
+                />
               </div>
-              <span className="hero-sticker absolute -left-6 top-2 rounded-full bg-card px-4 py-2 text-sm font-medium">Big moves start small.</span>
-              <span className="hero-sticker absolute -right-3 bottom-2 rounded-full bg-mint px-4 py-2 text-sm font-medium text-mint-foreground">Your next chapter</span>
+              {HERO_LABELS.map((l) => (
+                <span key={l.text} data-hero-label="" className={`float-label absolute hidden md:inline-flex ${l.tone} ${l.pos}`} style={dot(l.family)}>
+                  {l.text}
+                </span>
+              ))}
             </div>
           </div>
+        }
+        statement={
+          <div className="container relative flex max-w-6xl flex-col items-center justify-center px-4 py-20 lg:h-full lg:py-0">
+            <h2 className="max-w-3xl text-center font-display text-[2rem] leading-[1.2] sm:text-[40px]">
+              We turn a {countLabel}-name register into a short list of employers worth applying to.
+            </h2>
+            <ul className="mt-10 grid w-full gap-3 sm:grid-cols-2 lg:contents">
+              {PAINS.map((p) => (
+                <li key={p.text} data-pain="" className={`flex items-center gap-3 lg:absolute ${p.pos}`}>
+                  {p.photo && (
+                    <span className="relative size-[76px] shrink-0 overflow-hidden rounded-[12px]">
+                      <Image src={p.photo} alt="" fill sizes="76px" className="object-cover" />
+                    </span>
+                  )}
+                  <span className={`float-label max-w-[16rem] items-start rounded-[12px] px-4 py-4 leading-snug ${p.tone}`} style={dot(p.family)}>
+                    {p.text}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        }
+      />
 
-          <div className="mt-16 grid gap-4 text-left sm:grid-cols-3">
-            {[
-              {
-                href: "/jobs",
-                eyebrow: "Ready to apply",
-                title: "Explore open roles",
-                body: jobCount > 0 ? `${jobCount.toLocaleString("en-GB")} live roles, newest first.` : "Live roles from licensed sponsors.",
-                cta: "Browse jobs",
-                tone: "bg-mint text-mint-foreground",
-              },
-              { href: "/sponsors", eyebrow: "Looking for a sponsor", title: "Browse licensed employers", body: "Filter by town, visa route and rating.", cta: "Find sponsors", tone: "bg-accent text-accent-foreground" },
-              { href: "/saved", eyebrow: "Already applying", title: "Track your applications", body: "Save jobs and sponsors, and get reminded when to follow up.", cta: "Open tracker", tone: "bg-muted text-foreground" },
-            ].map((c, i) => (
-              <Reveal key={c.href} delay={i * 120} className="flex">
-                <Link href={c.href} className={`interactive-card group flex min-h-[17rem] w-full flex-col rounded-[1.75rem] p-7 ${c.tone}`}>
-                  <p className="eyebrow">
-                    <span className="tabular-nums">0{i + 1}</span> · {c.eyebrow}
-                  </p>
-                  <h2 className="mt-auto pt-10 font-display text-[2rem] leading-tight">{c.title}</h2>
-                  <p className="mt-2 opacity-80">{c.body}</p>
-                  <p className="mt-5 text-sm font-medium">
-                    <span className="underline decoration-current/30 underline-offset-4 group-hover:decoration-current">{c.cta}</span> →
-                  </p>
-                </Link>
-              </Reveal>
+      <section className="border-t border-border" aria-label="Horus in numbers">
+        <dl className="container grid max-w-6xl grid-cols-2 gap-y-8 px-4 py-10 text-center lg:grid-cols-4">
+          {[
+            { value: countLabel, label: "licensed sponsors" },
+            { value: jobCount > 0 ? jobCount.toLocaleString("en-GB") : "1,000s", label: "live jobs" },
+            { value: String(OCCUPATIONS.length), label: "occupation going rates" },
+            { value: String(VISA_CATEGORIES.length), label: "visa routes covered" },
+          ].map((s, i) => (
+            <Reveal key={s.label} delay={i * 80}>
+              <dt className="sr-only">{s.label}</dt>
+              <dd className="font-display text-[44px] font-medium leading-none tracking-[-0.03em] tabular-nums sm:text-[64px]">{s.value}</dd>
+              <dd className="mt-2 text-[17px]">{s.label}</dd>
+            </Reveal>
+          ))}
+        </dl>
+      </section>
+
+      <section className="container max-w-6xl px-4 pt-16" aria-labelledby="lookup">
+        <Reveal className="rounded-[20px] bg-accent p-6 sm:p-10">
+          <p className="eyebrow">Search</p>
+          <h2 id="lookup" className="mt-4 font-display text-[32px] leading-tight">
+            Look up any employer
+          </h2>
+          <form action="/sponsors" className="mt-6 flex max-w-2xl items-center gap-2 rounded-[14px] border border-border bg-white p-1.5">
+            <label className="relative min-w-0 flex-1">
+              <span className="sr-only">Company name</span>
+              <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" width={18} height={18} />
+              <input name="q" type="search" placeholder="Company name, e.g. Deliveroo" className="h-11 w-full bg-transparent pl-10 pr-3 text-base outline-none" />
+            </label>
+            <Button type="submit">Search</Button>
+          </form>
+          <AskAi className="mt-3 max-w-2xl" />
+          <div className="mt-6 flex flex-wrap gap-2 text-sm">
+            {POPULAR_LOCATIONS.slice(0, 6).map((place) => (
+              <Link key={place} href={placePath(place)} className="rounded-[10px] bg-white px-3 py-1.5 hover:bg-primary hover:text-primary-foreground">
+                {place}
+              </Link>
             ))}
           </div>
-          <DailyQuest className="mt-10" />
-        </div>
-      </section>
-
-      <section className="container max-w-6xl px-4 pb-6 pt-12" aria-labelledby="salary-check">
-        <Reveal className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-          <div>
-            <p className="eyebrow">New · Visa salary checker</p>
-            <h2 id="salary-check" className="mt-3 font-display text-3xl sm:text-4xl">
-              Is the salary high enough <span className="text-muted-foreground">to sponsor you?</span>
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Each job has its own going rate, not just the {fmt(THRESHOLDS.general)} minimum. A software developer needs {fmt(goingRate("2134"))},
-              a civil engineer {fmt(goingRate("2121"))}. Check yours in seconds, including new-entrant rates.
-            </p>
-          </div>
-          <form action="/visa-salary-checker" className="grid gap-3 sm:grid-cols-[1.4fr_1fr_auto] sm:items-end">
-            <label className="block space-y-1.5">
-              <span className="text-sm font-medium">Job title</span>
-              <input
-                name="title"
-                required
-                placeholder="e.g. Data engineer"
-                className="h-11 w-full rounded-md border border-input bg-card px-3 text-base outline-none focus:border-foreground/40"
-              />
-            </label>
-            <label className="block space-y-1.5">
-              <span className="text-sm font-medium">Salary (£ a year)</span>
-              <input
-                name="salary"
-                inputMode="numeric"
-                placeholder="Optional"
-                className="h-11 w-full rounded-md border border-input bg-card px-3 text-base outline-none focus:border-foreground/40"
-              />
-            </label>
-            <Button type="submit" size="lg">
-              Check
-            </Button>
-            <p className="text-xs text-muted-foreground sm:col-span-3">
-              Uses the official going rates for all {OCCUPATIONS.length} occupation codes.{" "}
-              <Link href="/visa-salary-checker" className="underline underline-offset-2 hover:text-foreground">
-                Browse all rates
-              </Link>
-            </p>
-          </form>
+          <DailyQuest className="mt-8" />
         </Reveal>
       </section>
 
-      <section className="container max-w-6xl px-4 pb-20" aria-labelledby="tailor">
-        <Reveal className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-          <div>
-            <p className="eyebrow">New · Tailor my application</p>
-            <h2 id="tailor" className="mt-3 font-display text-3xl sm:text-4xl">
-              Fit your CV to the job <span className="text-muted-foreground">in seconds.</span>
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Pick any job and Horus reads the full ad, shows which of its keywords your CV already covers, and drafts CV bullets and a cover
-              letter in the employer&apos;s own words, upfront about needing sponsorship.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <Button asChild size="lg">
-                <Link href="/jobs?sort=match">Find a job to tailor</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/profile">Add your CV</Link>
-              </Button>
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              The keyword check runs in your browser. AI only runs when you ask, and nothing is stored.
-            </p>
-          </div>
-
-          <ol className="space-y-3 text-sm" aria-label="How it works">
-            <li className="rounded-lg border border-border bg-background p-4">
-              <p className="font-medium">
-                <span className="tabular-nums text-muted-foreground">1</span> · Reads the whole job ad
-              </p>
-              <p className="mt-1 text-muted-foreground">Straight from the company&apos;s job board, not just the preview.</p>
-            </li>
-            <li className="rounded-lg border border-border bg-background p-4">
-              <p className="font-medium">
-                <span className="tabular-nums text-muted-foreground">2</span> · Checks your keywords
-              </p>
-              <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Example keyword check">
-                {["Python", "AWS", "PostgreSQL"].map((k) => (
-                  <li key={k} className="rounded-md bg-sage/10 px-2 py-0.5 text-sage">
-                    ✓ {k}
-                  </li>
-                ))}
-                {["Kafka", "Go"].map((k) => (
-                  <li key={k} className="rounded-md bg-clay/10 px-2 py-0.5 text-clay">
-                    {k}
-                  </li>
-                ))}
-              </ul>
-            </li>
-            <li className="rounded-lg border border-border bg-background p-4">
-              <p className="font-medium">
-                <span className="tabular-nums text-muted-foreground">3</span> · Drafts bullets and a cover letter
-              </p>
-              <p className="mt-2 border-l-2 border-primary/40 pl-3 italic text-muted-foreground">
-                &ldquo;Reduced chargeback losses by 18% by building rule-based fraud checks into payment flows.&rdquo;
-              </p>
-            </li>
-          </ol>
-        </Reveal>
-      </section>
-
-      <section className="section-band py-24 sm:py-32" aria-labelledby="why-horus">
-        <div className="container grid max-w-6xl gap-10 px-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <h2 id="why-horus" className="font-display text-5xl leading-[1.02] sm:text-6xl lg:sticky lg:top-32 lg:self-start">
-            <BlurWords text="A list of licences isn't a job search." />
+      <section className="container grid max-w-6xl items-center gap-12 px-4 py-24 lg:grid-cols-2" aria-labelledby="salary-check">
+        <Reveal>
+          <p className="eyebrow">Salary check</p>
+          <h2 id="salary-check" className="mt-5 font-display text-[2.25rem] leading-[1.15] sm:text-[52px]">
+            Is the salary high enough to sponsor you?
           </h2>
-          <div className="space-y-8">
-            <ScrollFill
-              className="text-2xl leading-snug sm:text-[2rem]"
-              text={`The register names ${countLabel} employers. It doesn't say which of them are hiring, which roles pay enough to sponsor you, or where to start.`}
-            />
-            <ScrollFill
-              className="text-2xl leading-snug sm:text-[2rem]"
-              text="So you end up with a spreadsheet, fifty open tabs and a cover letter you've rewritten for the tenth time."
-            />
-            <ScrollFill
-              className="text-2xl leading-snug sm:text-[2rem]"
-              text="Horus does the sorting. Your energy goes into the applications that can actually go somewhere."
-            />
+          <p className="mt-5">
+            Each job has its own going rate, not just the {fmt(THRESHOLDS.general)} minimum. A software developer needs {fmt(goingRate("2134"))}, a civil
+            engineer {fmt(goingRate("2121"))}.
+          </p>
+          <p className="mt-3">Check yours in seconds, including the lower new-entrant rates for graduates and people under 26.</p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button asChild size="lg">
+              <Link href="/visa-salary-checker">
+                Check a salary <ArrowChip />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/guide/visa-basics">Read the visa guide</Link>
+            </Button>
           </div>
+        </Reveal>
+        <Reveal delay={120} className="relative">
+          <div className="rounded-[20px] bg-green-dot pl-12 pt-12">
+            <form action="/visa-salary-checker" className="space-y-4 rounded-tl-[16px] bg-white p-6">
+              <p className="font-display text-xl">Visa salary checker</p>
+              <label className="block space-y-1.5">
+                <span className="text-sm font-medium">Job title</span>
+                <input name="title" required placeholder="e.g. Data engineer" className="h-11 w-full rounded-[10px] border border-input px-3 outline-none focus:border-primary" />
+              </label>
+              <label className="block space-y-1.5">
+                <span className="text-sm font-medium">Salary (£ a year)</span>
+                <input name="salary" inputMode="numeric" placeholder="Optional" className="h-11 w-full rounded-[10px] border border-input px-3 outline-none focus:border-primary" />
+              </label>
+              <Button type="submit" className="w-full">
+                Check
+              </Button>
+            </form>
+          </div>
+          <Checklist items={["Official going rates", "New-entrant rates", `All ${OCCUPATIONS.length} codes`]} className="absolute -left-6 top-1/3 hidden sm:block" />
+        </Reveal>
+      </section>
+
+      <section className="container grid max-w-6xl items-center gap-12 px-4 pb-24 lg:grid-cols-2" aria-labelledby="tailor">
+        <Reveal className="relative order-2 lg:order-1">
+          <div className="rounded-[20px] bg-pink-dot pr-12 pt-12">
+            <ol className="space-y-3 rounded-tr-[16px] bg-white p-6 text-sm" aria-label="How tailoring works">
+              <li className="rounded-[12px] bg-muted p-4">
+                <p className="font-medium">1 · Reads the whole job ad</p>
+                <p className="mt-1 text-muted-foreground">Straight from the company&apos;s job board, not just the preview.</p>
+              </li>
+              <li className="rounded-[12px] bg-muted p-4">
+                <p className="font-medium">2 · Checks your keywords</p>
+                <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Example keyword check">
+                  {["Python", "AWS", "PostgreSQL"].map((k) => (
+                    <li key={k} className="rounded-[8px] bg-green-soft px-2 py-0.5 text-green-ink">
+                      ✓ {k}
+                    </li>
+                  ))}
+                  {["Kafka", "Go"].map((k) => (
+                    <li key={k} className="rounded-[8px] bg-pink-soft px-2 py-0.5 text-pink-ink">
+                      {k}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              <li className="rounded-[12px] bg-muted p-4">
+                <p className="font-medium">3 · Drafts bullets and a cover letter</p>
+                <p className="mt-2 border-l-2 border-pink-dot pl-3 italic text-muted-foreground">
+                  &ldquo;Reduced chargeback losses by 18% by building rule-based fraud checks into payment flows.&rdquo;
+                </p>
+              </li>
+            </ol>
+          </div>
+          <span className="float-label absolute -right-4 top-8 hidden bg-pink-soft text-pink-ink sm:inline-flex" style={dot("pink")}>
+            Your CV
+          </span>
+        </Reveal>
+        <Reveal delay={120} className="order-1 lg:order-2">
+          <p className="eyebrow" style={dot("pink")}>
+            Tailor my application
+          </p>
+          <h2 id="tailor" className="mt-5 font-display text-[2.25rem] leading-[1.15] sm:text-[52px]">
+            Fit your CV to the job in seconds
+          </h2>
+          <ul className="mt-6 list-disc space-y-2 pl-5">
+            <li>Reads the full ad from the employer&apos;s own job board</li>
+            <li>Shows which keywords your CV already covers</li>
+            <li>Drafts bullets and a cover letter in the employer&apos;s words</li>
+            <li>Upfront about needing sponsorship</li>
+            <li>The keyword check runs in your browser; nothing is stored</li>
+          </ul>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button asChild size="lg">
+              <Link href="/jobs?sort=match">
+                Find a job to tailor <ArrowChip />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/profile">Add your CV</Link>
+            </Button>
+          </div>
+        </Reveal>
+      </section>
+
+      <section className="bg-primary py-24 text-white" aria-labelledby="hiring">
+        <div className="container max-w-6xl px-4">
+          <Reveal as="h2" className="mx-auto max-w-4xl text-center font-display text-[2.25rem] leading-[1.15] sm:text-[52px]">
+            <span id="hiring">Licensed sponsors hiring across the UK</span>
+          </Reveal>
+        </div>
+        <div className="mt-12">
+          <Marquee items={POPULAR_LOCATIONS} itemClassName="text-[26px] text-white/85" />
+        </div>
+        <div className="container mt-16 max-w-6xl px-4">
+          <Carousel label="Good to know" counter>
+            {FAQ.map((item, i) => (
+              <div key={item.q} className="grid w-[calc(min(72rem,100vw)-2rem)] gap-8 sm:grid-cols-[15rem_1fr] sm:items-center">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-[15px]">
+                  <Image src={FAQ_PHOTOS[i]} alt="" fill sizes="240px" className="object-cover" />
+                </div>
+                <div>
+                  <p className="eyebrow text-white" style={dot("green")}>
+                    Good to know
+                  </p>
+                  <p className="mt-5 font-display text-[1.75rem] leading-[1.25] sm:text-[36px]">{item.q}</p>
+                  <p className="mt-5 max-w-2xl text-white/85">{item.a}</p>
+                </div>
+              </div>
+            ))}
+          </Carousel>
         </div>
       </section>
 
-      <section className="section-band py-16">
-        <div className="container flex max-w-6xl flex-wrap items-end justify-between gap-6 px-4">
-          <div>
-            <Reveal as="p" className="font-display text-7xl tabular-nums tracking-[-0.02em] sm:text-8xl">{countLabel}</Reveal>
-            <p className="mt-2 text-muted-foreground">licensed sponsors on the register</p>
-          </div>
+      <section className="container max-w-6xl px-4 py-24" aria-labelledby="who">
+        <Reveal className="text-center">
+          <p className="eyebrow mx-auto" style={dot("pink")}>
+            Who it&apos;s for
+          </p>
+          <h2 id="who" className="mt-5 font-display text-[2.25rem] leading-[1.15] sm:text-[52px]">
+            Built for people moving their career to the UK
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl">Wherever you&apos;re starting from, Horus shows you the employers that can actually take you on.</p>
+        </Reveal>
+        <div className="mt-14">
+          <Tabs
+            label="Who Horus is for"
+            items={audiences.map((a) => ({
+              id: a.id,
+              label: a.label,
+              content: (
+                <div className="grid gap-10 md:grid-cols-[1.1fr_1fr] md:items-center">
+                  <div className="relative aspect-[4/5] -rotate-3 overflow-hidden rounded-[20px]">
+                    <Image src={a.photo} alt={a.alt} fill sizes="(min-width: 1024px) 380px, 90vw" className="object-cover" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-[26px] leading-tight">{a.title}</h3>
+                    <p className="mt-3">{a.body}</p>
+                    <Link href={a.href} className="mt-5 inline-flex items-center gap-2 font-display font-medium">
+                      <span aria-hidden="true" className="inline-flex size-5 items-center justify-center rounded-full bg-black text-[11px] text-white">
+                        →
+                      </span>
+                      {a.cta}
+                    </Link>
+                  </div>
+                </div>
+              ),
+            }))}
+          />
         </div>
-        <div className="mt-10">
-          <Marquee items={POPULAR_LOCATIONS} />
+      </section>
+
+      <section className="bg-primary py-24 text-white" aria-labelledby="roles">
+        <div className="container max-w-6xl px-4">
+          <Reveal>
+            <p className="eyebrow text-white" style={dot("blue")}>
+              Jobs by role
+            </p>
+            <h2 id="roles" className="mt-5 font-display text-[2.25rem] leading-[1.15] sm:text-[52px]">
+              Made for how the UK actually hires
+            </h2>
+            <p className="mt-4 max-w-3xl text-white/85">
+              Sponsors hire across every field, from nursing to software to logistics. Pick a role family to see the licensed employers with live jobs in it.
+            </p>
+          </Reveal>
+          <Carousel label="Role families" className="mt-12">
+            {ROLE_FAMILIES.map((r, i) => (
+              <Link
+                key={r.id}
+                href={rolePath(r.id)}
+                className={`flex h-[340px] w-[280px] flex-col justify-between rounded-[20px] p-6 text-black transition-transform hover:-translate-y-1 ${ROLE_TONES[i % ROLE_TONES.length]}`}
+              >
+                <span className="font-display text-[32px] leading-[1.1] tracking-[-0.02em]">{r.label}</span>
+                <span className="inline-flex items-center gap-2 font-display font-medium">
+                  See jobs <span aria-hidden="true">→</span>
+                </span>
+              </Link>
+            ))}
+          </Carousel>
+        </div>
+      </section>
+
+      <section className="bg-accent py-24" aria-labelledby="tools">
+        <div className="container max-w-5xl px-4">
+          <Reveal className="text-center">
+            <h2 id="tools" className="mx-auto max-w-3xl font-display text-[2.25rem] leading-[1.15] sm:text-[52px]">
+              Everything for your visa job search, in one place
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl">
+              One place to find sponsors, check salaries, tailor applications and keep track of them. Free, and nothing to install.
+            </p>
+          </Reveal>
+          <div className="mt-12">
+            <Accordion
+              items={tools.map((t) => ({
+                id: t.id,
+                title: t.title,
+                summary: t.summary,
+                icon: t.icon,
+                chip: t.chip,
+                body: (
+                  <>
+                    <p>{t.body}</p>
+                    <Link href={t.href} className="mt-4 inline-flex h-10 items-center rounded-[11px] bg-white px-4 font-display text-[15px] font-medium text-primary hover:bg-lime">
+                      {t.cta} →
+                    </Link>
+                  </>
+                ),
+              }))}
+            />
+          </div>
         </div>
       </section>
 
       {latestJobs.length > 0 && (
-        <section className="container max-w-6xl px-4 pt-20">
-          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
-            <h2 className="font-display text-3xl sm:text-4xl">Latest jobs from licensed sponsors</h2>
-            <Link href="/jobs" className="text-sm font-medium text-primary hover:underline">
-              See all {jobCount.toLocaleString("en-GB")} jobs →
-            </Link>
-          </div>
-          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+        <section className="container max-w-6xl px-4 pt-24" aria-labelledby="latest">
+          <Reveal className="text-center">
+            <h2 id="latest" className="font-display text-[2.25rem] leading-[1.15] sm:text-[52px]">
+              Latest jobs from licensed sponsors
+            </h2>
+          </Reveal>
+          <div className="mt-12 grid gap-4 lg:grid-cols-2">
             {latestJobs.map((job, i) => (
               <Reveal key={job.url} delay={(i % 2) * 100}>
                 <JobCard job={job} />
               </Reveal>
             ))}
           </div>
+          <div className="mt-10 text-center">
+            <Button asChild size="lg">
+              <Link href="/jobs">
+                See all {jobCount.toLocaleString("en-GB")} jobs <ArrowChip />
+              </Link>
+            </Button>
+          </div>
         </section>
       )}
 
-      <section className="container max-w-4xl px-4 pt-24" aria-labelledby="stamp-rush">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="eyebrow">A short break</p>
-            <h2 id="stamp-rush" className="mt-2 font-display text-3xl sm:text-4xl">
-              Bored of forms? Play <span className="text-muted-foreground">Stamp Rush</span>.
-            </h2>
-            <p className="mt-2 max-w-xl text-muted-foreground">
-              Every stamp is a real A-rated sponsor. Catch a gold one and it might just be your next employer.
-            </p>
-          </div>
-        </div>
-        <StampRushLoader />
-      </section>
-
-      <section className="container max-w-4xl px-4 py-24">
-        <h2 className="font-display text-4xl sm:text-5xl">
-          From register to <span className="text-muted-foreground">application in three steps.</span>
-        </h2>
-        <ol className="mt-14 divide-y divide-border">
-          {STEPS.map(({ icon: Icon, title, body }, i) => (
-            <Reveal as="li" key={title} delay={i * 80} className="grid gap-4 py-8 sm:grid-cols-[6rem_1fr]">
-              <span className="font-display text-6xl text-muted-foreground">{i + 1}</span>
-              <div>
-                <h3 className="flex items-center gap-2 font-display text-2xl">
-                  <Icon width={20} height={20} className="text-primary" /> {title}
-                </h3>
-                <p className="mt-2 max-w-xl text-lg text-muted-foreground">{body}</p>
-              </div>
-            </Reveal>
-          ))}
-        </ol>
-      </section>
-
-      <section className="section-band py-20">
-        <div className="container max-w-4xl px-4">
-          <h2 className="font-display text-3xl">Good to know</h2>
-          <ul className="mt-8 grid gap-8 text-muted-foreground md:grid-cols-3">
-            <li>
-              <strong className="block text-foreground">A licence isn&apos;t a promise.</strong> Being on the register means
-              an employer <em>can</em> sponsor, not that every role will. Look for &quot;visa sponsorship&quot; in the job
-              ad or ask the recruiter.
-            </li>
-            <li>
-              <strong className="block text-foreground">Prefer A-rated sponsors.</strong> B-rated sponsors are on a Home
-              Office action plan and can&apos;t assign new certificates of sponsorship until it&apos;s resolved.
-            </li>
-            <li>
-              <strong className="block text-foreground">Search the legal name.</strong> The register lists registered company
-              names, which can differ from the brand you know. If a brand doesn&apos;t show up, look up its legal name
-              on Companies House.
-            </li>
-          </ul>
-          <Button asChild variant="link" className="mt-6 px-0">
-            <Link href="/guide/visa-basics">Read the visa basics guide →</Link>
-          </Button>
-        </div>
-      </section>
-
-      <section className="container px-4 py-20">
-        <Reveal className="rounded-[2rem] bg-foreground px-6 py-20 text-center text-background">
-          <h2 className="font-display text-5xl sm:text-6xl">
-            <BlurWords text="Ready to find your sponsor?" />
+      <section className="container max-w-4xl px-4 py-24" aria-labelledby="stamp-rush">
+        <Reveal className="mb-8 text-center">
+          <p className="eyebrow mx-auto" style={dot("amber")}>
+            A short break
+          </p>
+          <h2 id="stamp-rush" className="mt-5 font-display text-[2rem] leading-tight sm:text-[40px]">
+            Bored of forms? Play Stamp Rush
           </h2>
-          <Button asChild size="lg" className="mt-8 bg-background text-foreground hover:bg-background/90">
-            <Link href="/sponsors">Search sponsors</Link>
-          </Button>
+          <p className="mx-auto mt-3 max-w-xl">Every stamp is a real A-rated sponsor. Catch a gold one and it might just be your next employer.</p>
         </Reveal>
+        <StampRushLoader />
       </section>
     </main>
   );

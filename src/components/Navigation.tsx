@@ -10,11 +10,9 @@ import { HUD } from "./game/HUD";
 
 const LINKS = [
   { href: "/jobs", label: "Jobs" },
-  { href: "/sponsors", label: "Find sponsors" },
-  { href: "/saved", label: "My shortlist" },
-  { href: "/profile", label: "My profile" },
   { href: "/visa-salary-checker", label: "Salary checker" },
   { href: "/guide/visa-basics", label: "Visa guide" },
+  { href: "/profile", label: "My profile" },
 ];
 
 export function Navigation() {
@@ -29,30 +27,46 @@ export function Navigation() {
       onClick={() => setOpen(false)}
       aria-current={pathname === href ? "page" : undefined}
       className={cn(
-        "flex items-center gap-2 rounded-lg px-3 py-2 text-[15px] font-medium transition-colors",
-        pathname === href
-          ? "bg-foreground/[0.06] text-foreground"
-          : "text-foreground/75 hover:text-foreground"
+        "flex items-center gap-2 rounded-lg px-3 py-2 font-display text-[16px] font-medium tracking-[-0.01em] transition-colors",
+        pathname === href ? "text-primary underline decoration-2 underline-offset-[10px]" : "text-foreground hover:text-primary"
       )}
     >
       {label}
-      {href === "/saved" && savedCount > 0 && (
-        <span className="rounded-full bg-mint px-1.5 text-xs leading-5 text-foreground tabular-nums">{savedCount}</span>
-      )}
     </Link>
   ));
 
+  const actions = (
+    <>
+      <Link
+        href="/sponsors"
+        onClick={() => setOpen(false)}
+        className="inline-flex h-10 items-center rounded-[11px] border-[0.625px] border-primary bg-primary px-4 font-display text-[15px] font-medium text-primary-foreground hover:bg-forest-deep"
+      >
+        Find sponsors
+      </Link>
+      <Link
+        href="/saved"
+        onClick={() => setOpen(false)}
+        className="inline-flex h-10 items-center gap-2 rounded-[11px] border-[0.625px] border-primary px-4 font-display text-[15px] font-medium text-primary hover:bg-accent"
+      >
+        My shortlist
+        {savedCount > 0 && <span className="rounded-full bg-green-dot px-1.5 text-xs leading-5 text-primary tabular-nums">{savedCount}</span>}
+      </Link>
+    </>
+  );
+
   return (
-    <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 bg-white">
       <nav className="container flex h-[4.5rem] max-w-6xl items-center justify-between gap-2 px-4" aria-label="Main">
-        <Link href="/" aria-label="Horus home" className="flex items-center gap-2.5 font-display text-[1.6rem] tracking-tight">
+        <Link href="/" aria-label="Horus home" className="flex items-center gap-2.5 font-display text-[1.65rem] font-medium tracking-[-0.03em]">
           {/* eslint-disable-next-line @next/next/no-img-element -- tiny static SVG */}
           <img src="/icon.svg" alt="" width={36} height={36} className="rounded-[10px]" />
           <span className="hidden min-[400px]:inline">Horus</span>
         </Link>
         <div className="hidden items-center gap-0.5 xl:flex">{links}</div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <HUD />
+          <div className="hidden items-center gap-2 xl:flex">{actions}</div>
           <button
             type="button"
             className="-mr-2 rounded-md p-2 hover:bg-muted xl:hidden"
@@ -64,7 +78,12 @@ export function Navigation() {
           </button>
         </div>
       </nav>
-      {open && <div className="container flex max-w-6xl flex-col border-t border-border px-4 py-2 xl:hidden">{links}</div>}
+      {open && (
+        <div className="container flex max-w-6xl flex-col gap-1 border-t border-border px-4 py-3 xl:hidden">
+          {links}
+          <div className="mt-2 flex flex-wrap gap-2">{actions}</div>
+        </div>
+      )}
     </header>
   );
 }

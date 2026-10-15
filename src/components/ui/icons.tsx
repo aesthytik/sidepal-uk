@@ -66,3 +66,15 @@ export const MenuIcon = (p: IconProps) => (
 export const ShieldCheckIcon = (p: IconProps) => (
   <Icon {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="m9 12 2 2 4-4" /></Icon>
 );
+export const ArrowRightIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></Icon>
+);
+export const FileTextIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></Icon>
+);
+export const MessageIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></Icon>
+);
+export const PoundIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M18 7c0-5.333-8-5.333-8 0" /><path d="M10 7v14" /><path d="M6 21h12" /><path d="M6 13h10" /></Icon>
+);

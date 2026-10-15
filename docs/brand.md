@@ -1,134 +1,139 @@
-# Horus — quiet, editorial, calm
+# Horus: bright, friendly, clear
 
-## Concept and personality
+## Concept
 
-**Big plans. Clear next steps.** Horus is a calm, capable companion for a serious job search. The look is editorial: large, light serif headlines, a clean grotesk for reading, near-white and cool-grey surfaces, charcoal for primary actions and a single cobalt accent. Soft pastel panels (mint, lavender, grey) group related actions. The eye badge is a charcoal rounded square with a cobalt iris, recognisable at favicon size. Official data, honest caveats and clear controls provide trust.
+**Find UK employers that can sponsor your visa.** Horus is a practical companion for a serious job search. The look is bright and plain-spoken: black type on white, a deep forest green for actions and big colour bands, and five cheerful colour families (green, pink, blue, amber, purple) for labels, cards and tools. The visual system follows the layout and motion patterns of parentsquare.com; Horus keeps its own name, eye mark, copy and photos.
 
-We are curious, capable and warm. Celebrate actions people can control: researching, saving, applying and preparing. Avoid promises about getting a visa, pressure about streaks, jokes about rejection or treating immigration problems as a punchline. Progress is encouragement, never a measure of someone's worth.
+We are curious, capable and warm. Celebrate actions people can control: researching, saving, applying and preparing. Avoid promises about getting a visa, pressure about streaks, jokes about rejection or treating immigration problems as a punchline.
 
 ## History
 
-- 2026-10 (current): moved from the violet "next chapter" identity (Space Grotesk, hard offset shadows, stickers) to an editorial system. Same tokens and component API; new values, fonts, radii and soft shadows.
+- 2026-10 (current): forest green and colour families, Onest + Inter, GSAP-pinned hero, light only.
+- 2026-10: editorial serif look (Source Serif 4, charcoal and cobalt).
+- 2026-10: violet "next chapter" identity (Space Grotesk, offset shadows).
 - Earlier: forest-green paper/ink identity with Fraunces and Inter.
 
 ## Colour tokens
 
-These HSL channels are the source values in `src/app/globals.css`, consumed as `hsl(var(--token))` and exposed through Tailwind. The theme follows the operating system. `gold`, `clay` and `sage` retain their existing API names for reward/warning, error/setback and success. Mint and apricot are paired surfaces, not body-text colours. `border` is a decorative separator; use `input` for control boundaries and `ring` for focus.
+HSL channels in `src/app/globals.css`, used as `hsl(var(--token))` and exposed through Tailwind. Light only (`color-scheme: light`; Tailwind `darkMode` is `class` and nothing sets it).
+
+- `primary` is forest `#224B17`, with light green `#9AEB83` text on it. Use it for main buttons, the dark bands and the footer.
+- `accent` (`#E5FAE0`) is the pale green section background.
+- Colour families: `--{green,pink,blue,amber,purple}-{dot,soft,ink}`, as Tailwind `bg-pink-dot`, `bg-pink-soft`, `text-pink-ink` and so on. `dot` is the bright square, card or icon chip (black text on it); `soft` is a pastel label background with `ink` text.
+- `apricot`/`mint`/`gold`/`clay`/`sage` keep their API names for the game layer and status colours, now mapped into the families.
 
 ```css
 :root {
-  --background: 0.0 0.0% 98.8%; /* #FCFCFC */
-  --foreground: 222.9 13.7% 10.0%; /* #16181D */
+  --background: 0.0 0.0% 100.0%; /* #FFFFFF */
+  --foreground: 0.0 0.0% 0.0%; /* #000000 */
   --card: 0.0 0.0% 100.0%; /* #FFFFFF */
-  --card-foreground: 222.9 13.7% 10.0%; /* #16181D */
-  --primary: 219.9 68.2% 48.0%; /* #275FCE */
-  --primary-foreground: 0.0 0.0% 100.0%; /* #FFFFFF */
-  --muted: 180.0 6.2% 93.7%; /* #EEF0F0 */
-  --muted-foreground: 205.7 7.3% 37.6%; /* #596167 */
-  --accent: 240.0 63.0% 94.7%; /* #E9E9FA */
-  --accent-foreground: 230.5 57.6% 38.8%; /* #2A3C9C */
-  --destructive: 354.3 62.2% 43.5%; /* #B42A37 */
+  --card-foreground: 0.0 0.0% 0.0%; /* #000000 */
+  --primary: 107.3 53.1% 19.2%; /* #224B17 */
+  --primary-foreground: 106.7 72.2% 71.8%; /* #9AEB83 */
+  --muted: 0.0 0.0% 94.5%; /* #F1F1F1 */
+  --muted-foreground: 0.0 0.0% 30.2%; /* #4D4D4D */
+  --accent: 108.5 72.2% 92.9%; /* #E5FAE0 */
+  --accent-foreground: 107.3 53.1% 19.2%; /* #224B17 */
+  --destructive: 0.0 100.0% 37.6%; /* #C00000 */
   --destructive-foreground: 0.0 0.0% 100.0%; /* #FFFFFF */
-  --border: 204.0 9.8% 90.0%; /* #E3E6E8 */
-  --input: 205.7 6.1% 55.3%; /* #868E94 */
-  --ring: 219.9 68.2% 48.0%; /* #275FCE */
+  --border: 0.0 0.0% 89.0%; /* #E3E3E3 */
+  --input: 0.0 0.0% 54.1%; /* #8A8A8A */
+  --ring: 107.3 53.1% 19.2%; /* #224B17 */
   --gold: 38.5 76.8% 27.1%; /* #7A5410 */
-  --clay: 354.3 62.2% 43.5%; /* #B42A37 */
-  --sage: 129.8 40.4% 29.6%; /* #2D6A37 */
-  --mint: 136.4 45.8% 90.6%; /* #DCF2E2 */
-  --mint-foreground: 115.7 34.1% 16.1%; /* #1D371B */
-  --apricot: 32.6 66.0% 89.6%; /* #F6E6D3 */
-  --apricot-foreground: 30.0 55.2% 22.7%; /* #5A3A1A */
-  --map-water: 223.8 59.1% 91.4%; /* #DCE3F6 */
-  --map-land: 180.0 6.7% 97.1%; /* #F7F8F8 */
-  --map-park: 136.7 36.0% 90.2%; /* #DDEFE2 */
+  --clay: 0.0 100.0% 37.6%; /* #C00000 */
+  --sage: 108.5 62.7% 29.4%; /* #2E7A1C */
+  --mint: 108.5 72.2% 92.9%; /* #E5FAE0 */
+  --mint-foreground: 107.3 53.1% 19.2%; /* #224B17 */
+  --apricot: 40.0 100.0% 92.9%; /* #FFF3DB */
+  --apricot-foreground: 39.7 71.7% 19.4%; /* #553D0E */
+  --green-dot: 106.9 72.9% 58.0%; /* #68E246 */
+  --green-soft: 108.5 72.2% 92.9%; /* #E5FAE0 */
+  --green-ink: 107.3 53.1% 19.2%; /* #224B17 */
+  --pink-dot: 308.4 96.5% 66.5%; /* #FC57E5 */
+  --pink-soft: 308.9 93.1% 94.3%; /* #FEE3FA */
+  --pink-ink: 308.7 48.7% 22.2%; /* #541D4C */
+  --blue-dot: 203.1 100.0% 53.1%; /* #10A3FF */
+  --blue-soft: 204.0 100.0% 92.2%; /* #D7EFFF */
+  --blue-ink: 203.2 88.9% 17.6%; /* #053655 */
+  --amber-dot: 40.0 100.0% 58.2%; /* #FFB82A */
+  --amber-soft: 40.0 100.0% 92.9%; /* #FFF3DB */
+  --amber-ink: 39.7 71.7% 19.4%; /* #553D0E */
+  --purple-dot: 271.3 100.0% 73.3%; /* #BE77FF */
+  --purple-soft: 270.0 100.0% 95.3%; /* #F3E7FF */
+  --purple-ink: 270.6 38.2% 24.1%; /* #3E2655 */
+  --forest-deep: 108.6 52.9% 27.5%; /* #2F6B21 */
+  --lime: 106.9 72.2% 78.8%; /* #B3F0A2 */
+  --map-water: 204.0 100.0% 92.2%; /* #D7EFFF */
+  --map-land: 0.0 0.0% 98.0%; /* #FAFAFA */
+  --map-park: 108.5 72.2% 92.9%; /* #E5FAE0 */
   --map-road: 0.0 0.0% 100.0%; /* #FFFFFF */
-  --map-road-casing: 213.3 12.0% 85.3%; /* #D5D9DE */
-  --radius: 1.5rem;
-  --shadow-card: 0 1px 2px hsl(var(--foreground) / 0.04), 0 10px 30px -18px hsl(var(--foreground) / 0.18);
-  --shadow-float: 0 18px 48px -20px hsl(var(--foreground) / 0.28);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 210.0 10.5% 7.5%; /* #111315 */
-    --foreground: 200.0 8.6% 93.1%; /* #ECEEEF */
-    --card: 214.3 11.9% 11.6%; /* #1A1D21 */
-    --card-foreground: 200.0 8.6% 93.1%; /* #ECEEEF */
-    --primary: 221.2 100.0% 78.0%; /* #8FB2FF */
-    --primary-foreground: 222.7 63.4% 13.9%; /* #0D1A3A */
-    --muted: 210.0 10.5% 14.9%; /* #22262A */
-    --muted-foreground: 207.7 8.2% 68.8%; /* #A9B0B6 */
-    --accent: 231.2 32.7% 20.4%; /* #232845 */
-    --accent-foreground: 228.9 100.0% 89.4%; /* #C9D3FF */
-    --destructive: 3.4 100.0% 82.9%; /* #FFADA8 */
-    --destructive-foreground: 357.1 56.8% 14.5%; /* #3A1012 */
-    --border: 210.0 9.8% 20.0%; /* #2E3338 */
-    --input: 208.0 6.1% 48.0%; /* #737B82 */
-    --ring: 221.2 100.0% 78.0%; /* #8FB2FF */
-    --gold: 40.0 73.0% 71.0%; /* #EBC77F */
-    --clay: 3.4 100.0% 82.9%; /* #FFADA8 */
-    --sage: 133.7 47.9% 71.4%; /* #93D9A3 */
-    --mint: 140.0 30.3% 17.5%; /* #1F3A28 */
-    --mint-foreground: 134.3 53.5% 83.1%; /* #BDEBC8 */
-    --apricot: 29.2 38.1% 19.0%; /* #43301E */
-    --apricot-foreground: 31.4 79.7% 84.5%; /* #F7D9B8 */
-    --map-water: 221.5 30.2% 16.9%; /* #1E2638 */
-    --map-land: 210.0 12.0% 9.8%; /* #16191C */
-    --map-park: 144.7 22.7% 14.7%; /* #1D2E24 */
-    --map-road: 212.3 10.1% 25.3%; /* #3A4047 */
-    --map-road-casing: 210.0 12.5% 6.3%; /* #0E1012 */
-    --shadow-card: 0 1px 0 hsl(0 0% 100% / 0.04) inset, 0 10px 30px -18px hsl(0 0% 0% / 0.6);
-  }
+  --map-road-casing: 0.0 0.0% 85.5%; /* #DADADA */
+  --radius: 15px;
+  --shadow-card: none;
+  --shadow-float: 0 8px 24px -10px hsl(0 0% 0% / 0.18);
 }
 ```
 
-Keep normal text at least 4.5:1 and meaningful control boundaries at least 3:1. Computed WCAG sRGB ratios for the core token pairs (rounded only for display):
+Contrast (WCAG sRGB):
 
-| Text / surface | Light | Dark |
-| --- | --- | --- |
-| `foreground` on `background` | 17.31:1 | 16.00:1 |
-| `card-foreground` on `card` | 17.76:1 | 14.53:1 |
-| `muted-foreground` on `muted` | 5.51:1 | 6.94:1 |
-| `muted-foreground` on `background` | 6.15:1 | 8.49:1 |
-| `primary-foreground` on `primary` | 5.81:1 | 8.14:1 |
-| `primary` on `card` | 5.81:1 | 8.04:1 |
-| `accent-foreground` on `accent` | 7.87:1 | 9.75:1 |
-| `primary` on `accent` | 4.84:1 | 6.83:1 |
-| `destructive-foreground` on `destructive` | 6.31:1 | 9.34:1 |
-| `mint-foreground` on `mint` | 11.05:1 | 9.37:1 |
-| `apricot-foreground` on `apricot` | 8.36:1 | 9.27:1 |
-| `sage` on `card` | 6.50:1 | 10.22:1 |
-| `gold` on `card` | 6.77:1 | 10.48:1 |
-| `clay` on `card` | 6.31:1 | 9.50:1 |
-| `input` on `card` | 3.33:1 | 3.93:1 |
-
-Success, warning and error badge text was also checked on its 10% tint over the card. Primary text and muted text were checked on mint. Do not lower text opacity to create hierarchy. Disabled controls are visibly disabled; decorative borders and illustration details do not encode status. Labels, icons and counts accompany colour. These palette calculations are not a complete accessibility audit of every screen or third-party control.
+| Text / surface | Ratio |
+| --- | --- |
+| `foreground` on `background` | 21.00:1 |
+| `muted-foreground` on `muted` | 7.48:1 |
+| `muted-foreground` on `background` | 8.45:1 |
+| `primary-foreground` on `primary` | 6.99:1 |
+| `primary` on `background` | 10.06:1 |
+| `accent-foreground` on `accent` | 9.14:1 |
+| `destructive-foreground` on `destructive` | 6.48:1 |
+| `sage` on `card` | 5.36:1 |
+| `gold` on `card` | 6.77:1 |
+| `clay` on `card` | 6.48:1 |
+| `input` on `card` | 3.45:1 |
+| `lime` on `primary` | 7.62:1 |
+| `background` on `primary` | 10.06:1 |
+| `primary` on `green-dot` | 6.02:1 |
+| `foreground` on `green-dot` | 12.56:1 |
+| `foreground` on `pink-dot` | 7.63:1 |
+| `foreground` on `blue-dot` | 7.70:1 |
+| `foreground` on `amber-dot` | 12.14:1 |
+| `foreground` on `purple-dot` | 7.27:1 |
+| `green-ink` on `green-soft` | 9.14:1 |
+| `pink-ink` on `pink-soft` | 10.61:1 |
+| `blue-ink` on `blue-soft` | 10.62:1 |
+| `amber-ink` on `amber-soft` | 9.27:1 |
+| `purple-ink` on `purple-soft` | 10.96:1 |
 
 ## Typography
 
-**Source Serif 4 + Inter**, loaded with `next/font/google` in `src/app/layout.tsx` (`display: "swap"`, Latin subset). `font-display` is the serif for headlines, always at regular weight with gentle negative tracking; never bold it. `font-sans` (Inter) is for body and UI at 400–500; action labels are 500. The hero runs from 52px to 92px at 0.95 line height. A second headline line or phrase can drop to `text-muted-foreground` for emphasis instead of colour. Tabular numerals align scores, salaries and counts. Press Start 2P stays exclusive to the opt-in arcade skin.
+**Onest 500** for `font-display` (headings, buttons, nav), a free stand-in for Atyp BL; **Inter** for body and UI. Headings use weight 500 with −0.02em tracking. Hero h1 is 52px on a 1.15 line; section h2 is 52px; the pinned statement and smaller h2s are 40px; h3 is 20–26px. Section labels (`.eyebrow`) are a coloured square (`--dot`) plus 13px uppercase text. Press Start 2P stays exclusive to the arcade easter egg.
 
-## Shape, depth and motion
+## Shape and components
 
-- `--radius: 1.5rem` for cards; feature panels go to 1.75rem; nested surfaces around 1rem. Buttons are 12px rounded rectangles (`rounded-xl`), not pills. Tags and eyebrows are small soft pills. Keep main actions at 44px.
-- Buttons: `default` is charcoal (`bg-foreground`); `brand` is cobalt (`bg-primary`) for the single most important action on a surface; `outline` and `ghost` for the rest.
-- Depth is soft: `shadow-card` is a faint, wide blur; `shadow-float` is for hover and menus. No hard offset shadows. Sections alternate between `background` and the cool-grey `section-band`.
-- The hero has a blurred cobalt/lavender glow behind a frosted mascot card.
-- Scroll motion lives in `src/components/motion.tsx`: `Reveal` (blur, fade and lift on entering the viewport, with `delay` for staggering), `BlurWords` (headline words sharpen in one by one), `ScrollFill` (a paragraph fills in word by word as it scrolls past) and `MorphWord` (the hero's last word melts into the next using an SVG alpha threshold). The hero glow drifts slowly and a soft scan line sweeps the mascot card. Content is only hidden when JS has run (`html.js`), so it never gets stuck invisible.
-- Hover lifts a card 3px with a larger, softer shadow; pressing a button scales it to 98%. `prefers-reduced-motion` and Calm mode disable decorative motion globally.
+- `--radius: 15px`. Buttons have 11px corners: `default` is forest with light-green text, `outline` has a 0.625px forest border, `lg` is the 51px homepage size. `ArrowChip` adds the small arrow square to main calls to action.
+- No card shadows; cards use a thin border. Floating labels (`.float-label`) and checklist cards get a soft shadow.
+- Feature blocks: big bright-colour frame (`bg-green-dot`, `bg-pink-dot`) holding a white UI card, with a floating checklist or label.
+- Forest bands hold carousels (`Carousel` in `src/components/motion.tsx`: snap track, white square arrows, optional "01 / 03" counter).
+- `Tabs` (big grey/black text tabs with a tilted photo) and `Accordion` (white rows with colour icon chips; the open row turns forest) are keyboard-accessible.
+- Footer: forest, light-green uppercase headings, white links, giant cropped "Horus" wordmark in `forest-deep`.
 
-## Illustration and emoji
+## Motion
 
-Use crisp CSS/SVG shapes: the eye, sparks, rounded stamps, bubbly map markers and simple line icons. No generated photography is needed. Mascot movement is small and friendly; it never covers a job title or critical guidance. Emoji may punctuate a streak, trophy or optional game, with a text label alongside. Decorative emoji should be hidden from assistive technology when adjacent text already supplies their meaning. No skulls, graves or combat language for a user's application outcome.
+- `HeroScroll` (`src/components/HeroScroll.tsx`, GSAP + ScrollTrigger): on screens 1024px wide and 640px tall or more, the hero pins under the nav. The intro and floating labels blur out (opacity 0, blur 15px, scale 0.85), the photo shrinks away, and the statement and pain-point cards blur in. Scroll scrubs it both ways.
+- `Reveal`: fade up from 30px over 0.8s when entering the viewport, with `delay` for staggering.
+- `Marquee`: continuous sideways scroll of place names.
+- Reduced motion and Calm mode turn off pinning, blurs and reveals. Content is only hidden once JS has run (`html.js`).
 
-The static mark uses fixed colours (charcoal tile, white eye, cobalt iris) so it remains recognisable on every surface. SVG, Apple icon and social artwork share its geometry. OG and Twitter cards use ImageResponse's built-in sans to render without an extra runtime font-service dependency. Canvas artwork and confetti use matching fixed palette values; canvas has a separate dark theme.
+## Photos
+
+Free Unsplash License photos in `public/images/` (WebP, 150KB or less each), listed with sources in `public/images/CREDITS.md`. Always use `next/image` with meaningful alt text, or `alt=""` when decorative.
+
+## Logo
+
+The eye badge keeps its geometry: forest tile, white eye, bright green iris and spark. `icon.svg`, `_brand/mark.tsx`, the Apple icon and the mascot share these values.
 
 ## The map
 
-Retain the existing OpenFreeMap Positron style, tile endpoints, glyph service and visible attribution; no paid provider or key. Base layers are repainted from the CSS map tokens: pale blue-grey water, near-white land, soft mint parks, white roads with grey casing, and deep slate equivalents in dark mode. A live system-theme change repaints the loaded map.
-
-Cobalt clusters show summed job counts; mint place bubbles show local counts with a cobalt outline and a soft blurred shadow. Apricot marks the selected place, which is also named in the sidebar. Popups use the body font, rounded corners and a soft float shadow. The adjacent place list keeps every action available without the map.
+OpenFreeMap tiles repainted from tokens: blue water (`--map-water`), near-white land, pale green parks, white roads. Clusters are forest with light-green counts; place bubbles are lime with forest outlines; the selected place is amber.
 
 ## Voice examples
 
@@ -146,6 +151,6 @@ Keep visa requirements and eligibility language factual. Never replace uncertain
 
 ## Implementation verification
 
-- Contrast for every pair in the table above was computed from sRGB values; body-text pairs are at least 4.5:1 and `input` is at least 3:1 on cards in both themes.
+- Contrast table above computed from the token values.
 - `npm test`, `npm run lint` and `npx tsc --noEmit` pass.
-- Home, the jobs list and the jobs map were checked in a browser, in light and dark mode, on the local dev server.
+- Home page compared section by section with parentsquare.com in a browser at 1512px, plus a 375px phone check. `/jobs` (list and map), `/sponsors`, `/visa-salary-checker` and `/profile` were checked visually.
