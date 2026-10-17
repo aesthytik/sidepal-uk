@@ -382,4 +382,6 @@ html.calm *, html.calm *::before, html.calm *::after {
 .hero-pinned [data-hero-statement] {
   position: absolute;
   inset: 0;
+  /* Layered over the intro (and invisible at first), so let clicks through to the buttons beneath */
+  pointer-events: none;
 }
