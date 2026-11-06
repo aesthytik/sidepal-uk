@@ -18,8 +18,8 @@ import { ROLE_FAMILIES } from "@/lib/sectors/taxonomy";
 import { breadcrumbs, jobIdFromSlug, jobPath, jobPostingLd, pageMetadata, rolePath, sponsorPath } from "@/lib/seo";
 import type { Salary } from "@/lib/sponsorTypes";
 
-// Job pages are rendered on first visit and cached for an hour; roles that leave the daily index 404
-export const revalidate = 3600;
+// Job pages are rendered on first visit and cached for a day, as the index only changes daily; roles that leave it 404
+export const revalidate = 86400;
 export const dynamicParams = true;
 export function generateStaticParams() {
   return [];
